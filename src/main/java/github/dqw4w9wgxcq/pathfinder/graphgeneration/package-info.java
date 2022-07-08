@@ -1,0 +1,4 @@
+@ParametersAreNonnullByDefault
+package github.dqw4w9wgxcq.pathfinder.graphgeneration;
+
+import javax.annotation.ParametersAreNonnullByDefault;
