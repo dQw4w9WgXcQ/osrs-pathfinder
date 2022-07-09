@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+//🗺️
 @Slf4j
 public class Main {
     public static class ExitCodes {
@@ -57,7 +58,7 @@ public class Main {
         File out;
         if (cmd.hasOption("out")) {
             out = new File(cmd.getOptionValue("out"));
-        }else {
+        } else {
             out = DESKTOP_DIR;
         }
 
