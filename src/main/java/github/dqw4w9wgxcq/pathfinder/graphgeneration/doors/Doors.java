@@ -9,7 +9,7 @@ import net.runelite.cache.region.RegionLoader;
 import java.util.List;
 
 @AllArgsConstructor
-public class DoorsStep {
+public class Doors {
     public static final String OPEN_ACTION = "Open";
     public static final List<String> NAMES = List.of("Door", "Large door", "Gate");
     public static final List<WorldPoint> IGNORE_LOCATIONS = List.of(

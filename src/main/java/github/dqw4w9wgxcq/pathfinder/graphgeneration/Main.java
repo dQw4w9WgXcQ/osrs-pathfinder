@@ -81,6 +81,6 @@ public class Main {
             return;
         }
 
-        var graph = Graph.generate(cacheData);
+        var graph = new Graph(cacheData);
     }
 }

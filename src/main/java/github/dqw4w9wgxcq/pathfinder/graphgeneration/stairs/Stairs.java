@@ -6,7 +6,7 @@ import net.runelite.cache.ObjectManager;
 import net.runelite.cache.region.RegionLoader;
 
 @AllArgsConstructor
-public class StairsStep {
+public class Stairs {
     private final RegionLoader regionLoader;
     private final ObjectManager objectManager;
 

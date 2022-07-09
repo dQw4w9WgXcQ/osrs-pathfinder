@@ -5,10 +5,8 @@ import lombok.AllArgsConstructor;
 import net.runelite.cache.ObjectManager;
 import net.runelite.cache.region.RegionLoader;
 
-import java.util.function.Consumer;
-
 @AllArgsConstructor
-public class DungeonsStep{
+public class Dungeons {
     private final RegionLoader regionLoader;
     private final ObjectManager objectManager;
 
