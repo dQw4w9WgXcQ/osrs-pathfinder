@@ -1,17 +1,15 @@
-package github.dqw4w9wgxcq.pathfinder.graphgeneration.steps.stairs;
+package github.dqw4w9wgxcq.pathfinder.graphgeneration.stairs;
 
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.Graph;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.steps.GenerationStep;
 import lombok.AllArgsConstructor;
 import net.runelite.cache.ObjectManager;
 import net.runelite.cache.region.RegionLoader;
 
 @AllArgsConstructor
-public class StairsStep implements GenerationStep {
+public class StairsStep {
     private final RegionLoader regionLoader;
     private final ObjectManager objectManager;
 
-    @Override
     public void accept(Graph graph) {
         var regions = regionLoader.getRegions();
         for (var region : regions) {

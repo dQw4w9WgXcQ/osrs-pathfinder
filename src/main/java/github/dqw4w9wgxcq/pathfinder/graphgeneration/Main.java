@@ -14,13 +14,13 @@ public class Main {
     public static class ExitCodes {
         private static final int BASE = 500;
         private static int i = 0;
-        public static final int ARGS_MALFORMED = BASE;
+        public static final int ARGS_MALFORMED = BASE + i++;
         public static final int CACHE_OR_XTEAS_NOT_FOUND = BASE + i++;
         public static final int READ_FAIL = BASE + i++;
         public static final int XTEAS_MALFORMED = BASE + i++;
     }
 
-    private static final File DESKTOP_DIR = new File(System.getProperty("user.home"), "Desktop");
+    public static final File DESKTOP_DIR = new File(System.getProperty("user.home"), "Desktop");
 
     public static void main(String... args) {
         var options = new Options();
@@ -42,7 +42,6 @@ public class Main {
             return;
         }
 
-        var outFile = new File(cmd.getOptionValue("out"));
         File cacheDir;
         if (cmd.hasOption("cache")) {
             cacheDir = new File(cmd.getOptionValue("cache"));
@@ -54,6 +53,12 @@ public class Main {
             xteasFile = new File(cmd.getOptionValue("xteas"));
         } else {
             xteasFile = new File(DESKTOP_DIR, "xteas.json");
+        }
+        File out;
+        if (cmd.hasOption("out")) {
+            out = new File(cmd.getOptionValue("out"));
+        }else {
+            out = DESKTOP_DIR;
         }
 
         CacheData cacheData;
@@ -77,7 +82,5 @@ public class Main {
         }
 
         var graph = Graph.generate(cacheData);
-
-        graph.write(outFile);
     }
 }
