@@ -1,48 +1,48 @@
-package github.dqw4w9wgxcq.pathfinder.graphgeneration.collisionmap;
-
-import lombok.AllArgsConstructor;
-
-@AllArgsConstructor
-public enum LocationType {
-    WALL_OBJECT_0(),
-    WALL_OBJECT_1(),
-    WALL_OBJECT_2(),
-    WALL_OBJECT_3(),
-    WALL_DECORATION_4(),
-    WALL_DECORATION_5(),
-    WALL_DECORATION_6(),
-    WALL_DECORATION_7(),
-    WALL_DECORATION_8(),
-    GAME_OBJECT_9(),
-    GAME_OBJECT_10_11(),
-    GAME_OBJECT_12_TO_21(),
-    FLOOR_DECORATION_22(),
-    ;
-
-    public static LocationType getType(int type) {
-        return switch (type) {
-            case 0 -> WALL_OBJECT_0;
-            case 1 -> WALL_OBJECT_1;
-            case 2 -> WALL_OBJECT_2;
-            case 3 -> WALL_OBJECT_3;
-            case 4 -> WALL_DECORATION_4;
-            case 5 -> WALL_DECORATION_5;
-            case 6 -> WALL_DECORATION_6;
-            case 7 -> WALL_DECORATION_7;
-            case 8 -> WALL_DECORATION_8;
-            case 9 -> GAME_OBJECT_9;
-            case 10, 11 -> GAME_OBJECT_10_11;
-            case 22 -> FLOOR_DECORATION_22;
-            default -> {
-                if (type >= 12 && type <= 21) {
-                    yield GAME_OBJECT_12_TO_21;
-                }
-
-                throw new IllegalArgumentException("require:  0 =< type <= 22, found:" + type);
-            }
-        };
-    }
-}
+//package github.dqw4w9wgxcq.pathfinder.graphgeneration.grid;
+//
+//import lombok.AllArgsConstructor;
+//
+//@AllArgsConstructor
+//public enum LocationType {
+//    WALL_OBJECT_0(),
+//    WALL_OBJECT_1(),
+//    WALL_OBJECT_2(),
+//    WALL_OBJECT_3(),
+//    WALL_DECORATION_4(),
+//    WALL_DECORATION_5(),
+//    WALL_DECORATION_6(),
+//    WALL_DECORATION_7(),
+//    WALL_DECORATION_8(),
+//    GAME_OBJECT_9(),
+//    GAME_OBJECT_10_11(),
+//    GAME_OBJECT_12_TO_21(),
+//    FLOOR_DECORATION_22(),
+//    ;
+//
+//    public static LocationType getType(int type) {
+//        return switch (type) {
+//            case 0 -> WALL_OBJECT_0;
+//            case 1 -> WALL_OBJECT_1;
+//            case 2 -> WALL_OBJECT_2;
+//            case 3 -> WALL_OBJECT_3;
+//            case 4 -> WALL_DECORATION_4;
+//            case 5 -> WALL_DECORATION_5;
+//            case 6 -> WALL_DECORATION_6;
+//            case 7 -> WALL_DECORATION_7;
+//            case 8 -> WALL_DECORATION_8;
+//            case 9 -> GAME_OBJECT_9;
+//            case 10, 11 -> GAME_OBJECT_10_11;
+//            case 22 -> FLOOR_DECORATION_22;
+//            default -> {
+//                if (type >= 12 && type <= 21) {
+//                    yield GAME_OBJECT_12_TO_21;
+//                }
+//
+//                throw new IllegalArgumentException("require:  0 =< type <= 22, found:" + type);
+//            }
+//        };
+//    }
+//}
 
 //from decompile for reference
 /*

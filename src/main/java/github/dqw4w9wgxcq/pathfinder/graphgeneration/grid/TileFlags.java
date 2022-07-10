@@ -1,4 +1,4 @@
-package github.dqw4w9wgxcq.pathfinder.graphgeneration.collisionmap;
+package github.dqw4w9wgxcq.pathfinder.graphgeneration.grid;
 
 /**
  * Bitwise flags to game uses to determine if a tile is walkable.

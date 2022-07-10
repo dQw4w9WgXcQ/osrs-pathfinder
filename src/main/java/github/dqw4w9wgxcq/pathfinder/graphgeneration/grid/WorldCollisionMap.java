@@ -1,4 +1,4 @@
-package github.dqw4w9wgxcq.pathfinder.graphgeneration.collisionmap;
+package github.dqw4w9wgxcq.pathfinder.graphgeneration.grid;
 
 import com.google.common.annotations.VisibleForTesting;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +10,7 @@ import net.runelite.cache.region.RegionLoader;
 
 /**
  * this class is modeled after the collision map from the decompiled game client, but is global instead of scene
+ *
  * @see net.runelite.api.CollisionData
  */
 @Slf4j
@@ -87,6 +88,7 @@ public class WorldCollisionMap {
 
         var orientation = location.getOrientation();
 
+        //rotate according to the orientation
         int sizeX;
         int sizeY;
         if (orientation == 1 || orientation == 3) {
@@ -97,13 +99,13 @@ public class WorldCollisionMap {
             sizeY = definition.getSizeY(); // L: 965
         }
 
-        var type = location.getType();
+        var locationType = location.getType();
         var interactType = definition.getInteractType();
-        switch (type) {
+        switch (locationType) {
             //wall objects
             case 0, 1, 2, 3 -> {
                 if (interactType != 0) {
-                    addWallObject(z, x, y, type, orientation);
+                    addWallObject(z, x, y, locationType, orientation);
                 }
             }
             //wall decoration
@@ -124,13 +126,13 @@ public class WorldCollisionMap {
             }
             default -> {
                 //
-                if (type >= 12 && type <= 21) {
+                if (locationType >= 12 && locationType <= 21) {
                     if (interactType != 0) {
                         addGameObject(z, x, y, sizeX, sizeY, false);
                     }
                 }
 
-                throw new IllegalArgumentException("require:  0 =< type <= 22, found:" + type);
+                throw new IllegalArgumentException("require:  0 =< locationType <= 22, found:" + locationType);
             }
         }
     }

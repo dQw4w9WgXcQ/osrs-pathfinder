@@ -1,4 +1,4 @@
-package github.dqw4w9wgxcq.pathfinder.graphgeneration.collisionmap;
+package github.dqw4w9wgxcq.pathfinder.graphgeneration.grid;
 
 import lombok.AllArgsConstructor;
 
@@ -12,4 +12,12 @@ public enum Orientation {
 
     public final int config;
     public final int associatedFlag;
+
+    public static Orientation forConfig(int config) {
+        var out = Orientation.values()[config];
+
+        assert out.config == config;
+
+        return out;
+    }
 }

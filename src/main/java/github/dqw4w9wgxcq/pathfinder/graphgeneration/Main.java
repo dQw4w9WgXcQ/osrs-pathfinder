@@ -10,13 +10,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 @Slf4j
-public class Main {
+class Main {
     public static class ExitCodes {
         private static final int BASE = 500;
-        private static int i = 0;
+        private static int i = 0;//todo use fixed vlaues
         public static final int ARGS_MALFORMED = BASE + i++;
         public static final int CACHE_OR_XTEAS_NOT_FOUND = BASE + i++;
-        public static final int READ_FAIL = BASE + i++;
+        public static final int CACHE_READ_FAIL = BASE + i++;
+        public static final int XTEAS_READ_FAIL = BASE + i++;
         public static final int XTEAS_MALFORMED = BASE + i++;
     }
 
@@ -54,31 +55,38 @@ public class Main {
         } else {
             xteasFile = new File(DESKTOP_DIR, "xteas.json");
         }
-        File out;
+        File outDir;
         if (cmd.hasOption("out")) {
-            out = new File(cmd.getOptionValue("out"));
+            outDir = new File(cmd.getOptionValue("out"));
         } else {
-            out = DESKTOP_DIR;
+            outDir = new File(DESKTOP_DIR, "graph");
         }
 
         CacheData cacheData;
         try {
             cacheData = new CacheData(cacheDir, xteasFile);
         } catch (FileNotFoundException e) {
-            log.error("file not found exception creating cache data", e);
-            System.out.println("cache dir(or expected contents) or xteas file not found");
+            log.error("cache dir(or expected contents) or xteas file not found");
+            log.debug(null, e);
             System.exit(ExitCodes.CACHE_OR_XTEAS_NOT_FOUND);
             return;
-        } catch (IOException | JsonIOException e) {
-            log.error("io error creating cache data", e);
-            System.out.println("io error reading/loading cache or xteas");
-            System.exit(ExitCodes.READ_FAIL);
+        } catch (IOException e) {
+            log.error("reading cache data failed");
+            log.debug(null, e);
+            System.exit(ExitCodes.CACHE_READ_FAIL);
+            return;
+        } catch (JsonIOException e) {
+            log.error("reading xtea failed");
+            log.debug(null, e);
+            System.exit(ExitCodes.XTEAS_READ_FAIL);
             return;
         } catch (JsonSyntaxException e) {
-            log.error("xteas json malformed", e);
-            System.out.println("xteas file malformed");
+            log.error("xteas json malformed");
+            log.debug(null, e);
             System.exit(ExitCodes.XTEAS_MALFORMED);
             return;
         }
+
+        throw new UnsupportedOperationException("not implemented");//todo
     }
 }
