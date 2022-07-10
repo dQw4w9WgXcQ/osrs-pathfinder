@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-//🗺️
 @Slf4j
 public class Main {
     public static class ExitCodes {

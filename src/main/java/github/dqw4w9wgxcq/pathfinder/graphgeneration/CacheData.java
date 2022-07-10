@@ -26,12 +26,14 @@ public class CacheData {
     private final ObjectManager objectManager;
 
     /**
-     * @param cacheDir  raw osrs game cache.  the game populates this directory at [userhome]/jagexcache/oldschool/LIVE/
-     * @param xteasJson json file containing json array of xteas {@see net.runelite.cache.util.XteaKey}
-     * @throws FileNotFoundException cacheDir(or expected contents) or xteasJson don't exist
-     * @throws IOException           Store, RegionLoader, ObjectManager
-     * @throws JsonIOException       gson failed loading xteas {@see net.runelite.cache.util.XteaKeyManager#loadKeys()}
-     * @throws JsonSyntaxException   gson says xteas malformed {@see net.runelite.cache.util.XteaKeyManager#loadKeys(File)}
+     * @param cacheDir  directory containing raw osrs game cache.  <p>
+     *                  the game populates this directory at [userhome]/jagexcache/oldschool/LIVE/
+     * @param xteasJson json file containing json array of xteas
+     * @throws FileNotFoundException cacheDir(or expected contents) or xteasJson doesn't exist
+     * @throws IOException           some other fs error while reading cache with runelite utils (Store, RegionLoader, ObjectManager)
+     * @throws JsonIOException       gson fs error reading xteas
+     * @throws JsonSyntaxException   gson says xteas malformed
+     * @see net.runelite.cache.util.XteaKey for xtea key format ([XteaKey, XteaKey, ...])
      */
     public CacheData(File cacheDir, File xteasJson) throws FileNotFoundException, IOException, JsonIOException, JsonSyntaxException {
         Store store = new Store(cacheDir);
