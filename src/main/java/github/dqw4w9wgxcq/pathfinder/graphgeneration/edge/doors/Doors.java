@@ -1,10 +1,12 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.edge.doors;
 
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.edge.Edge;
 import lombok.AllArgsConstructor;
 import net.runelite.cache.ObjectManager;
 import net.runelite.cache.region.Position;
 import net.runelite.cache.region.RegionLoader;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -20,13 +22,16 @@ public class Doors {
     private final RegionLoader regionLoader;
     private final ObjectManager objectManager;
 
-    public void findEdges() {
+    public List<Edge> findEdges() {
         var regions = regionLoader.getRegions();
+        var out = new ArrayList<Edge>();
         for (var region : regions) {
             var baseX = region.getBaseX();
             var baseY = region.getBaseY();
 
-
+            throw new RuntimeException("Not implemented");//todo
         }
+
+        return out;
     }
 }

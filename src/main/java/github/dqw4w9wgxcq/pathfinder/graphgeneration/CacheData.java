@@ -28,7 +28,7 @@ import java.util.Map;
 @Slf4j
 public class CacheData {
     @Getter
-    private final Collection<Region> regions;
+    private final Map<Integer, Region> regions;
     @Getter
     private final int lowestRegionX, lowestRegionY, highestRegionX, highestRegionY;
     @Getter
@@ -56,7 +56,11 @@ public class CacheData {
         var regionLoader = new RegionLoader(store, keyManager);
         regionLoader.loadRegions();
         regionLoader.calculateBounds();
-        regions = regionLoader.getRegions();
+        var regions = regionLoader.getRegions();
+        this.regions = new HashMap<>(regions.size());
+        for (var region : regions) {
+            this.regions.put(region.getRegionID(), region);
+        }
         lowestRegionX = regionLoader.getLowestX().getRegionX();
         lowestRegionY = regionLoader.getLowestY().getRegionY();
         highestRegionX = regionLoader.getHighestX().getRegionX();
@@ -68,10 +72,8 @@ public class CacheData {
         var definitions = objectManager.getObjects();
         objectDefinitions = new HashMap<>(definitions.size());
         for (var definition : definitions) {
-            assert !objectDefinitions.containsKey(definition.getId());
             objectDefinitions.put(definition.getId(), definition);
         }
-        assert objectDefinitions.size() == definitions.size();
 
         try {
             store.close();

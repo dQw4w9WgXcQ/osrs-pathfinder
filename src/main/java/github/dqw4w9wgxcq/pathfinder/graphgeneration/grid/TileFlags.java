@@ -23,7 +23,8 @@ public class TileFlags {
     public static final int HAS_FLAGS = 1 << 24;//16777216
 
     /**
-     * in the game client, index 0 and the last 5 of the flags are filled on init<p>
+     * in the game client, index 0 and the last 5 of the flags are filled on init.
+     * this is done to create a boarder and because an object with sizeX/Y > 1 from outside the scene could block movement<p>
      * from decompile:
      * <pre>
      * for (int x = 0; x < this.xSize; ++x)

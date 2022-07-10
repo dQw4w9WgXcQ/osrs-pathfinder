@@ -27,8 +27,13 @@ public class Stairs {
         return out;
     }
 
-    public static boolean isClimbUpObject(ObjectDefinition definition) {
+    public static boolean isUpObject(ObjectDefinition definition) {
         var action = definition.getActions()[0];
         return action != null && action.equals(UP_ACTION);
+    }
+
+    public static boolean isDownObject(ObjectDefinition definition) {
+        var action = definition.getActions()[0];
+        return action != null && action.equals(DOWN_ACTION);
     }
 }
