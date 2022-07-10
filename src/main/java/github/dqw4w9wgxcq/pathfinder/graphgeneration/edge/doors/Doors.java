@@ -1,6 +1,5 @@
-package github.dqw4w9wgxcq.pathfinder.graphgeneration.doors;
+package github.dqw4w9wgxcq.pathfinder.graphgeneration.edge.doors;
 
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.Graph;
 import lombok.AllArgsConstructor;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.cache.ObjectManager;
@@ -21,7 +20,4 @@ public class Doors {
     private final RegionLoader regionLoader;
     private final ObjectManager objectManager;
 
-    public void accept(Graph graph) {
-        throw new UnsupportedOperationException("TODO");//todo
-    }
 }

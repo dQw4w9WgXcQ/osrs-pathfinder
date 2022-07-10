@@ -80,7 +80,5 @@ public class Main {
             System.exit(ExitCodes.XTEAS_MALFORMED);
             return;
         }
-
-        var graph = new Graph(cacheData);
     }
 }

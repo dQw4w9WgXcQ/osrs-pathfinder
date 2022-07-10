@@ -1,6 +1,5 @@
-package github.dqw4w9wgxcq.pathfinder.graphgeneration.stairs;
+package github.dqw4w9wgxcq.pathfinder.graphgeneration.edge.stairs;
 
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.Graph;
 import lombok.AllArgsConstructor;
 import net.runelite.cache.ObjectManager;
 import net.runelite.cache.region.RegionLoader;
@@ -10,7 +9,7 @@ public class Stairs {
     private final RegionLoader regionLoader;
     private final ObjectManager objectManager;
 
-    public void accept(Graph graph) {
+    public void accept() {
         var regions = regionLoader.getRegions();
         for (var region : regions) {
             var baseX = region.getBaseX();
