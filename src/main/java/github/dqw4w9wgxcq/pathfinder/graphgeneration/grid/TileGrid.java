@@ -2,6 +2,7 @@ package github.dqw4w9wgxcq.pathfinder.graphgeneration.grid;
 
 import com.google.common.base.Preconditions;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.utils.RegionUtils;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.cache.definitions.ObjectDefinition;
 import net.runelite.cache.region.Location;
@@ -15,29 +16,48 @@ import java.util.Map;
  * uses bit flags to store collision data and bitwise operations to check for collisions
  */
 @Slf4j
-public class Grid {
-    public static final int Z_SIZE = 4;
-
-    private final int[][][] flags;
+public class TileGrid {
+    @Getter
+    private final int[][] flags;
+    @Getter
     private final int xSize;
+    @Getter
     private final int ySize;
 
-    public Grid(int xSize, int ySize) {
-        log.debug("init with size x:" + xSize + " y:" + ySize);
+    public TileGrid(int xSize, int ySize) {
+        log.debug("grid inited with size x:" + xSize + " y:" + ySize);
+
+        flags = new int[xSize][ySize];
+
+        for (var x = 0; x < xSize; x++) {
+            flags[x][0] = TileFlags.SCENE_BORDER;
+            flags[x][ySize - 1] = TileFlags.SCENE_BORDER;
+        }
+
+        for (var y = 0; y < ySize; y++) {
+            flags[0][y] = TileFlags.SCENE_BORDER;
+            flags[xSize - 1][y] = TileFlags.SCENE_BORDER;
+        }
 
         this.xSize = xSize;
         this.ySize = ySize;
-
-        flags = new int[Z_SIZE][this.xSize][this.ySize];
     }
 
-    public boolean canTravelInDirection(int z, int x, int y, int dx, int dy) {
+    public boolean canTravelInDirection(int x, int y, int dx, int dy) {
         Preconditions.checkArgument(dx != 0 || dy != 0, "dx and dy cant both be 0, found dx: " + dx + " dy: " + dy);
         Preconditions.checkArgument(Math.abs(dx) <= 1 && Math.abs(dy) <= 1, "dx and dy must be 1 or -1, found dx: " + dx + " dy: " + dy);
 
-        var flags = this.flags[z];
-
         var flag = flags[x][y];
+        var destinationX = x + dx;
+        var destinationY = y + dy;
+
+        if (destinationX < 0 || destinationX >= xSize || destinationY < 0 || destinationY >= ySize) {
+            log.trace("canTravelInDirection: destination out of bounds, x: " + destinationX + " y: " + destinationY + " dx: " + dx + " dy: " + dy);
+            return false;
+        }
+
+        var destinationFlag = flags[x + dx][y + dy];
+
         var checkMask = 0;
         if (dx == 1) {
             checkMask |= TileFlags.W;
@@ -67,27 +87,27 @@ public class Grid {
             return false;
         }
 
-        var oppositeFlag = flags[x + dx][y + dy];
-        return (oppositeFlag & TileFlags.ANY_FULL) != 0;
+        return (destinationFlag & TileFlags.ANY_FULL) != 0;
     }
 
-    public void addFloorFromRegion(Region region) {
+    public static void addFloorFromRegion(TileGrid[] world, Region region) {
+        log.debug("adding region " + region.getRegionID() + " x" + region.getRegionX() + "y" + region.getRegionY());
         var baseX = region.getBaseX();
         var baseY = region.getBaseY();
 
-        for (var z = 0; z < Z_SIZE; z++) {
-            for (var x = baseX; x < baseX + RegionUtils.SIZE; x++) {
-                for (var y = baseY; y < baseY + RegionUtils.SIZE; y++) {
+        for (var z = 0; z < world.length; z++) {
+            for (var x = 0; x < RegionUtils.SIZE; x++) {
+                for (var y = 0; y < RegionUtils.SIZE; y++) {
                     var tileSetting = region.getTileSetting(z, x, y);
                     if ((tileSetting & 1) == 1) {
                         var modifiedZ = z;
                         if ((region.getTileSetting(1, x, y) & 2) == 2) {
                             modifiedZ = z - 1;
-                            log.debug("z was modified from " + z + " to " + modifiedZ + " at " + "x" + x + "y" + y);
+                            log.trace("z was modified from " + z + " to " + modifiedZ + " at " + "x" + x + "y" + y);
                         }
 
                         if (modifiedZ >= 0) {
-                            addFlag(modifiedZ, x + baseX, y + baseY, TileFlags.FLOOR);
+                            world[modifiedZ].addFlag(x + baseX, y + baseY, TileFlags.FLOOR);
                         }
                     }
                 }
@@ -95,27 +115,28 @@ public class Grid {
         }
     }
 
-    public void addObjectLocations(List<Location> locations, Map<Integer, ObjectDefinition> definitions) {
+    public static void addObjectLocations(TileGrid[] world, List<Location> locations, Map<Integer, ObjectDefinition> definitions) {
         for (var location : locations) {
-            addObjectLocation(location, definitions);
+            world[location.getPosition().getZ()].addObjectLocation(location, definitions);
         }
     }
 
     /**
      * @param location object spawn location
      */
-    private void addObjectLocation(Location location, Map<Integer, ObjectDefinition> definitions) {
-        log.debug("adding location " + location);
+    public void addObjectLocation(Location location, Map<Integer, ObjectDefinition> definitions) {
+        log.trace("adding location " + location);
 
         var position = location.getPosition();
-        var z = position.getZ();
+
         var x = position.getX();
         var y = position.getY();
-        var orientation = location.getOrientation();
 
         var objectDefinition = definitions.get(location.getId());
 
-        //log.debug("name : " + objectDefinition.getName());
+        log.trace("objlocation name : " + objectDefinition.getName());
+
+        var orientation = location.getOrientation();
 
         //rotate according to the orientation
         int sizeX;
@@ -134,7 +155,7 @@ public class Grid {
             //wall objects
             case 0, 1, 2, 3 -> {
                 if (interactType != 0) {
-                    addWallObject(z, x, y, locationType, orientation);
+                    addWallObject(x, y, locationType, orientation);
                 }
             }
             //wall decoration
@@ -144,20 +165,20 @@ public class Grid {
             //game object
             case 10, 11 -> {
                 if (interactType != 0) {
-                    addGameObject(z, x, y, sizeX, sizeY, false);
+                    addGameObject(x, y, sizeX, sizeY, false);
                 }
             }
             //floor decoration
             case 22 -> {
                 if (interactType == 1) {
-                    addGameObject(z, x, y, sizeX, sizeY, true);
+                    addGameObject(x, y, sizeX, sizeY, true);
                 }
             }
             default -> {
                 //
                 if (locationType >= 12 && locationType <= 21) {
                     if (interactType != 0) {
-                        addGameObject(z, x, y, sizeX, sizeY, false);
+                        addGameObject(x, y, sizeX, sizeY, false);
                     }
                 } else {
                     throw new IllegalArgumentException("expect:  0 =< locationType <= 22, found:" + locationType);
@@ -166,19 +187,19 @@ public class Grid {
         }
     }
 
-    public void addFlag(int z, int x, int y, int flag) {
-        log.trace("adding flag " + flag + " at z" + z + "x" + x + "y" + y);
+    public void addFlag(int x, int y, int flag) {
+        log.trace("adding flag " + flag + "x" + x + "y" + y);
 
         Preconditions.checkArgument(
-                z >= 0 && x >= 0 && y >= 0 && z < Z_SIZE && x < xSize && y < ySize,
+                x >= 0 && y >= 0 && x < xSize && y < ySize,
                 "expect: 0 <= z, x, y <" + xSize + "," + ySize + ", found: " + x + "," + y
         );
 
-        flags[z][x][y] |= (flag & TileFlags.VISITED);
+        flags[x][y] |= (flag & TileFlags.VISITED);
     }
 
-    private void addGameObject(int z, int x, int y, int sizeX, int sizeY, boolean isFloorDecoration) {
-        log.debug("adding game object at " + x + "," + y + "," + z + " sizeX:" + sizeX + " sizeY:" + sizeY);
+    private void addGameObject(int x, int y, int sizeX, int sizeY, boolean isFloorDecoration) {
+        log.trace("adding game object at " + x + "," + y + " sizeX:" + sizeX + " sizeY:" + sizeY);
 
         Preconditions.checkArgument(
                 sizeX >= 1 && sizeY >= 1,
@@ -190,7 +211,7 @@ public class Grid {
         for (var i = x; i < x + sizeX; i++) {
             for (var j = y; j < y + sizeY; j++) {
                 //todo, i think can fail if the object size goes off the map (throws index out of bounds exception) but haven't seen it yet
-                addFlag(z, i, j, flag);
+                addFlag(i, j, flag);
             }
         }
     }
@@ -199,78 +220,78 @@ public class Grid {
      * adds flags for a wall object and opposing flags.
      * i.e. if a wall blocks movement west, then it will set flags on the west tile to block east
      */
-    private void addWallObject(int z, int x, int y, int locationType, int orientation) {
-        log.debug("adding wall object at " + x + "," + y + "," + z + " locationType:" + locationType + " orientation:" + orientation);
+    private void addWallObject(int x, int y, int locationType, int orientation) {
+        log.trace("adding wall object at " + x + "," + y + " locationType:" + locationType + " orientation:" + orientation);
 
         Preconditions.checkArgument(
                 locationType >= 0 && locationType <= 3 && orientation >= 0 && orientation <= 3,
                 "expect: 3 >= locationType >= 0, 3 >= orientation >= 0, found: x:%d y:%d locationType:%d orientation:%d", x, y, locationType, orientation
         );
 
-        method3878(z, x, y, locationType, orientation);
+        method3878(x, y, locationType, orientation);
     }
 
     /**
      * copy pasted from decompiled game client
      */
-    private void method3878(int z, int x, int y, int type, int orientation) {
+    private void method3878(int x, int y, int type, int orientation) {
         switch (type) {
             case 0 -> {
                 if (orientation == 0) {
-                    addFlag(z, x, y, 128);
-                    addFlag(z, x - 1, y, 8);
+                    addFlag(x, y, 128);
+                    addFlag(x - 1, y, 8);
                 }
                 if (orientation == 1) {
-                    addFlag(z, x, y, 2);
-                    addFlag(z, x, y + 1, 32);
+                    addFlag(x, y, 2);
+                    addFlag(x, y + 1, 32);
                 }
                 if (orientation == 2) {
-                    addFlag(z, x, y, 8);
-                    addFlag(z, x + 1, y, 128);
+                    addFlag(x, y, 8);
+                    addFlag(x + 1, y, 128);
                 }
                 if (orientation == 3) {
-                    addFlag(z, x, y, 32);
-                    addFlag(z, x, y - 1, 2);
+                    addFlag(x, y, 32);
+                    addFlag(x, y - 1, 2);
                 }
             }
             case 1, 3 -> {
                 if (orientation == 0) {
-                    addFlag(z, x, y, 1);
-                    addFlag(z, x - 1, y + 1, 16);
+                    addFlag(x, y, 1);
+                    addFlag(x - 1, y + 1, 16);
                 }
                 if (orientation == 1) {
-                    addFlag(z, x, y, 4);
-                    addFlag(z, x + 1, y + 1, 64);
+                    addFlag(x, y, 4);
+                    addFlag(x + 1, y + 1, 64);
                 }
                 if (orientation == 2) {
-                    addFlag(z, x, y, 16);
-                    addFlag(z, x + 1, y - 1, 1);
+                    addFlag(x, y, 16);
+                    addFlag(x + 1, y - 1, 1);
                 }
                 if (orientation == 3) {
-                    addFlag(z, x, y, 64);
-                    addFlag(z, x - 1, y - 1, 4);
+                    addFlag(x, y, 64);
+                    addFlag(x - 1, y - 1, 4);
                 }
             }
             case 2 -> {
                 if (orientation == 0) {
-                    addFlag(z, x, y, 130);
-                    addFlag(z, x - 1, y, 8);
-                    addFlag(z, x, y + 1, 32);
+                    addFlag(x, y, 130);
+                    addFlag(x - 1, y, 8);
+                    addFlag(x, y + 1, 32);
                 }
                 if (orientation == 1) {
-                    addFlag(z, x, y, 10);
-                    addFlag(z, x, y + 1, 32);
-                    addFlag(z, x + 1, y, 128);
+                    addFlag(x, y, 10);
+                    addFlag(x, y + 1, 32);
+                    addFlag(x + 1, y, 128);
                 }
                 if (orientation == 2) {
-                    addFlag(z, x, y, 40);
-                    addFlag(z, x + 1, y, 128);
-                    addFlag(z, x, y - 1, 2);
+                    addFlag(x, y, 40);
+                    addFlag(x + 1, y, 128);
+                    addFlag(x, y - 1, 2);
                 }
                 if (orientation == 3) {
-                    addFlag(z, x, y, 160);
-                    addFlag(z, x, y - 1, 2);
-                    addFlag(z, x - 1, y, 8);
+                    addFlag(x, y, 160);
+                    addFlag(x, y - 1, 2);
+                    addFlag(x - 1, y, 8);
                 }
             }
         }

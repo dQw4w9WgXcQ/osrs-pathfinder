@@ -2,13 +2,16 @@ package github.dqw4w9wgxcq.pathfinder.graphgeneration;
 
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.grid.Grid;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.grid.TileGrid;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.utils.RegionUtils;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.cache.region.Region;
 import org.apache.commons.cli.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 
 @Slf4j
 class Main {
@@ -38,8 +41,8 @@ class Main {
         try {
             cmd = new DefaultParser().parse(options, args);
         } catch (ParseException e) {
+            log.error(e.getMessage());
             log.info(null, e);
-            System.out.println(e.getMessage());
             System.exit(ExitCodes.ARGS_MALFORMED);
             return;
         }
@@ -90,21 +93,13 @@ class Main {
 
         var highestBaseX = cacheData.getHighestBaseX();
         var highestBaseY = cacheData.getHighestBaseY();
-        var worldSizeX = highestBaseX + 64;
-        var worldSizeY = highestBaseY + 64;
+        var worldSizeX = highestBaseX + RegionUtils.SIZE;
+        var worldSizeY = highestBaseY + RegionUtils.SIZE;
         log.info("world size x: {}, y: {}", worldSizeX, worldSizeY);
-        var map = new Grid(worldSizeX, worldSizeY);
 
         var regions = cacheData.getRegions();
-
-        for (var region : regions.values()) {
-            map.addFloorFromRegion(region);
-        }
-
         var definitions = cacheData.getObjectDefinitions();
 
-        for (var region : regions.values()) {
-            map.addObjectLocations(region.getLocations(), definitions);
-        }
+
     }
 }
