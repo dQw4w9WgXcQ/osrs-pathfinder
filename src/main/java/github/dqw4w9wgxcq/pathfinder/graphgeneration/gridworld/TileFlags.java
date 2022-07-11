@@ -1,4 +1,4 @@
-package github.dqw4w9wgxcq.pathfinder.graphgeneration.grid;
+package github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld;
 
 /**
  * Bitwise flags to game uses to determine if a tile is walkable.

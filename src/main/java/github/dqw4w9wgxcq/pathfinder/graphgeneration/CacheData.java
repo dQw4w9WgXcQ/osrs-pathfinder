@@ -1,8 +1,10 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
-import lombok.Getter;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.cache.ObjectManager;
 import net.runelite.cache.definitions.ObjectDefinition;
@@ -18,22 +20,18 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * eager loads data from runelite cache tools. no fs io happens after the constructor
- *
- * @see RegionLoader
- * @see ObjectManager
- */
 @Slf4j
-public class CacheData {
-    @Getter
-    private final Map<Integer, Region> regions;
-    @Getter
-    private final int highestBaseX, highestBaseY;
-    @Getter
-    private final Map<Integer, ObjectDefinition> objectDefinitions;
+@Builder(access = AccessLevel.PRIVATE)
+public record CacheData(
+        Map<Integer, Region> regions,
+        int highestBaseX,
+        int highestBaseY,
+        Map<Integer, ObjectDefinition> objectDefinitions
+) {
 
     /**
+     * loads data from runelite cache tools. no fs io happens after
+     *
      * @param cacheDir  directory containing raw osrs game cache.  <p>
      *                  the game populates this directory at [userhome]/jagexcache/oldschool/LIVE/
      * @param xteasJson json file containing json array of xteas
@@ -43,7 +41,9 @@ public class CacheData {
      * @throws JsonSyntaxException   gson says xteas malformed
      * @see net.runelite.cache.util.XteaKey for xtea key format ([XteaKey, XteaKey, ...])
      */
-    public CacheData(File cacheDir, File xteasJson) throws FileNotFoundException, IOException, JsonIOException, JsonSyntaxException {
+    public static CacheData load(File cacheDir, File xteasJson) throws FileNotFoundException, IOException, JsonIOException, JsonSyntaxException {
+        var b = new CacheDataBuilder();
+
         var store = new Store(cacheDir);
         store.load();
 
@@ -56,28 +56,37 @@ public class CacheData {
         regionLoader.loadRegions();
         regionLoader.calculateBounds();
         //cant access the internal map
-        var regions = regionLoader.getRegions();
-        this.regions = new HashMap<>(regions.size());
-        for (var region : regions) {
-            System.out.println(region.getRegionX() + "," + region.getRegionY());
-            this.regions.put(region.getRegionID(), region);
+        var regionsCol = regionLoader.getRegions();
+        var regions = new HashMap<Integer, Region>(regionsCol.size());
+        for (var region : regionsCol) {
+            log.debug("adding region " + region.getRegionID());
+            regions.put(region.getRegionID(), region);
         }
-        highestBaseX = regionLoader.getHighestX().getBaseX();
-        highestBaseY = regionLoader.getHighestY().getBaseY();
+        b.regions(regions);
+        b.highestBaseX(regionLoader.getHighestX().getBaseX());
+        b.highestBaseY(regionLoader.getHighestY().getBaseY());
 
         var objectManager = new ObjectManager(store);
         objectManager.load();
         //cant access the internal map
         var definitions = objectManager.getObjects();
-        objectDefinitions = new HashMap<>(definitions.size());
+        var objectDefinitions = new HashMap<Integer, ObjectDefinition>(definitions.size());
         for (var definition : definitions) {
             objectDefinitions.put(definition.getId(), definition);
         }
+        b.objectDefinitions(objectDefinitions);
 
         try {
             store.close();
         } catch (IOException e) {
             log.warn("failed closing store", e);
         }
+
+        return b.build();
+    }
+
+    @VisibleForTesting
+    private static void addFromRegionLoader(CacheDataBuilder b, RegionLoader regionLoader) {
+
     }
 }

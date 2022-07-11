@@ -1,14 +1,11 @@
-package github.dqw4w9wgxcq.pathfinder.graphgeneration.grid;
+package github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld;
 
 import com.google.common.base.Preconditions;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.utils.RegionUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.cache.definitions.ObjectDefinition;
 import net.runelite.cache.region.Location;
-import net.runelite.cache.region.Region;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,9 +17,7 @@ public class TileGrid {
     @Getter
     private final int[][] flags;
     @Getter
-    private final int xSize;
-    @Getter
-    private final int ySize;
+    private final int xSize, ySize;
 
     public TileGrid(int xSize, int ySize) {
         log.debug("grid inited with size x:" + xSize + " y:" + ySize);
@@ -90,40 +85,6 @@ public class TileGrid {
         return (destinationFlag & TileFlags.ANY_FULL) != 0;
     }
 
-    public static void addFloorFromRegion(TileGrid[] world, Region region) {
-        log.debug("adding region " + region.getRegionID() + " x" + region.getRegionX() + "y" + region.getRegionY());
-        var baseX = region.getBaseX();
-        var baseY = region.getBaseY();
-
-        for (var z = 0; z < world.length; z++) {
-            for (var x = 0; x < RegionUtils.SIZE; x++) {
-                for (var y = 0; y < RegionUtils.SIZE; y++) {
-                    var tileSetting = region.getTileSetting(z, x, y);
-                    if ((tileSetting & 1) == 1) {
-                        var modifiedZ = z;
-                        if ((region.getTileSetting(1, x, y) & 2) == 2) {
-                            modifiedZ = z - 1;
-                            log.trace("z was modified from " + z + " to " + modifiedZ + " at " + "x" + x + "y" + y);
-                        }
-
-                        if (modifiedZ >= 0) {
-                            world[modifiedZ].addFlag(x + baseX, y + baseY, TileFlags.FLOOR);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    public static void addObjectLocations(TileGrid[] world, List<Location> locations, Map<Integer, ObjectDefinition> definitions) {
-        for (var location : locations) {
-            world[location.getPosition().getZ()].addObjectLocation(location, definitions);
-        }
-    }
-
-    /**
-     * @param location object spawn location
-     */
     public void addObjectLocation(Location location, Map<Integer, ObjectDefinition> definitions) {
         log.trace("adding location " + location);
 
@@ -318,32 +279,6 @@ public void addGameObject(int x, int y, int xSize, int ySize, boolean blocksLine
             }
         }
     }
-}
-
-//some collision flag updates happen when render flags are updated.  not sure exactly if some object is rendered or not.
-private void method2905(int[][][] renderFlags) {
-    int var2;
-    int var3;
-    int var4;
-    int var5;
-    for (var2 = 0; var2 < 4; ++var2) {
-        for (var3 = 0; var3 < 104; ++var3) {
-            for (var4 = 0; var4 < 104; ++var4) {
-                if ((renderFlags[var2][var3][var4] & 1) == 1) {
-                    var5 = var2;
-                    if ((renderFlags[1][var3][var4] & 2) == 2) {
-                        var5 = var2 - 1;
-                    }
-
-                    if (var5 >= 0) {
-                        addTileFlag(var2, var3, var4, 2097152);
-                    }
-                }
-            }
-        }
-    }
-
-    ...
 }
 
 //add object to Scene and CollisionMap
