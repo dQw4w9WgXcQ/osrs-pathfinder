@@ -55,6 +55,7 @@ public class CacheData {
         var regionLoader = new RegionLoader(store, keyManager);
         regionLoader.loadRegions();
         regionLoader.calculateBounds();
+        //cant access the internal map
         var regions = regionLoader.getRegions();
         this.regions = new HashMap<>(regions.size());
         for (var region : regions) {
@@ -66,7 +67,7 @@ public class CacheData {
 
         var objectManager = new ObjectManager(store);
         objectManager.load();
-        //no way to access the internal map of id:definition directly
+        //cant access the internal map
         var definitions = objectManager.getObjects();
         objectDefinitions = new HashMap<>(definitions.size());
         for (var definition : definitions) {

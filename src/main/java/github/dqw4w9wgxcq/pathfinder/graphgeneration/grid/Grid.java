@@ -1,59 +1,93 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.grid;
 
+import com.google.common.base.Preconditions;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.utils.RegionUtils;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.cache.definitions.LocationsDefinition;
 import net.runelite.cache.definitions.ObjectDefinition;
 import net.runelite.cache.region.Location;
 import net.runelite.cache.region.Region;
 
+import java.util.List;
 import java.util.Map;
 
 /**
- * this class is modeled after the collision map from the decompiled game client, but is global instead of scene
- *
- * @see net.runelite.api.CollisionData
+ * this class is modeled after the collision map from the decompiled game client, but is global instead of scene.
+ * uses bit flags to store collision data and bitwise operations to check for collisions
  */
 @Slf4j
-public class WorldCollisionMap {
+public class Grid {
+    public static final int Z_SIZE = 4;
+
     private final int[][][] flags;
     private final int xSize;
     private final int ySize;
 
-    public WorldCollisionMap(int xSize, int ySize) {
+    public Grid(int xSize, int ySize) {
+        log.debug("init with size x:" + xSize + " y:" + ySize);
+
         this.xSize = xSize;
         this.ySize = ySize;
-        log.debug("init with size x:" + this.xSize + " y:" + this.ySize);
 
-        flags = new int[Region.Z][this.xSize][this.ySize];
+        flags = new int[Z_SIZE][this.xSize][this.ySize];
+    }
+
+    public boolean canTravelInDirection(int z, int x, int y, int dx, int dy) {
+        Preconditions.checkArgument(dx != 0 || dy != 0, "dx and dy cant both be 0, found dx: " + dx + " dy: " + dy);
+        Preconditions.checkArgument(Math.abs(dx) <= 1 && Math.abs(dy) <= 1, "dx and dy must be 1 or -1, found dx: " + dx + " dy: " + dy);
+
+        var flags = this.flags[z];
+
+        var flag = flags[x][y];
+        var checkMask = 0;
+        if (dx == 1) {
+            checkMask |= TileFlags.W;
+
+            if (dy == 1) {
+                checkMask |= TileFlags.NW;
+            } else if (dy == -1) {
+                checkMask |= TileFlags.SW;
+            }
+        } else if (dx == -1) {
+            checkMask |= TileFlags.E;
+
+            if (dy == 1) {
+                checkMask |= TileFlags.NE;
+            } else if (dy == -1) {
+                checkMask |= TileFlags.SE;
+            }
+        }
+
+        if (dy == 1) {
+            checkMask |= TileFlags.N;
+        } else if (dy == -1) {
+            checkMask |= TileFlags.S;
+        }
+
+        if ((flag & checkMask) != 0) {
+            return false;
+        }
+
+        var oppositeFlag = flags[x + dx][y + dy];
+        return (oppositeFlag & TileFlags.ANY_FULL) != 0;
     }
 
     public void addFloorFromRegion(Region region) {
         var baseX = region.getBaseX();
         var baseY = region.getBaseY();
 
-        for (var z = 0; z < Region.Z; z++) {
-            for (var regionX = 0; regionX < Region.X; regionX++) {
-                for (var regionY = 0; regionY < Region.Y; regionY++) {
-                    var tileSetting = region.getTileSetting(z, regionX, regionY);
+        for (var z = 0; z < Z_SIZE; z++) {
+            for (var x = baseX; x < baseX + RegionUtils.SIZE; x++) {
+                for (var y = baseY; y < baseY + RegionUtils.SIZE; y++) {
+                    var tileSetting = region.getTileSetting(z, x, y);
                     if ((tileSetting & 1) == 1) {
-                        var worldX = baseX + regionX;
-                        var worldY = baseY + regionY;
                         var modifiedZ = z;
-                        if ((region.getTileSetting(1, regionX, regionY) & 2) == 2) {
+                        if ((region.getTileSetting(1, x, y) & 2) == 2) {
                             modifiedZ = z - 1;
-
-
-                            if (worldY < 4200 && modifiedZ == 0) {
-                                System.out.println("found weird floor tile at " + worldX + "," + worldY + "," + modifiedZ);
-                            }
+                            log.debug("z was modified from " + z + " to " + modifiedZ + " at " + "x" + x + "y" + y);
                         }
 
                         if (modifiedZ >= 0) {
-                            if (modifiedZ != z) {
-                                System.out.println("asdf " + worldX + "," + worldY + "," + modifiedZ);
-                            }
-
-                            addFlag(modifiedZ, regionX + baseX, regionY + baseY, TileFlags.FLOOR);
+                            addFlag(modifiedZ, x + baseX, y + baseY, TileFlags.FLOOR);
                         }
                     }
                 }
@@ -61,32 +95,27 @@ public class WorldCollisionMap {
         }
     }
 
-    /**
-     * adds flags for all locations in the region
-     *
-     * @param region must already be loaded
-     * @see Region#loadLocations(LocationsDefinition)
-     */
-    public void addLocationsFromRegion(Region region, Map<Integer, ObjectDefinition> definitions) {
-        var baseX = region.getBaseX();
-        var baseY = region.getBaseY();
-        for (var location : region.getLocations()) {
-            addLocation(location, definitions, baseX, baseY);
+    public void addObjectLocations(List<Location> locations, Map<Integer, ObjectDefinition> definitions) {
+        for (var location : locations) {
+            addObjectLocation(location, definitions);
         }
     }
 
-    private void addLocation(Location location, Map<Integer, ObjectDefinition> definitions, int baseX, int baseY) {
-        var id = location.getId();
-
-        var objectDefinition = definitions.get(id);
+    /**
+     * @param location object spawn location
+     */
+    private void addObjectLocation(Location location, Map<Integer, ObjectDefinition> definitions) {
+        log.debug("adding location " + location);
 
         var position = location.getPosition();
-
         var z = position.getZ();
-        var x = position.getX() + baseX;
-        var y = position.getY() + baseY;
-
+        var x = position.getX();
+        var y = position.getY();
         var orientation = location.getOrientation();
+
+        var objectDefinition = definitions.get(location.getId());
+
+        //log.debug("name : " + objectDefinition.getName());
 
         //rotate according to the orientation
         int sizeX;
@@ -130,29 +159,38 @@ public class WorldCollisionMap {
                     if (interactType != 0) {
                         addGameObject(z, x, y, sizeX, sizeY, false);
                     }
+                } else {
+                    throw new IllegalArgumentException("expect:  0 =< locationType <= 22, found:" + locationType);
                 }
-
-                throw new IllegalArgumentException("require:  0 =< locationType <= 22, found:" + locationType);
             }
         }
     }
 
     public void addFlag(int z, int x, int y, int flag) {
-        if (!(z >= 0 && x >= 0 && y >= 0 && z < Region.Z && x < xSize && y < ySize)) {
-            throw new IllegalArgumentException("require: 0 <= z, x, y <= " + xSize + "," + ySize + ", found: " + x + "," + y);
-        }
+        log.trace("adding flag " + flag + " at z" + z + "x" + x + "y" + y);
 
-        flags[z][x][y] |= (flag & TileFlags.INITIALIZED);
+        Preconditions.checkArgument(
+                z >= 0 && x >= 0 && y >= 0 && z < Z_SIZE && x < xSize && y < ySize,
+                "expect: 0 <= z, x, y <" + xSize + "," + ySize + ", found: " + x + "," + y
+        );
+
+        flags[z][x][y] |= (flag & TileFlags.VISITED);
     }
 
     private void addGameObject(int z, int x, int y, int sizeX, int sizeY, boolean isFloorDecoration) {
-        if (!(sizeX >= 1 && sizeY >= 1)) {
-            throw new IllegalArgumentException(String.format("require: sizeX >= 1 && sizeY >= 1, found: x:%d y:%d", sizeX, sizeY));
-        }
+        log.debug("adding game object at " + x + "," + y + "," + z + " sizeX:" + sizeX + " sizeY:" + sizeY);
 
-        for (var i = x; i < x + sizeX; x++) {
-            for (var j = y; j < y + sizeY; y++) {
-                addFlag(z, i, j, isFloorDecoration ? TileFlags.FLOOR_DECORATION : TileFlags.OBJECT);
+        Preconditions.checkArgument(
+                sizeX >= 1 && sizeY >= 1,
+                "expect sizeXY >=1, found: " + sizeX + "," + sizeY
+        );
+
+        var flag = isFloorDecoration ? TileFlags.FLOOR_DECORATION : TileFlags.OBJECT;
+
+        for (var i = x; i < x + sizeX; i++) {
+            for (var j = y; j < y + sizeY; j++) {
+                //todo, i think can fail if the object size goes off the map (throws index out of bounds exception) but haven't seen it yet
+                addFlag(z, i, j, flag);
             }
         }
     }
@@ -162,15 +200,18 @@ public class WorldCollisionMap {
      * i.e. if a wall blocks movement west, then it will set flags on the west tile to block east
      */
     private void addWallObject(int z, int x, int y, int locationType, int orientation) {
-        if (!(locationType >= 0 && locationType <= 3 && orientation >= 0 && orientation <= 3)) {
-            throw new IllegalArgumentException(String.format("require: 3 >= locationType >= 0, 3 >= orientation >= 0, found: x:%d y:%d locationType:%d orientation:%d", x, y, locationType, orientation));
-        }
+        log.debug("adding wall object at " + x + "," + y + "," + z + " locationType:" + locationType + " orientation:" + orientation);
+
+        Preconditions.checkArgument(
+                locationType >= 0 && locationType <= 3 && orientation >= 0 && orientation <= 3,
+                "expect: 3 >= locationType >= 0, 3 >= orientation >= 0, found: x:%d y:%d locationType:%d orientation:%d", x, y, locationType, orientation
+        );
 
         method3878(z, x, y, locationType, orientation);
     }
 
     /**
-     * from decompiled game
+     * copy pasted from decompiled game client
      */
     private void method3878(int z, int x, int y, int type, int orientation) {
         switch (type) {

@@ -18,14 +18,14 @@ public class TileFlags {
     public static final int OBJECT = 1 << 8;//256
     public static final int FLOOR_DECORATION = 1 << 18;//262144
     public static final int FLOOR = 1 << 21;//2097152
-    public static final int ANY_FULL = OBJECT | FLOOR_DECORATION | FLOOR;
+    public static final int ANY_FULL = OBJECT | FLOOR_DECORATION | FLOOR;//2359552
 
-    public static final int HAS_FLAGS = 1 << 24;//16777216
+    public static final int VALID = 1 << 24;//16777216
 
     /**
      * in the game client, index 0 and the last 5 of the flags are filled on init.
      * this is done to create a boarder and because an object with sizeX/Y > 1 from outside the scene could block movement<p>
-     * from decompile:
+     * from decompiled game client:
      * <pre>
      * for (int x = 0; x < this.xSize; ++x)
      * {
@@ -37,14 +37,28 @@ public class TileFlags {
      *         }
      *         else
      *         {
-     *             this.flags[x][y] = 16777216;//HAS_FLAGS
+     *             this.flags[x][y] = 16777216;//VALID
      *         }
      *     }
      * }
      * </pre>
      */
-    public static final int SCENE_BORDER = HAS_FLAGS - 1;//16777215
+    public static final int SCENE_BORDER = VALID - 1;//16777215
 
-    //not found in game, used to mark tile as initialized
-    public static final int INITIALIZED = Integer.MIN_VALUE;
+    //not found in game, used by me to mark tile as initialized
+    public static final int VISITED = Integer.MIN_VALUE;
+
+    public static int getOpposite(int plainFlag) {
+        return switch (plainFlag) {
+            case NW -> SE;
+            case N -> S;
+            case NE -> SW;
+            case E -> W;
+            case SE -> NW;
+            case S -> N;
+            case SW -> NE;
+            case W -> E;
+            default -> throw new IllegalArgumentException("Invalid flag: " + plainFlag);
+        };
+    }
 }

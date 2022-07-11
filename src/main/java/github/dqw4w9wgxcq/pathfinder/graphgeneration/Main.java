@@ -2,17 +2,13 @@ package github.dqw4w9wgxcq.pathfinder.graphgeneration;
 
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.grid.WorldCollisionMap;
-import lombok.SneakyThrows;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.grid.Grid;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.cache.definitions.ObjectDefinition;
-import net.runelite.cache.region.Region;
 import org.apache.commons.cli.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Map;
 
 @Slf4j
 class Main {
@@ -42,7 +38,7 @@ class Main {
         try {
             cmd = new DefaultParser().parse(options, args);
         } catch (ParseException e) {
-            log.debug(null, e);
+            log.info(null, e);
             System.out.println(e.getMessage());
             System.exit(ExitCodes.ARGS_MALFORMED);
             return;
@@ -72,33 +68,32 @@ class Main {
             cacheData = new CacheData(cacheDir, xteasFile);
         } catch (FileNotFoundException e) {
             log.error("cache dir(or expected contents) or xteas file not found");
-            log.debug(null, e);
+            log.info(null, e);
             System.exit(ExitCodes.CACHE_OR_XTEAS_NOT_FOUND);
             return;
         } catch (IOException e) {
             log.error("reading cache data failed");
-            log.debug(null, e);
+            log.info(null, e);
             System.exit(ExitCodes.CACHE_READ_FAIL);
             return;
         } catch (JsonIOException e) {
             log.error("reading xtea failed");
-            log.debug(null, e);
+            log.info(null, e);
             System.exit(ExitCodes.XTEAS_READ_FAIL);
             return;
         } catch (JsonSyntaxException e) {
             log.error("xteas json malformed");
-            log.debug(null, e);
+            log.info(null, e);
             System.exit(ExitCodes.XTEAS_MALFORMED);
             return;
         }
 
         var highestBaseX = cacheData.getHighestBaseX();
         var highestBaseY = cacheData.getHighestBaseY();
-        log.debug("highest region x: {}, y: {}", highestBaseX, highestBaseY);
         var worldSizeX = highestBaseX + 64;
         var worldSizeY = highestBaseY + 64;
-        log.debug("world size x: {}, y: {}", worldSizeX, worldSizeY);
-        var map = new WorldCollisionMap(worldSizeX, worldSizeY);
+        log.info("world size x: {}, y: {}", worldSizeX, worldSizeY);
+        var map = new Grid(worldSizeX, worldSizeY);
 
         var regions = cacheData.getRegions();
 
@@ -108,5 +103,8 @@ class Main {
 
         var definitions = cacheData.getObjectDefinitions();
 
+        for (var region : regions.values()) {
+            map.addObjectLocations(region.getLocations(), definitions);
+        }
     }
 }
