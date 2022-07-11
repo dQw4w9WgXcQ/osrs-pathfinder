@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +29,7 @@ public class CacheData {
     @Getter
     private final Map<Integer, Region> regions;
     @Getter
-    private final int lowestRegionX, lowestRegionY, highestRegionX, highestRegionY;
+    private final int highestBaseX, highestBaseY;
     @Getter
     private final Map<Integer, ObjectDefinition> objectDefinitions;
 
@@ -59,12 +58,11 @@ public class CacheData {
         var regions = regionLoader.getRegions();
         this.regions = new HashMap<>(regions.size());
         for (var region : regions) {
+            System.out.println(region.getRegionX() + "," + region.getRegionY());
             this.regions.put(region.getRegionID(), region);
         }
-        lowestRegionX = regionLoader.getLowestX().getRegionX();
-        lowestRegionY = regionLoader.getLowestY().getRegionY();
-        highestRegionX = regionLoader.getHighestX().getRegionX();
-        highestRegionY = regionLoader.getHighestY().getRegionY();
+        highestBaseX = regionLoader.getHighestX().getBaseX();
+        highestBaseY = regionLoader.getHighestY().getBaseY();
 
         var objectManager = new ObjectManager(store);
         objectManager.load();

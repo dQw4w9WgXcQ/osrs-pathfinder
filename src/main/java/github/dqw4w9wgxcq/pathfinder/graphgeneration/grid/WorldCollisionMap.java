@@ -1,12 +1,12 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.grid;
 
-import com.google.common.annotations.VisibleForTesting;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.cache.ObjectManager;
 import net.runelite.cache.definitions.LocationsDefinition;
+import net.runelite.cache.definitions.ObjectDefinition;
 import net.runelite.cache.region.Location;
 import net.runelite.cache.region.Region;
-import net.runelite.cache.region.RegionLoader;
+
+import java.util.Map;
 
 /**
  * this class is modeled after the collision map from the decompiled game client, but is global instead of scene
@@ -15,28 +15,19 @@ import net.runelite.cache.region.RegionLoader;
  */
 @Slf4j
 public class WorldCollisionMap {
-    private final ObjectManager objectManager;
     private final int[][][] flags;
+    private final int xSize;
+    private final int ySize;
 
-    public WorldCollisionMap(RegionLoader regionLoader, ObjectManager objectManager) {
-        this.objectManager = objectManager;
-        var xSize = (regionLoader.getHighestX().getRegionX() + 1) * Region.X;
-        var ySize = (regionLoader.getHighestY().getRegionY() + 1) * Region.Y;
+    public WorldCollisionMap(int xSize, int ySize) {
+        this.xSize = xSize;
+        this.ySize = ySize;
+        log.debug("init with size x:" + this.xSize + " y:" + this.ySize);
 
-        flags = new int[Region.Z][xSize][ySize];
-
-        var regions = regionLoader.getRegions();
-
-        for (var region : regions) {
-            addFloorFromRegion(region);
-        }
-
-        for (var region : regions) {
-            addLocationsFromRegion(region);
-        }
+        flags = new int[Region.Z][this.xSize][this.ySize];
     }
 
-    private void addFloorFromRegion(Region region) {
+    public void addFloorFromRegion(Region region) {
         var baseX = region.getBaseX();
         var baseY = region.getBaseY();
 
@@ -45,15 +36,23 @@ public class WorldCollisionMap {
                 for (var regionY = 0; regionY < Region.Y; regionY++) {
                     var tileSetting = region.getTileSetting(z, regionX, regionY);
                     if ((tileSetting & 1) == 1) {
-                        //not sure where this happens in game, but this behavior is from decompiled client
-                        //just gonna ignore it 4 now
-                        //todo
+                        var worldX = baseX + regionX;
+                        var worldY = baseY + regionY;
                         var modifiedZ = z;
-//                        if ((region.getTileSetting(1, regionX, regionY) & 2) == 2) {
-//                            modifiedZ = z - 1;
-//                        }
+                        if ((region.getTileSetting(1, regionX, regionY) & 2) == 2) {
+                            modifiedZ = z - 1;
+
+
+                            if (worldY < 4200 && modifiedZ == 0) {
+                                System.out.println("found weird floor tile at " + worldX + "," + worldY + "," + modifiedZ);
+                            }
+                        }
 
                         if (modifiedZ >= 0) {
+                            if (modifiedZ != z) {
+                                System.out.println("asdf " + worldX + "," + worldY + "," + modifiedZ);
+                            }
+
                             addFlag(modifiedZ, regionX + baseX, regionY + baseY, TileFlags.FLOOR);
                         }
                     }
@@ -68,17 +67,18 @@ public class WorldCollisionMap {
      * @param region must already be loaded
      * @see Region#loadLocations(LocationsDefinition)
      */
-    public void addLocationsFromRegion(Region region) {
+    public void addLocationsFromRegion(Region region, Map<Integer, ObjectDefinition> definitions) {
         var baseX = region.getBaseX();
         var baseY = region.getBaseY();
         for (var location : region.getLocations()) {
-            addLocation(location, baseX, baseY);
+            addLocation(location, definitions, baseX, baseY);
         }
     }
 
-    private void addLocation(Location location, int baseX, int baseY) {
+    private void addLocation(Location location, Map<Integer, ObjectDefinition> definitions, int baseX, int baseY) {
         var id = location.getId();
-        var definition = objectManager.getObject(id);
+
+        var objectDefinition = definitions.get(id);
 
         var position = location.getPosition();
 
@@ -92,15 +92,15 @@ public class WorldCollisionMap {
         int sizeX;
         int sizeY;
         if (orientation == 1 || orientation == 3) {
-            sizeX = definition.getSizeY(); // L: 960
-            sizeY = definition.getSizeX(); // L: 961
+            sizeX = objectDefinition.getSizeY(); // L: 960
+            sizeY = objectDefinition.getSizeX(); // L: 961
         } else { // L: 959
-            sizeX = definition.getSizeX(); // L: 964
-            sizeY = definition.getSizeY(); // L: 965
+            sizeX = objectDefinition.getSizeX(); // L: 964
+            sizeY = objectDefinition.getSizeY(); // L: 965
         }
 
         var locationType = location.getType();
-        var interactType = definition.getInteractType();
+        var interactType = objectDefinition.getInteractType();
         switch (locationType) {
             //wall objects
             case 0, 1, 2, 3 -> {
@@ -138,14 +138,13 @@ public class WorldCollisionMap {
     }
 
     public void addFlag(int z, int x, int y, int flag) {
-        if (!(z >= 0 && x >= 0 && y >= 0)) {
-            throw new IllegalArgumentException(String.format("require: z >= 0 && x >= 0 && y >= 0, found: x:%d y:%d z:%d", x, y, z));
+        if (!(z >= 0 && x >= 0 && y >= 0 && z < Region.Z && x < xSize && y < ySize)) {
+            throw new IllegalArgumentException("require: 0 <= z, x, y <= " + xSize + "," + ySize + ", found: " + x + "," + y);
         }
 
         flags[z][x][y] |= (flag & TileFlags.INITIALIZED);
     }
 
-    @VisibleForTesting
     private void addGameObject(int z, int x, int y, int sizeX, int sizeY, boolean isFloorDecoration) {
         if (!(sizeX >= 1 && sizeY >= 1)) {
             throw new IllegalArgumentException(String.format("require: sizeX >= 1 && sizeY >= 1, found: x:%d y:%d", sizeX, sizeY));
@@ -162,7 +161,6 @@ public class WorldCollisionMap {
      * adds flags for a wall object and opposing flags.
      * i.e. if a wall blocks movement west, then it will set flags on the west tile to block east
      */
-    @VisibleForTesting
     private void addWallObject(int z, int x, int y, int locationType, int orientation) {
         if (!(locationType >= 0 && locationType <= 3 && orientation >= 0 && orientation <= 3)) {
             throw new IllegalArgumentException(String.format("require: 3 >= locationType >= 0, 3 >= orientation >= 0, found: x:%d y:%d locationType:%d orientation:%d", x, y, locationType, orientation));

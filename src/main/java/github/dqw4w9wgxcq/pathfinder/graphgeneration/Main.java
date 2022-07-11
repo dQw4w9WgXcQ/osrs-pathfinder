@@ -2,12 +2,17 @@ package github.dqw4w9wgxcq.pathfinder.graphgeneration;
 
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.grid.WorldCollisionMap;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.cache.definitions.ObjectDefinition;
+import net.runelite.cache.region.Region;
 import org.apache.commons.cli.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Map;
 
 @Slf4j
 class Main {
@@ -87,6 +92,21 @@ class Main {
             return;
         }
 
-        throw new UnsupportedOperationException("not implemented");//todo
+        var highestBaseX = cacheData.getHighestBaseX();
+        var highestBaseY = cacheData.getHighestBaseY();
+        log.debug("highest region x: {}, y: {}", highestBaseX, highestBaseY);
+        var worldSizeX = highestBaseX + 64;
+        var worldSizeY = highestBaseY + 64;
+        log.debug("world size x: {}, y: {}", worldSizeX, worldSizeY);
+        var map = new WorldCollisionMap(worldSizeX, worldSizeY);
+
+        var regions = cacheData.getRegions();
+
+        for (var region : regions.values()) {
+            map.addFloorFromRegion(region);
+        }
+
+        var definitions = cacheData.getObjectDefinitions();
+
     }
 }
