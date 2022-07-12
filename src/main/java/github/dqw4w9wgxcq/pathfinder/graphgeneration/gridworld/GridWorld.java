@@ -1,6 +1,8 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld;
 
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.utils.RegionUtils;
+import com.google.common.annotations.VisibleForTesting;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.CacheData;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.util.RegionUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.cache.definitions.ObjectDefinition;
@@ -17,58 +19,41 @@ public class GridWorld {
 
     @Getter
     private final int sizeX, sizeY;
+    @Getter
     private final TileGrid[] planes;
 
-    public GridWorld(int sizeX, int sizeY) {
+    private GridWorld(int sizeX, int sizeY) {
         log.info("Creating grid world with size x{}y{}", sizeX, sizeY);
 
         planes = new TileGrid[PLANES_SIZE];
-        Arrays.fill(planes, new TileGrid(sizeX, sizeY));
+        Arrays.setAll(planes, x -> new TileGrid(sizeX, sizeY));
 
         this.sizeX = sizeX;
         this.sizeY = sizeY;
     }
 
-    public void addFloorFlags(Region region) {
-        log.debug("adding floor region:{} (x:{} y:{})", region.getRegionID(), region.getRegionX(), region.getRegionY());
-
-        var baseX = region.getBaseX();
-        var baseY = region.getBaseY();
-
-        for (var z = 0; z < planes.length; z++) {
-            for (var x = 0; x < RegionUtils.SIZE; x++) {
-                for (var y = 0; y < RegionUtils.SIZE; y++) {
-                    var tileSetting = region.getTileSetting(z, x, y);
-                    if ((tileSetting & 1) == 1) {
-                        var modifiedZ = z;
-                        if ((region.getTileSetting(1, x, y) & 2) == 2) {
-                            modifiedZ = z - 1;
-                            log.trace("z was modified from " + z + " to " + modifiedZ + " at " + "x" + x + "y" + y);
-                        }
-
-                        if (modifiedZ >= 0) {
-                            planes[modifiedZ].addFlag(x + baseX, y + baseY, TileFlags.FLOOR);
-                        }
-                    }
-                }
-            }
+    public static GridWorld create(CacheData data) {
+        var out = new GridWorld(data.highestWorldX(), data.highestWorldY());
+        for (var region : data.regions().values()) {
+            applyFloorFlagsFromRegion(out.planes, region);
         }
+
+        for (var region : data.regions().values()) {
+            applyObjectLocationFlagsFromRegion(out.planes, region.getLocations(), data.objectDefinitions());
+        }
+
+        return out;
     }
 
-    public void addObjectLocations(Region region, Map<Integer, ObjectDefinition> definitions) {
-        for (var location : region.getLocations()) {
-            planes[location.getPosition().getZ()].addObjectLocation(location, definitions);
-        }
-    }
-
-    public static void applyFloorFlagsFromRegion(TileGrid[] planes, Region region) {
+    @VisibleForTesting
+    private static void applyFloorFlagsFromRegion(TileGrid[] planes, Region region) {
         log.debug("adding region " + region.getRegionID() + " x" + region.getRegionX() + "y" + region.getRegionY());
         var baseX = region.getBaseX();
         var baseY = region.getBaseY();
 
         for (var z = 0; z < planes.length; z++) {
-            for (var x = 0; x < RegionUtils.SIZE; x++) {
-                for (var y = 0; y < RegionUtils.SIZE; y++) {
+            for (var x = 0; x < RegionUtil.SIZE; x++) {
+                for (var y = 0; y < RegionUtil.SIZE; y++) {
                     var tileSetting = region.getTileSetting(z, x, y);
                     if ((tileSetting & 1) == 1) {
                         var modifiedZ = z;
@@ -86,7 +71,8 @@ public class GridWorld {
         }
     }
 
-    public static void applyObjectLocationFlagsFromRegion(TileGrid[] planes, List<Location> locations, Map<Integer, ObjectDefinition> definitions) {
+    @VisibleForTesting
+    private static void applyObjectLocationFlagsFromRegion(TileGrid[] planes, List<Location> locations, Map<Integer, ObjectDefinition> definitions) {
         for (var location : locations) {
             planes[location.getPosition().getZ()].addObjectLocation(location, definitions);
         }

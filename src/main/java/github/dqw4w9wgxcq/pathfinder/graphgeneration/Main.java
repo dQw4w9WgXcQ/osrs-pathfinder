@@ -2,8 +2,9 @@ package github.dqw4w9wgxcq.pathfinder.graphgeneration;
 
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.algo.Algo;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld.GridEdge;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld.GridWorld;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.utils.RegionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.*;
 
@@ -89,22 +90,11 @@ class Main {
             return;
         }
 
-        var highestBaseX = cacheData.highestBaseX();
-        var highestBaseY = cacheData.highestBaseY();
-        var worldSizeX = highestBaseX + RegionUtils.SIZE;
-        var worldSizeY = highestBaseY + RegionUtils.SIZE;
-        log.info("world size x: {}, y: {}", worldSizeX, worldSizeY);
+        var world = GridWorld.create(cacheData);
 
-        var regions = cacheData.regions();
-        var definitions = cacheData.objectDefinitions();
+        var grid = world.getPlanes()[0];
 
-        var world = new GridWorld(worldSizeX, worldSizeY);
-        for (var region : regions.values()) {
-            world.addFloorFlags(region);
-        }
-
-        for (var region : regions.values()) {
-            world.addObjectLocations(region, definitions);
-        }
+        var xd = Algo.floodFill(new GridEdge(3200, 3200, grid));
+        System.out.println(xd.size());
     }
 }

@@ -1,6 +1,6 @@
-package github.dqw4w9wgxcq.pathfinder.graphgeneration.edge.doors;
+package github.dqw4w9wgxcq.pathfinder.graphgeneration.link.door;
 
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.edge.Edge;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.link.Link;
 import lombok.AllArgsConstructor;
 import net.runelite.cache.ObjectManager;
 import net.runelite.cache.region.Position;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
-public class Doors {
+public class DoorLinks {
     public static final String OPEN_ACTION = "Open";
     public static final List<String> NAMES = List.of("Door", "Large door", "Gate");
     public static final List<Position> IGNORE_LOCATIONS = List.of(
@@ -22,9 +22,9 @@ public class Doors {
     private final RegionLoader regionLoader;
     private final ObjectManager objectManager;
 
-    public List<Edge> findEdges() {
+    public List<Link> findEdges() {
         var regions = regionLoader.getRegions();
-        var out = new ArrayList<Edge>();
+        var out = new ArrayList<Link>();
         for (var region : regions) {
             var baseX = region.getBaseX();
             var baseY = region.getBaseY();
