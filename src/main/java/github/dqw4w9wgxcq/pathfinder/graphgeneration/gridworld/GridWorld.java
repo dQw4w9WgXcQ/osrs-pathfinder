@@ -1,6 +1,6 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld;
 
-import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Preconditions;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.CacheData;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.util.RegionUtil;
 import lombok.Getter;
@@ -19,11 +19,10 @@ public class GridWorld {
 
     @Getter
     private final int sizeX, sizeY;
-    @Getter
     private final TileGrid[] planes;
 
-    private GridWorld(int sizeX, int sizeY) {
-        log.info("Creating grid world with size x{}y{}", sizeX, sizeY);
+    GridWorld(int sizeX, int sizeY) {
+        log.info("Creating map world with size x{}y{}", sizeX, sizeY);
 
         planes = new TileGrid[PLANES_SIZE];
         Arrays.setAll(planes, x -> new TileGrid(sizeX, sizeY));
@@ -34,6 +33,7 @@ public class GridWorld {
 
     public static GridWorld create(CacheData data) {
         var out = new GridWorld(data.highestWorldX(), data.highestWorldY());
+
         for (var region : data.regions().values()) {
             applyFloorFlagsFromRegion(out.planes, region);
         }
@@ -45,8 +45,13 @@ public class GridWorld {
         return out;
     }
 
-    @VisibleForTesting
-    private static void applyFloorFlagsFromRegion(TileGrid[] planes, Region region) {
+    public TileGrid getPlane(int plane) {
+        Preconditions.checkArgument(plane >= 0 && plane < PLANES_SIZE, "plane must be between 0 and 3");
+
+        return planes[plane];
+    }
+
+    static void applyFloorFlagsFromRegion(TileGrid[] planes, Region region) {
         log.debug("adding region " + region.getRegionID() + " x" + region.getRegionX() + "y" + region.getRegionY());
         var baseX = region.getBaseX();
         var baseY = region.getBaseY();
@@ -71,8 +76,7 @@ public class GridWorld {
         }
     }
 
-    @VisibleForTesting
-    private static void applyObjectLocationFlagsFromRegion(TileGrid[] planes, List<Location> locations, Map<Integer, ObjectDefinition> definitions) {
+    static void applyObjectLocationFlagsFromRegion(TileGrid[] planes, List<Location> locations, Map<Integer, ObjectDefinition> definitions) {
         for (var location : locations) {
             planes[location.getPosition().getZ()].addObjectLocation(location, definitions);
         }

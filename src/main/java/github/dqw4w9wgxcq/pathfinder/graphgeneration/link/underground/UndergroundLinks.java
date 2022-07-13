@@ -14,7 +14,7 @@ public class UndergroundLinks {
     private final RegionLoader regionLoader;
     private final ObjectManager objectManager;
 
-    public List<UndergroundLink> findEdges() {
+    public List<UndergroundLink> findLinks() {
         throw new UnsupportedOperationException("Not implemented");//todo
     }
 }

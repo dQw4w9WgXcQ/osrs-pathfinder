@@ -1,10 +1,12 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld;
 
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.algo.Edge;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public record GridEdge(int x, int y, TileGrid grid) implements Edge {
     @Override
     public List<Edge> adjacent() {
@@ -26,11 +28,13 @@ public record GridEdge(int x, int y, TileGrid grid) implements Edge {
 
     @Override
     public int hashCode() {
-        return x << 16 | y;
+        return GridPoint.toId(x, y);
     }
 
     @Override
     public boolean equals(Object o) {
         return o instanceof GridEdge && hashCode() == o.hashCode();
     }
+
+
 }

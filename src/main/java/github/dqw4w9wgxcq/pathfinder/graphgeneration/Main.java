@@ -2,8 +2,7 @@ package github.dqw4w9wgxcq.pathfinder.graphgeneration;
 
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.algo.Algo;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld.GridEdge;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld.ConnectedComponents;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld.GridWorld;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.*;
@@ -92,9 +91,9 @@ class Main {
 
         var world = GridWorld.create(cacheData);
 
-        var grid = world.getPlanes()[0];
+        var grid = world.getPlane(0);
 
-        var xd = Algo.floodFill(new GridEdge(3200, 3200, grid));
-        System.out.println(xd.size());
+        var plane0Components = ConnectedComponents.findIn(grid);
+        System.out.println(plane0Components.count());
     }
 }

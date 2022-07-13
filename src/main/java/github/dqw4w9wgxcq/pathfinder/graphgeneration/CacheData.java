@@ -1,8 +1,8 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.util.RegionUtil;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.cache.ObjectManager;
 import net.runelite.cache.definitions.ObjectDefinition;
@@ -74,8 +74,7 @@ public record CacheData(
     record RegionData(Map<Integer, Region> regions, int highestWorldX, int highestWorldY) {
     }
 
-    @VisibleForTesting
-    private static RegionData loadRegionData(Store store, XteaKeyManager keyManager) throws IOException {
+    static RegionData loadRegionData(Store store, XteaKeyManager keyManager) throws IOException {
         var regionLoader = new RegionLoader(store, keyManager);
         regionLoader.loadRegions();
         regionLoader.calculateBounds();
@@ -87,14 +86,14 @@ public record CacheData(
             regions.put(region.getRegionID(), region);
         }
 
-        var baseX = regionLoader.getHighestX().getBaseX();
-        var baseY = regionLoader.getHighestY().getBaseY();
-
-        return new RegionData(regions, baseX, baseY);
+        return new RegionData(
+                regions,
+                regionLoader.getHighestX().getBaseX() + RegionUtil.SIZE,
+                regionLoader.getHighestY().getBaseY() + RegionUtil.SIZE
+        );
     }
 
-    @VisibleForTesting
-    private static Map<Integer, ObjectDefinition> loadObjectData(Store store) throws IOException {
+    static Map<Integer, ObjectDefinition> loadObjectData(Store store) throws IOException {
         var objectManager = new ObjectManager(store);
         objectManager.load();
         //cant access the internal map

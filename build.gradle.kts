@@ -28,7 +28,7 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
 
     testAnnotationProcessor("org.projectlombok:lombok:$runeliteLombokVersion")
-    testCompileOnly("org.projectlombok:lombok:$runeliteLombokVersion" )
+    testCompileOnly("org.projectlombok:lombok:$runeliteLombokVersion")
 }
 
 tasks {
@@ -37,7 +37,8 @@ tasks {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    getByName<Test>("test") {
+    test {
         useJUnitPlatform()
+
     }
 }

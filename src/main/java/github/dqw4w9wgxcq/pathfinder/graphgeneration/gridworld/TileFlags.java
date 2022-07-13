@@ -1,5 +1,9 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Bitwise flags to game uses to determine if a tile is walkable.
  * <p>
@@ -60,5 +64,50 @@ public class TileFlags {
             case W -> E;
             default -> throw new IllegalArgumentException("Invalid flag: " + plainFlag);
         };
+    }
+
+    private static final Map<Integer, String> flagNames = Map.ofEntries(
+            Map.entry(NW, "NW"),
+            Map.entry(N, "N"),
+            Map.entry(NE, "NE"),
+            Map.entry(E, "E"),
+            Map.entry(SE, "SE"),
+            Map.entry(S, "S"),
+            Map.entry(SW, "SW"),
+            Map.entry(W, "W"),
+            Map.entry(OBJECT, "OBJECT"),
+            Map.entry(FLOOR_DECORATION, "FLOOR_DECORATION"),
+            Map.entry(FLOOR, "FLOOR"),
+            Map.entry(ANY_FULL, "ANY_FULL"),
+            Map.entry(VALID, "VALID"),
+            Map.entry(SCENE_BORDER, "SCENE_BORDER"),
+            Map.entry(VISITED, "VISITED")
+    );
+
+    public static String getFlagName(int flag) {
+        var name = flagNames.get(flag);
+        if (name == null) {
+            throw new IllegalArgumentException("Invalid flag: " + flag);
+        }
+        return name;
+    }
+
+    public static List<String> getFlagNames(int flag) {
+        if (flag == 0){
+            return List.of("NONE");
+        }
+
+        if(flag == SCENE_BORDER){
+            return List.of("SCENE_BORDER");
+        }
+
+        var list = new ArrayList<String>();
+        for (var e : flagNames.entrySet()) {
+            if ((e.getKey() & flag) == e.getKey()) {
+                var value = e.getValue();
+                list.add(value);
+            }
+        }
+        return list;
     }
 }

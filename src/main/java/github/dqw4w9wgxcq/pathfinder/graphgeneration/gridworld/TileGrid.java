@@ -1,5 +1,6 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -14,40 +15,46 @@ import java.util.Map;
  */
 @Slf4j
 public class TileGrid {
+    @VisibleForTesting
+    final int[][] flags;
     @Getter
-    private final int[][] flags;
-    @Getter
-    private final int xSize, ySize;
+    private final int width, height;
 
-    public TileGrid(int xSize, int ySize) {
-        log.debug("grid inited with size x:" + xSize + " y:" + ySize);
+    public TileGrid(int width, int height) {
+        log.debug("map inited with size x:" + width + " y:" + height);
 
-        flags = new int[xSize][ySize];
+        flags = new int[width][height];
 
-        for (var x = 0; x < xSize; x++) {
+        for (var x = 0; x < width; x++) {
             flags[x][0] = TileFlags.SCENE_BORDER;
-            flags[x][ySize - 1] = TileFlags.SCENE_BORDER;
+            flags[x][height - 1] = TileFlags.SCENE_BORDER;
         }
 
-        for (var y = 0; y < ySize; y++) {
+        for (var y = 0; y < height; y++) {
             flags[0][y] = TileFlags.SCENE_BORDER;
-            flags[xSize - 1][y] = TileFlags.SCENE_BORDER;
+            flags[width - 1][y] = TileFlags.SCENE_BORDER;
         }
 
-        this.xSize = xSize;
-        this.ySize = ySize;
+        this.width = width;
+        this.height = height;
     }
 
     public boolean canTravelInDirection(int x, int y, int dx, int dy) {
-        Preconditions.checkArgument(dx != 0 || dy != 0, "dx and dy cant both be 0, found dx: " + dx + " dy: " + dy);
-        Preconditions.checkArgument(Math.abs(dx) <= 1 && Math.abs(dy) <= 1, "dx and dy must be 1 or -1, found dx: " + dx + " dy: " + dy);
+        Preconditions.checkArgument(
+                dx != 0 || dy != 0,
+                "dx and dy cant both be 0, found dx: " + dx + " dy: " + dy
+        );
+        Preconditions.checkArgument(
+                Math.abs(dx) <= 1 && Math.abs(dy) <= 1,
+                "dx and dy must be 1 or -1, found dx: " + dx + " dy: " + dy
+        );
 
         var flag = flags[x][y];
         var destinationX = x + dx;
         var destinationY = y + dy;
 
-        if (destinationX < 0 || destinationX >= xSize || destinationY < 0 || destinationY >= ySize) {
-            log.trace("canTravelInDirection: destination out of bounds, x: " + destinationX + " y: " + destinationY + " dx: " + dx + " dy: " + dy);
+        if (destinationX < 0 || destinationX >= width || destinationY < 0 || destinationY >= height) {
+            log.debug("canTravelInDirection: destination out of bounds, x: " + destinationX + " y: " + destinationY + " dx: " + dx + " dy: " + dy);
             return false;
         }
 
@@ -55,20 +62,20 @@ public class TileGrid {
 
         var checkMask = 0;
         if (dx == 1) {
-            checkMask |= TileFlags.W;
-
-            if (dy == 1) {
-                checkMask |= TileFlags.NW;
-            } else if (dy == -1) {
-                checkMask |= TileFlags.SW;
-            }
-        } else if (dx == -1) {
             checkMask |= TileFlags.E;
 
             if (dy == 1) {
                 checkMask |= TileFlags.NE;
             } else if (dy == -1) {
                 checkMask |= TileFlags.SE;
+            }
+        } else if (dx == -1) {
+            checkMask |= TileFlags.W;
+
+            if (dy == 1) {
+                checkMask |= TileFlags.NW;
+            } else if (dy == -1) {
+                checkMask |= TileFlags.SW;
             }
         }
 
@@ -78,14 +85,19 @@ public class TileGrid {
             checkMask |= TileFlags.S;
         }
 
-        if ((flag & checkMask) != 0) {
+        log.info("check mask: " + checkMask);
+
+        log.info("check mask stringed " + String.join(",", TileFlags.getFlagNames(checkMask)));
+
+        log.info("flag: " + String.join(",", TileFlags.getFlagNames(flag)));
+        if ((checkMask & flag) != 0) {
             return false;
         }
 
         return (destinationFlag & TileFlags.ANY_FULL) != 0;
     }
 
-    public void addObjectLocation(Location location, Map<Integer, ObjectDefinition> definitions) {
+    void addObjectLocation(Location location, Map<Integer, ObjectDefinition> definitions) {
         log.trace("adding location " + location);
 
         var position = location.getPosition();
@@ -103,11 +115,11 @@ public class TileGrid {
         int sizeX;
         int sizeY;
         if (orientation == 1 || orientation == 3) {
-            sizeX = objectDefinition.getSizeY(); // L: 960
-            sizeY = objectDefinition.getSizeX(); // L: 961
+            sizeX = objectDefinition.getSizeY();
+            sizeY = objectDefinition.getSizeX();
         } else { // L: 959
-            sizeX = objectDefinition.getSizeX(); // L: 964
-            sizeY = objectDefinition.getSizeY(); // L: 965
+            sizeX = objectDefinition.getSizeX();
+            sizeY = objectDefinition.getSizeY();
         }
 
         var locationType = location.getType();
@@ -148,18 +160,18 @@ public class TileGrid {
         }
     }
 
-    public void addFlag(int x, int y, int flag) {
-        log.trace("adding flag " + flag + "x" + x + "y" + y);
+    void addFlag(int x, int y, int flag) {
+        log.info("adding flag " + flag + " " + x + "x " + y + "y");
 
         Preconditions.checkArgument(
-                x >= 0 && y >= 0 && x < xSize && y < ySize,
-                "expect: 0 <= z, x, y <" + xSize + "," + ySize + ", found: " + x + "," + y
+                x >= 0 && y >= 0 && x < width && y < height,
+                "expect: 0 <= z, x, y <" + width + "," + height + ", found: " + x + "," + y
         );
 
-        flags[x][y] |= (flag & TileFlags.VISITED);
+        flags[x][y] |= (flag | TileFlags.VISITED);
     }
 
-    private void addGameObject(int x, int y, int sizeX, int sizeY, boolean isFloorDecoration) {
+    void addGameObject(int x, int y, int sizeX, int sizeY, boolean isFloorDecoration) {
         log.trace("adding game object at " + x + "," + y + " sizeX:" + sizeX + " sizeY:" + sizeY);
 
         Preconditions.checkArgument(
@@ -181,7 +193,7 @@ public class TileGrid {
      * adds flags for a wall object and opposing flags.
      * i.e. if a wall blocks movement west, then it will set flags on the west tile to block east
      */
-    private void addWallObject(int x, int y, int locationType, int orientation) {
+    void addWallObject(int x, int y, int locationType, int orientation) {
         log.trace("adding wall object at " + x + "," + y + " locationType:" + locationType + " orientation:" + orientation);
 
         Preconditions.checkArgument(
@@ -256,6 +268,14 @@ public class TileGrid {
                 }
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return "TileMap{" +
+                "width=" + width +
+                ", height=" + height +
+                '}';
     }
 }
 
