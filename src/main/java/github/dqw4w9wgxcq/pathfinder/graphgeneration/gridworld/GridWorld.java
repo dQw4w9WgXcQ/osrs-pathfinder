@@ -19,13 +19,13 @@ public class GridWorld {
 
     @Getter
     private final int sizeX, sizeY;
-    private final TileGrid[] planes;
+    private final PlaneGrid[] planes;
 
     GridWorld(int sizeX, int sizeY) {
         log.info("Creating map world with size x{}y{}", sizeX, sizeY);
 
-        planes = new TileGrid[PLANES_SIZE];
-        Arrays.setAll(planes, x -> new TileGrid(sizeX, sizeY));
+        planes = new PlaneGrid[PLANES_SIZE];
+        Arrays.setAll(planes, x -> new PlaneGrid(sizeX, sizeY));
 
         this.sizeX = sizeX;
         this.sizeY = sizeY;
@@ -35,23 +35,23 @@ public class GridWorld {
         var out = new GridWorld(data.highestWorldX(), data.highestWorldY());
 
         for (var region : data.regions().values()) {
-            applyFloorFlagsFromRegion(out.planes, region);
+            addFloorFromRegion(out.planes, region);
         }
 
         for (var region : data.regions().values()) {
-            applyObjectLocationFlagsFromRegion(out.planes, region.getLocations(), data.objectDefinitions());
+            addLocationsFromRegion(out.planes, region.getLocations(), data.objectDefinitions());
         }
 
         return out;
     }
 
-    public TileGrid getPlane(int plane) {
+    public PlaneGrid getPlane(int plane) {
         Preconditions.checkArgument(plane >= 0 && plane < PLANES_SIZE, "plane must be between 0 and 3");
 
         return planes[plane];
     }
 
-    static void applyFloorFlagsFromRegion(TileGrid[] planes, Region region) {
+    static void addFloorFromRegion(PlaneGrid[] planes, Region region) {
         log.debug("adding region " + region.getRegionID() + " x" + region.getRegionX() + "y" + region.getRegionY());
         var baseX = region.getBaseX();
         var baseY = region.getBaseY();
@@ -68,7 +68,7 @@ public class GridWorld {
                         }
 
                         if (modifiedZ >= 0) {
-                            planes[modifiedZ].addFlag(x + baseX, y + baseY, TileFlags.FLOOR);
+                            planes[modifiedZ].addFlag(x + baseX, y + baseY, CollisionFlags.FLOOR);
                         }
                     }
                 }
@@ -76,9 +76,72 @@ public class GridWorld {
         }
     }
 
-    static void applyObjectLocationFlagsFromRegion(TileGrid[] planes, List<Location> locations, Map<Integer, ObjectDefinition> definitions) {
+    static void addLocationsFromRegion(PlaneGrid[] planes, List<Location> locations, Map<Integer, ObjectDefinition> definitions) {
         for (var location : locations) {
-            planes[location.getPosition().getZ()].addObjectLocation(location, definitions);
+            applyObjectLocationFlags(planes[location.getPosition().getZ()], location, definitions);
+        }
+    }
+
+    static void applyObjectLocationFlags(PlaneGrid grid, Location location, Map<Integer, ObjectDefinition> definitions) {
+        log.debug("adding location " + location);
+
+        var position = location.getPosition();
+
+        var x = position.getX();
+        var y = position.getY();
+
+        var objectDefinition = definitions.get(location.getId());
+
+        log.debug("obj location name : " + objectDefinition.getName());
+
+        var orientation = location.getOrientation();
+
+        //rotate according to the orientation
+        int sizeX;
+        int sizeY;
+        if (orientation == 1 || orientation == 3) {
+            sizeX = objectDefinition.getSizeY();
+            sizeY = objectDefinition.getSizeX();
+        } else {
+            sizeX = objectDefinition.getSizeX();
+            sizeY = objectDefinition.getSizeY();
+        }
+
+        var locationType = location.getType();
+        var interactType = objectDefinition.getInteractType();
+        switch (locationType) {
+            //wall objects
+            case 0, 1, 2, 3 -> {
+                if (interactType != 0) {
+                    grid.addWallFlags(x, y, locationType, orientation);
+                }
+            }
+            //wall decoration
+            case 4, 5, 6, 7, 8, 9 -> {
+                //no collisions
+            }
+            //game object
+            case 10, 11 -> {
+                if (interactType != 0) {
+                    grid.addObjectFlags(x, y, sizeX, sizeY, false);
+                }
+            }
+            //floor decoration
+            case 22 -> {
+                if (interactType == 1) {
+                    grid.addObjectFlags(x, y, sizeX, sizeY, true);
+                }
+            }
+            default -> {
+                //
+                if (locationType >= 12 && locationType <= 21) {
+                    if (interactType != 0) {
+                        grid.addObjectFlags(x, y, sizeX, sizeY, false);
+                    }
+                } else {
+                    throw new IllegalArgumentException("expect:  0 =< locationType <= 22, found:" + locationType);
+                }
+            }
         }
     }
 }

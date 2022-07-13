@@ -7,16 +7,16 @@ import java.util.Arrays;
 
 @Slf4j
 public record ConnectedComponents(int count, int[][] map) {
-    public static ConnectedComponents findIn(TileGrid grid) {
-        var componentsMap = new int[grid.getWidth()][grid.getHeight()];
+    public static ConnectedComponents findIn(PlaneGrid grid) {
+        var componentsMap = new int[grid.getSizeX()][grid.getSizeY()];
         for (var ys : componentsMap) {
             Arrays.fill(ys, -1);
         }
 
         var count = 0;
 
-        for (var x = 0; x < grid.getWidth(); x++) {
-            for (var y = 0; y < grid.getHeight(); y++) {
+        for (var x = 0; x < grid.getSizeX(); x++) {
+            for (var y = 0; y < grid.getSizeY(); y++) {
                 if (componentsMap[x][y] == -1) {
                     log.debug("new component id:{} at x:{} y:{}", count, x, y);
                     var component = Algo.floodFill(new GridEdge(x, y, grid));

@@ -4,39 +4,35 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.cache.definitions.ObjectDefinition;
-import net.runelite.cache.region.Location;
-
-import java.util.Map;
 
 /**
  * this class is modeled after the collision map from the decompiled game client, but is global instead of scene.
  * uses bit flags to store collision data and bitwise operations to check for collisions
  */
 @Slf4j
-public class TileGrid {
+public class PlaneGrid {
     @VisibleForTesting
     final int[][] flags;
     @Getter
-    private final int width, height;
+    private final int sizeX, sizeY;
 
-    public TileGrid(int width, int height) {
-        log.debug("map inited with size x:" + width + " y:" + height);
+    public PlaneGrid(int sizeX, int sizeY) {
+        log.debug("map inited with size x:" + sizeX + " y:" + sizeY);
 
-        flags = new int[width][height];
+        flags = new int[sizeX][sizeY];
 
-        for (var x = 0; x < width; x++) {
-            flags[x][0] = TileFlags.SCENE_BORDER;
-            flags[x][height - 1] = TileFlags.SCENE_BORDER;
+        for (var x = 0; x < sizeX; x++) {
+            flags[x][0] = CollisionFlags.BORDER;
+            flags[x][sizeY - 1] = CollisionFlags.BORDER;
         }
 
-        for (var y = 0; y < height; y++) {
-            flags[0][y] = TileFlags.SCENE_BORDER;
-            flags[width - 1][y] = TileFlags.SCENE_BORDER;
+        for (var y = 0; y < sizeY; y++) {
+            flags[0][y] = CollisionFlags.BORDER;
+            flags[sizeX - 1][y] = CollisionFlags.BORDER;
         }
 
-        this.width = width;
-        this.height = height;
+        this.sizeX = sizeX;
+        this.sizeY = sizeY;
     }
 
     public boolean canTravelInDirection(int x, int y, int dx, int dy) {
@@ -53,8 +49,10 @@ public class TileGrid {
         var destinationX = x + dx;
         var destinationY = y + dy;
 
-        if (destinationX < 0 || destinationX >= width || destinationY < 0 || destinationY >= height) {
-            log.debug("canTravelInDirection: destination out of bounds, x: " + destinationX + " y: " + destinationY + " dx: " + dx + " dy: " + dy);
+        if (destinationX < 0 || destinationX >= sizeX || destinationY < 0 || destinationY >= sizeY) {
+            log.debug("destination out of bounds," +
+                    " destinationX: " + destinationX +
+                    " destinationY: " + destinationY);
             return false;
         }
 
@@ -62,124 +60,66 @@ public class TileGrid {
 
         var checkMask = 0;
         if (dx == 1) {
-            checkMask |= TileFlags.E;
+            checkMask |= CollisionFlags.E;
 
             if (dy == 1) {
-                checkMask |= TileFlags.NE;
+                checkMask |= CollisionFlags.NE;
             } else if (dy == -1) {
-                checkMask |= TileFlags.SE;
+                checkMask |= CollisionFlags.SE;
             }
         } else if (dx == -1) {
-            checkMask |= TileFlags.W;
+            checkMask |= CollisionFlags.W;
 
             if (dy == 1) {
-                checkMask |= TileFlags.NW;
+                checkMask |= CollisionFlags.NW;
             } else if (dy == -1) {
-                checkMask |= TileFlags.SW;
+                checkMask |= CollisionFlags.SW;
             }
         }
 
         if (dy == 1) {
-            checkMask |= TileFlags.N;
+            checkMask |= CollisionFlags.N;
         } else if (dy == -1) {
-            checkMask |= TileFlags.S;
+            checkMask |= CollisionFlags.S;
         }
 
-        log.info("check mask: " + checkMask);
+        log.trace("check mask: " + checkMask +
+                " stringed: " + CollisionFlags.toDescription(checkMask));
 
-        log.info("check mask stringed " + String.join(",", TileFlags.getFlagNames(checkMask)));
-
-        log.info("flag: " + String.join(",", TileFlags.getFlagNames(flag)));
+        log.trace("flag: " + CollisionFlags.toDescription(flag));
         if ((checkMask & flag) != 0) {
+            log.trace("wall collision detected");
             return false;
         }
 
-        return (destinationFlag & TileFlags.ANY_FULL) != 0;
-    }
-
-    void addObjectLocation(Location location, Map<Integer, ObjectDefinition> definitions) {
-        log.trace("adding location " + location);
-
-        var position = location.getPosition();
-
-        var x = position.getX();
-        var y = position.getY();
-
-        var objectDefinition = definitions.get(location.getId());
-
-        log.trace("objlocation name : " + objectDefinition.getName());
-
-        var orientation = location.getOrientation();
-
-        //rotate according to the orientation
-        int sizeX;
-        int sizeY;
-        if (orientation == 1 || orientation == 3) {
-            sizeX = objectDefinition.getSizeY();
-            sizeY = objectDefinition.getSizeX();
-        } else { // L: 959
-            sizeX = objectDefinition.getSizeX();
-            sizeY = objectDefinition.getSizeY();
+        if ((destinationFlag & CollisionFlags.ANY_FULL) != 0) {
+            log.trace("full collision detected");
+            return false;
         }
 
-        var locationType = location.getType();
-        var interactType = objectDefinition.getInteractType();
-        switch (locationType) {
-            //wall objects
-            case 0, 1, 2, 3 -> {
-                if (interactType != 0) {
-                    addWallObject(x, y, locationType, orientation);
-                }
-            }
-            //wall decoration
-            case 4, 5, 6, 7, 8, 9 -> {
-                //ignore wall decorations
-            }
-            //game object
-            case 10, 11 -> {
-                if (interactType != 0) {
-                    addGameObject(x, y, sizeX, sizeY, false);
-                }
-            }
-            //floor decoration
-            case 22 -> {
-                if (interactType == 1) {
-                    addGameObject(x, y, sizeX, sizeY, true);
-                }
-            }
-            default -> {
-                //
-                if (locationType >= 12 && locationType <= 21) {
-                    if (interactType != 0) {
-                        addGameObject(x, y, sizeX, sizeY, false);
-                    }
-                } else {
-                    throw new IllegalArgumentException("expect:  0 =< locationType <= 22, found:" + locationType);
-                }
-            }
-        }
+        return true;
     }
 
     void addFlag(int x, int y, int flag) {
-        log.info("adding flag " + flag + " " + x + "x " + y + "y");
+        log.debug("adding flag " + flag + " " + x + "x " + y + "y");
 
         Preconditions.checkArgument(
-                x >= 0 && y >= 0 && x < width && y < height,
-                "expect: 0 <= z, x, y <" + width + "," + height + ", found: " + x + "," + y
+                x >= 0 && y >= 0 && x < sizeX && y < sizeY,
+                "expect: 0 <= z, x, y <" + sizeX + "," + sizeY + ", found: " + x + "," + y
         );
 
-        flags[x][y] |= (flag | TileFlags.VISITED);
+        flags[x][y] |= (flag | CollisionFlags.VALID);
     }
 
-    void addGameObject(int x, int y, int sizeX, int sizeY, boolean isFloorDecoration) {
-        log.trace("adding game object at " + x + "," + y + " sizeX:" + sizeX + " sizeY:" + sizeY);
+    void addObjectFlags(int x, int y, int sizeX, int sizeY, boolean isFloorDecoration) {
+        log.debug("adding game object at " + x + "," + y + " sizeX:" + sizeX + " sizeY:" + sizeY);
 
         Preconditions.checkArgument(
                 sizeX >= 1 && sizeY >= 1,
                 "expect sizeXY >=1, found: " + sizeX + "," + sizeY
         );
 
-        var flag = isFloorDecoration ? TileFlags.FLOOR_DECORATION : TileFlags.OBJECT;
+        var flag = isFloorDecoration ? CollisionFlags.FLOOR_DECORATION : CollisionFlags.OBJECT;
 
         for (var i = x; i < x + sizeX; i++) {
             for (var j = y; j < y + sizeY; j++) {
@@ -193,8 +133,8 @@ public class TileGrid {
      * adds flags for a wall object and opposing flags.
      * i.e. if a wall blocks movement west, then it will set flags on the west tile to block east
      */
-    void addWallObject(int x, int y, int locationType, int orientation) {
-        log.trace("adding wall object at " + x + "," + y + " locationType:" + locationType + " orientation:" + orientation);
+    void addWallFlags(int x, int y, int locationType, int orientation) {
+        log.debug("adding wall object at " + x + "," + y + " locationType:" + locationType + " orientation:" + orientation);
 
         Preconditions.checkArgument(
                 locationType >= 0 && locationType <= 3 && orientation >= 0 && orientation <= 3,
@@ -210,61 +150,67 @@ public class TileGrid {
     private void method3878(int x, int y, int type, int orientation) {
         switch (type) {
             case 0 -> {
-                if (orientation == 0) {
-                    addFlag(x, y, 128);
-                    addFlag(x - 1, y, 8);
-                }
-                if (orientation == 1) {
-                    addFlag(x, y, 2);
-                    addFlag(x, y + 1, 32);
-                }
-                if (orientation == 2) {
-                    addFlag(x, y, 8);
-                    addFlag(x + 1, y, 128);
-                }
-                if (orientation == 3) {
-                    addFlag(x, y, 32);
-                    addFlag(x, y - 1, 2);
+                switch (orientation) {
+                    case 0 -> {
+                        addFlag(x, y, 128);
+                        addFlag(x - 1, y, 8);
+                    }
+                    case 1 -> {
+                        addFlag(x, y, 2);
+                        addFlag(x, y + 1, 32);
+                    }
+                    case 2 -> {
+                        addFlag(x, y, 8);
+                        addFlag(x + 1, y, 128);
+                    }
+                    case 3 -> {
+                        addFlag(x, y, 32);
+                        addFlag(x, y - 1, 2);
+                    }
                 }
             }
             case 1, 3 -> {
-                if (orientation == 0) {
-                    addFlag(x, y, 1);
-                    addFlag(x - 1, y + 1, 16);
-                }
-                if (orientation == 1) {
-                    addFlag(x, y, 4);
-                    addFlag(x + 1, y + 1, 64);
-                }
-                if (orientation == 2) {
-                    addFlag(x, y, 16);
-                    addFlag(x + 1, y - 1, 1);
-                }
-                if (orientation == 3) {
-                    addFlag(x, y, 64);
-                    addFlag(x - 1, y - 1, 4);
+                switch (orientation) {
+                    case 0 -> {
+                        addFlag(x, y, 1);
+                        addFlag(x - 1, y + 1, 16);
+                    }
+                    case 1 -> {
+                        addFlag(x, y, 4);
+                        addFlag(x + 1, y + 1, 64);
+                    }
+                    case 2 -> {
+                        addFlag(x, y, 16);
+                        addFlag(x + 1, y - 1, 1);
+                    }
+                    case 3 -> {
+                        addFlag(x, y, 64);
+                        addFlag(x - 1, y - 1, 4);
+                    }
                 }
             }
             case 2 -> {
-                if (orientation == 0) {
-                    addFlag(x, y, 130);
-                    addFlag(x - 1, y, 8);
-                    addFlag(x, y + 1, 32);
-                }
-                if (orientation == 1) {
-                    addFlag(x, y, 10);
-                    addFlag(x, y + 1, 32);
-                    addFlag(x + 1, y, 128);
-                }
-                if (orientation == 2) {
-                    addFlag(x, y, 40);
-                    addFlag(x + 1, y, 128);
-                    addFlag(x, y - 1, 2);
-                }
-                if (orientation == 3) {
-                    addFlag(x, y, 160);
-                    addFlag(x, y - 1, 2);
-                    addFlag(x - 1, y, 8);
+                switch (orientation) {
+                    case 0 -> {
+                        addFlag(x, y, 130);
+                        addFlag(x - 1, y, 8);
+                        addFlag(x, y + 1, 32);
+                    }
+                    case 1 -> {
+                        addFlag(x, y, 10);
+                        addFlag(x, y + 1, 32);
+                        addFlag(x + 1, y, 128);
+                    }
+                    case 2 -> {
+                        addFlag(x, y, 40);
+                        addFlag(x + 1, y, 128);
+                        addFlag(x, y - 1, 2);
+                    }
+                    case 3 -> {
+                        addFlag(x, y, 160);
+                        addFlag(x, y - 1, 2);
+                        addFlag(x - 1, y, 8);
+                    }
                 }
             }
         }
@@ -273,8 +219,8 @@ public class TileGrid {
     @Override
     public String toString() {
         return "TileMap{" +
-                "width=" + width +
-                ", height=" + height +
+                "width=" + sizeX +
+                ", height=" + sizeY +
                 '}';
     }
 }

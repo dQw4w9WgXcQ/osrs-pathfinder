@@ -8,36 +8,50 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-public class TileGridTest {
+public class PlaneGridTest {
+    int X = 2;
+    int Y = 7;
+
     @Test
     void testEmpty() {
-        var grid = initGrid();
+        var grid = newGrid();
 
         log.info("\n" + stringify(pad(toNames(grid.flags))));
 
-        Assertions.assertTrue(grid.canTravelInDirection(5, 5, 1, 0));
+        Assertions.assertTrue(grid.canTravelInDirection(X, Y, 1, 0));
     }
 
     @Test
-    void testWall() {
-        var grid = initGrid();
+    void testWallFlag() {
+        var grid = newGrid();
 
-        grid.addFlag(5, 5, TileFlags.E);
+        grid.addFlag(X, Y, CollisionFlags.E);
 
         log.info("\n" + stringify(pad(toNames(grid.flags))));
 
-        Assertions.assertFalse(grid.canTravelInDirection(5, 5, 1, 0));
+        Assertions.assertFalse(grid.canTravelInDirection(X, Y, 1, 0));
     }
 
-    static TileGrid initGrid() {
-        return new TileGrid(10, 10);
+    @Test
+    void testObjectFlag() {
+        var grid = newGrid();
+
+        grid.addFlag(X + 1, Y, CollisionFlags.OBJECT);
+
+        log.info("\n" + stringify(pad(toNames(grid.flags))));
+
+        Assertions.assertFalse(grid.canTravelInDirection(X, Y, 1, 0));
     }
 
-    static String stringify(List<List<String>> s) {
+    static PlaneGrid newGrid() {
+        return new PlaneGrid(10, 10);
+    }
+
+    static String stringify(List<List<String>> columns) {
         var sb = new StringBuilder();
-        for (var row : s) {
-            for (var col : row) {
-                sb.append(col);
+        for (var column : columns) {
+            for (var row : column) {
+                sb.append(row);
             }
             sb.append("\n");
         }
@@ -84,8 +98,11 @@ public class TileGridTest {
         for (var column : flags) {
             var nameRows = new ArrayList<String>();
             for (var flag : column) {
-                var flagString = TileFlags.getFlagNames(flag);
-                nameRows.add(String.join(",", flagString));
+                var desc = CollisionFlags.toDescription(flag);
+                if (desc.length() > 20) {
+                    desc = flag + "";
+                }
+                nameRows.add(desc);
             }
 
             nameColumns.add(nameRows);

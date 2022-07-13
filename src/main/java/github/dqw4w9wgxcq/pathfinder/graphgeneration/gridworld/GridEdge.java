@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-public record GridEdge(int x, int y, TileGrid grid) implements Edge {
+public record GridEdge(int x, int y, PlaneGrid grid) implements Edge {
     @Override
     public List<Edge> adjacent() {
         var out = new ArrayList<Edge>();
