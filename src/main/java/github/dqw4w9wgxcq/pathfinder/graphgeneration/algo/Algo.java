@@ -18,13 +18,7 @@ public class Algo {
         while (!frontier.isEmpty()) {
             var current = frontier.remove();
             if (current.equals(end)) {
-                var path = new LinkedList<Edge>();
-                var currentEdge = current;
-                while (currentEdge != null) {
-                    path.add(0, currentEdge);
-                    currentEdge = seenFrom.get(currentEdge);
-                }
-                return path;
+                throw new UnsupportedOperationException("not implemented");//todo
             }
 
             for (var edge : current.adjacent()) {
