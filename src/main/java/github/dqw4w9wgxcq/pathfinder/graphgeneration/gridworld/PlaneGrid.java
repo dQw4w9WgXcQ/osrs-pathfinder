@@ -21,15 +21,16 @@ public class PlaneGrid {
 
         flags = new int[sizeX][sizeY];
 
-        for (var x = 0; x < sizeX; x++) {
-            flags[x][0] = CollisionFlags.BORDER;
-            flags[x][sizeY - 1] = CollisionFlags.BORDER;
-        }
-
-        for (var y = 0; y < sizeY; y++) {
-            flags[0][y] = CollisionFlags.BORDER;
-            flags[sizeX - 1][y] = CollisionFlags.BORDER;
-        }
+        //game does this, but its easier to check bounds
+//        for (var x = 0; x < sizeX; x++) {
+//            flags[x][0] = CollisionFlags.BORDER;
+//            flags[x][sizeY - 1] = CollisionFlags.BORDER;
+//        }
+//
+//        for (var y = 0; y < sizeY; y++) {
+//            flags[0][y] = CollisionFlags.BORDER;
+//            flags[sizeX - 1][y] = CollisionFlags.BORDER;
+//        }
 
         this.sizeX = sizeX;
         this.sizeY = sizeY;
@@ -54,9 +55,7 @@ public class PlaneGrid {
         var destinationY = y + dy;
 
         if (destinationX < 0 || destinationX >= sizeX || destinationY < 0 || destinationY >= sizeY) {
-            log.debug("destination out of bounds," +
-                    " destinationX: " + destinationX +
-                    " destinationY: " + destinationY);
+            log.debug("destination out of bounds, x: " + x + " y: " + y + " dx: " + dx + " dy: " + dy);
             return false;
         }
 
@@ -101,7 +100,7 @@ public class PlaneGrid {
             return false;
         }
 
-        if((destinationFlag & CollisionFlags.VALID) == 0) {
+        if ((destinationFlag & CollisionFlags.VALID) == 0) {
             log.trace("destination tile doesn't exist");
             return false;
         }
