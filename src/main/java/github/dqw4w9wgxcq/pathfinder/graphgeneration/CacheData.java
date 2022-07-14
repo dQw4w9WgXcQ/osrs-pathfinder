@@ -2,7 +2,7 @@ package github.dqw4w9wgxcq.pathfinder.graphgeneration;
 
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.util.RegionUtil;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.RegionUtil;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.cache.ObjectManager;
 import net.runelite.cache.definitions.ObjectDefinition;

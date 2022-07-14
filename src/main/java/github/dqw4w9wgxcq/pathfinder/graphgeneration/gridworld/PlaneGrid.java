@@ -35,6 +35,10 @@ public class PlaneGrid {
         this.sizeY = sizeY;
     }
 
+    public boolean checkFlag(int x, int y, int mask) {
+        return (flags[x][y] & mask) != 0;
+    }
+
     public boolean canTravelInDirection(int x, int y, int dx, int dy) {
         Preconditions.checkArgument(
                 dx != 0 || dy != 0,
@@ -84,9 +88,9 @@ public class PlaneGrid {
         }
 
         log.trace("check mask: " + checkMask +
-                " stringed: " + CollisionFlags.toDescription(checkMask));
+                " stringed: " + CollisionFlags.describe(checkMask));
 
-        log.trace("flag: " + CollisionFlags.toDescription(flag));
+        log.trace("flag: " + CollisionFlags.describe(flag));
         if ((checkMask & flag) != 0) {
             log.trace("wall collision detected");
             return false;
@@ -94,6 +98,11 @@ public class PlaneGrid {
 
         if ((destinationFlag & CollisionFlags.ANY_FULL) != 0) {
             log.trace("full collision detected");
+            return false;
+        }
+
+        if((destinationFlag & CollisionFlags.VALID) == 0) {
+            log.trace("destination tile doesn't exist");
             return false;
         }
 
@@ -105,7 +114,7 @@ public class PlaneGrid {
 
         Preconditions.checkArgument(
                 x >= 0 && y >= 0 && x < sizeX && y < sizeY,
-                "expect: 0 <= z, x, y <" + sizeX + "," + sizeY + ", found: " + x + "," + y
+                "expected: x <" + sizeX + ", y <" + sizeY + ", found: " + x + "," + y + " flags: " + flag
         );
 
         flags[x][y] |= (flag | CollisionFlags.VALID);
@@ -116,7 +125,7 @@ public class PlaneGrid {
 
         Preconditions.checkArgument(
                 sizeX >= 1 && sizeY >= 1,
-                "expect sizeXY >=1, found: " + sizeX + "," + sizeY
+                "expected: sizeXY >=1, found: " + sizeX + "," + sizeY
         );
 
         var flag = isFloorDecoration ? CollisionFlags.FLOOR_DECORATION : CollisionFlags.OBJECT;
@@ -138,7 +147,7 @@ public class PlaneGrid {
 
         Preconditions.checkArgument(
                 locationType >= 0 && locationType <= 3 && orientation >= 0 && orientation <= 3,
-                "expect: 3 >= locationType >= 0, 3 >= orientation >= 0, found: x:%d y:%d locationType:%d orientation:%d", x, y, locationType, orientation
+                "expected: 3 >= locationType >= 0, 3 >= orientation >= 0, found: x:%d y:%d locationType:%d orientation:%d", x, y, locationType, orientation
         );
 
         method3878(x, y, locationType, orientation);

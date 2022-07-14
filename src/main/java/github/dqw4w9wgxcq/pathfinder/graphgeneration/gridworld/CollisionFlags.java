@@ -32,6 +32,8 @@ public class CollisionFlags {
     //derived
     //object
     public static final int ANY_FULL = OBJECT | FLOOR_DECORATION | FLOOR;//2359552
+
+    //marker
     /**
      * in the game client, index 0 and the last 5 of the flags are filled on init.
      * this is done to create a boarder and because an object with sizeX/Y > 1 from outside the scene could block movement<p>
@@ -51,8 +53,6 @@ public class CollisionFlags {
      *     }
      * }</pre>
      */
-
-    //marker
     public static final int BORDER = VALID - 1;//16777215
 
     public static int getOpposite(int cardinalFlag) {
@@ -69,7 +69,7 @@ public class CollisionFlags {
         };
     }
 
-    private static final Map<Integer, String> names = Map.ofEntries(
+    private static final Map<Integer, String> plainFlagDescs = Map.ofEntries(
             Map.entry(NW, "NW"),
             Map.entry(N, "N"),
             Map.entry(NE, "NE"),
@@ -78,35 +78,36 @@ public class CollisionFlags {
             Map.entry(S, "S"),
             Map.entry(SW, "SW"),
             Map.entry(W, "W"),
-            Map.entry(OBJECT, "object"),
-            Map.entry(FLOOR_DECORATION, "floor decoration"),
-            Map.entry(FLOOR, "floor"),
-            Map.entry(VALID, "valid"),
-            Map.entry(ANY_FULL, "any full"),
-            Map.entry(BORDER, "border")
+            Map.entry(OBJECT, "o"),
+            Map.entry(FLOOR_DECORATION, "d"),
+            Map.entry(FLOOR, "f"),
+            Map.entry(VALID, "v")
     );
 
-    public static String getFlagName(int flag) {
-        var name = names.get(flag);
+    public static String getDescription(int plainFlag) {
+        var name = plainFlagDescs.get(plainFlag);
         if (name == null) {
-            throw new IllegalArgumentException("no flag found for: " + flag);
+            throw new IllegalArgumentException("no description found for: " + plainFlag);
         }
         return name;
     }
 
-    public static List<String> getFlagNames(int flag) {
+    static List<String> getDescriptions(int flag) {
         if (flag == 0) {
+            return List.of("x");
+        }
+
+        if (flag == BORDER) {
+            return List.of("=");
+        }
+
+        if (flag == VALID) {
             return List.of(".");
         }
 
         var list = new ArrayList<String>();
-        for (var e : names.entrySet()) {
-            var key = e.getKey();
-            if (key == VALID) {
-                continue;
-            }
-
-            if ((key & flag) == key) {
+        for (var e : plainFlagDescs.entrySet()) {
+            if ((e.getKey() & flag) == e.getKey()) {
                 var value = e.getValue();
                 list.add(value);
             }
@@ -115,7 +116,7 @@ public class CollisionFlags {
         return list;
     }
 
-    public static String toDescription(int flag) {
-        return String.join(",", getFlagNames(flag));
+    public static String describe(int flag) {
+        return String.join(",", getDescriptions(flag));
     }
 }

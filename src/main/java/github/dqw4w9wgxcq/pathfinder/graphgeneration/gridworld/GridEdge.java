@@ -1,6 +1,7 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld;
 
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.algo.Edge;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Point;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public record GridEdge(int x, int y, PlaneGrid grid) implements Edge {
 
     @Override
     public int hashCode() {
-        return GridPoint.toId(x, y);
+        return toId(x, y);
     }
 
     @Override
@@ -36,5 +37,15 @@ public record GridEdge(int x, int y, PlaneGrid grid) implements Edge {
         return o instanceof GridEdge && hashCode() == o.hashCode();
     }
 
+    public int getId() {
+        return toId(x, y);
+    }
 
+    public static int toId(int x, int y) {
+        return x << 16 | y;
+    }
+
+    public static Point toPoint(int id) {
+        return new Point(id >> 16, id & 0xFFFF);
+    }
 }

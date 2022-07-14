@@ -1,8 +1,9 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.CacheData;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.util.RegionUtil;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.RegionUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.cache.definitions.ObjectDefinition;
@@ -19,8 +20,10 @@ public class GridWorld {
 
     @Getter
     private final int sizeX, sizeY;
+    @Getter
     private final PlaneGrid[] planes;
 
+    @VisibleForTesting
     GridWorld(int sizeX, int sizeY) {
         log.info("Creating map world with size x{}y{}", sizeX, sizeY);
 

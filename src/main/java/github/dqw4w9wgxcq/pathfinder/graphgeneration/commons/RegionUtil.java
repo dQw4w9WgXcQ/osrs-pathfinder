@@ -1,4 +1,4 @@
-package github.dqw4w9wgxcq.pathfinder.graphgeneration.util;
+package github.dqw4w9wgxcq.pathfinder.graphgeneration.commons;
 
 public class RegionUtil {
     public static final int SIZE = 64;
