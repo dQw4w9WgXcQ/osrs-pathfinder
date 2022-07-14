@@ -79,7 +79,7 @@ public class TileFlags {
             Map.entry(VALID, "v")
     );
 
-    public static String getDescription(int plainFlag) {
+    static String getDescription(int plainFlag) {
         var name = plainFlagDescs.get(plainFlag);
         if (name == null) {
             throw new IllegalArgumentException("no description found for: " + plainFlag);
@@ -89,7 +89,7 @@ public class TileFlags {
 
     static List<String> getDescriptions(int flag) {
         if (flag == 0) {
-            return List.of("x");
+            return List.of("?");
         }
 
         if (flag == BORDER) {
@@ -103,6 +103,9 @@ public class TileFlags {
         var list = new ArrayList<String>();
         for (var e : plainFlagDescs.entrySet()) {
             if ((e.getKey() & flag) == e.getKey()) {
+                if (e.getKey() == VALID) {
+                    continue;
+                }
                 var value = e.getValue();
                 list.add(value);
             }

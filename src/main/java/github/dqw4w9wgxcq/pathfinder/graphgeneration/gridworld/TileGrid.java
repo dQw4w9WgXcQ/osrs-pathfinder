@@ -2,6 +2,7 @@ package github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.RegionUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,20 +19,9 @@ public class TileGrid {
     final int[][] flags;
 
     public TileGrid(int sizeX, int sizeY) {
-        log.debug("map inited with size x:" + sizeX + " y:" + sizeY);
+        log.debug("new TileGrid with size size x:" + sizeX + " y:" + sizeY);
 
         flags = new int[sizeX][sizeY];
-
-        //game does this, but its easier to check bounds
-//        for (var x = 0; x < sizeX; x++) {
-//            flags[x][0] = CollisionFlags.BORDER;
-//            flags[x][sizeY - 1] = CollisionFlags.BORDER;
-//        }
-//
-//        for (var y = 0; y < sizeY; y++) {
-//            flags[0][y] = CollisionFlags.BORDER;
-//            flags[sizeX - 1][y] = CollisionFlags.BORDER;
-//        }
 
         this.sizeX = sizeX;
         this.sizeY = sizeY;
@@ -42,6 +32,8 @@ public class TileGrid {
     }
 
     public boolean canTravelInDirection(int x, int y, int dx, int dy) {
+        log.debug("canTravelInDirection x:{} y:{} dx:{} dy:{}", x, y, dx, dy);
+
         Preconditions.checkArgument(
                 dx != 0 || dy != 0,
                 "dx and dy cant both be 0, found dx: " + dx + " dy: " + dy
@@ -56,7 +48,7 @@ public class TileGrid {
         var destinationY = y + dy;
 
         if (destinationX < 0 || destinationX >= sizeX || destinationY < 0 || destinationY >= sizeY) {
-            log.debug("destination out of bounds, x: " + x + " y: " + y + " dx: " + dx + " dy: " + dy);
+            log.trace("destination out of bounds, x: " + x + " y: " + y + " dx: " + dx + " dy: " + dy);
             return false;
         }
 
@@ -102,26 +94,36 @@ public class TileGrid {
         }
 
         if ((destinationFlag & TileFlags.VALID) == 0) {
-            log.trace("destination tile doesn't exist");
+            log.trace("destination tile is not valid");
             return false;
         }
 
         return true;
     }
 
-    void addFlag(int x, int y, int flag) {
-        log.debug("adding flag " + flag + " " + x + "x " + y + "y");
+    void markFlag(int x, int y, int flag) {
+        log.debug("marking flag " + flag + " " + x + "x " + y + "y");
 
         Preconditions.checkArgument(
                 x >= 0 && y >= 0 && x < sizeX && y < sizeY,
                 "expected: x <" + sizeX + ", y <" + sizeY + ", found: " + x + "," + y + " flags: " + flag
         );
 
-        flags[x][y] |= (flag | TileFlags.VALID);
+        flags[x][y] |= flag;
     }
 
-    void addObjectFlags(int x, int y, int sizeX, int sizeY, boolean isFloorDecoration) {
-        log.debug("adding game object at " + x + "," + y + " sizeX:" + sizeX + " sizeY:" + sizeY);
+    void markRegionAsValid(int regionX, int regionY){
+        var baseX = regionX * RegionUtil.SIZE;
+        var baseY = regionY * RegionUtil.SIZE;
+        for(var x = baseX; x < baseX + RegionUtil.SIZE; x++){
+            for(var y = baseY; y < baseY + RegionUtil.SIZE; y++){
+                markFlag(x, y, TileFlags.VALID);
+            }
+        }
+    }
+
+    void markObject(int x, int y, int sizeX, int sizeY, boolean isFloorDecoration) {
+        log.debug("marking game object at " + x + "," + y + " sizeX:" + sizeX + " sizeY:" + sizeY);
 
         Preconditions.checkArgument(
                 sizeX >= 1 && sizeY >= 1,
@@ -133,7 +135,7 @@ public class TileGrid {
         for (var i = x; i < x + sizeX; i++) {
             for (var j = y; j < y + sizeY; j++) {
                 //todo, i think can fail if the object size goes off the map (will throw iae) but haven't seen it yet
-                addFlag(i, j, flag);
+                markFlag(i, j, flag);
             }
         }
     }
@@ -142,8 +144,8 @@ public class TileGrid {
      * adds flags for a wall object and opposing flags.
      * i.e. if a wall blocks movement west, then it will set flags on the west tile to block east
      */
-    void addWallFlags(int x, int y, int locationType, int orientation) {
-        log.debug("adding wall object at " + x + "," + y + " locationType:" + locationType + " orientation:" + orientation);
+    void markWall(int x, int y, int locationType, int orientation) {
+        log.debug("marking wall object at " + x + "," + y + " locationType:" + locationType + " orientation:" + orientation);
 
         Preconditions.checkArgument(
                 locationType >= 0 && locationType <= 3 && orientation >= 0 && orientation <= 3,
@@ -161,64 +163,64 @@ public class TileGrid {
             case 0 -> {
                 switch (orientation) {
                     case 0 -> {
-                        addFlag(x, y, 128);
-                        addFlag(x - 1, y, 8);
+                        markFlag(x, y, 128);
+                        markFlag(x - 1, y, 8);
                     }
                     case 1 -> {
-                        addFlag(x, y, 2);
-                        addFlag(x, y + 1, 32);
+                        markFlag(x, y, 2);
+                        markFlag(x, y + 1, 32);
                     }
                     case 2 -> {
-                        addFlag(x, y, 8);
-                        addFlag(x + 1, y, 128);
+                        markFlag(x, y, 8);
+                        markFlag(x + 1, y, 128);
                     }
                     case 3 -> {
-                        addFlag(x, y, 32);
-                        addFlag(x, y - 1, 2);
+                        markFlag(x, y, 32);
+                        markFlag(x, y - 1, 2);
                     }
                 }
             }
             case 1, 3 -> {
                 switch (orientation) {
                     case 0 -> {
-                        addFlag(x, y, 1);
-                        addFlag(x - 1, y + 1, 16);
+                        markFlag(x, y, 1);
+                        markFlag(x - 1, y + 1, 16);
                     }
                     case 1 -> {
-                        addFlag(x, y, 4);
-                        addFlag(x + 1, y + 1, 64);
+                        markFlag(x, y, 4);
+                        markFlag(x + 1, y + 1, 64);
                     }
                     case 2 -> {
-                        addFlag(x, y, 16);
-                        addFlag(x + 1, y - 1, 1);
+                        markFlag(x, y, 16);
+                        markFlag(x + 1, y - 1, 1);
                     }
                     case 3 -> {
-                        addFlag(x, y, 64);
-                        addFlag(x - 1, y - 1, 4);
+                        markFlag(x, y, 64);
+                        markFlag(x - 1, y - 1, 4);
                     }
                 }
             }
             case 2 -> {
                 switch (orientation) {
                     case 0 -> {
-                        addFlag(x, y, 130);
-                        addFlag(x - 1, y, 8);
-                        addFlag(x, y + 1, 32);
+                        markFlag(x, y, 130);
+                        markFlag(x - 1, y, 8);
+                        markFlag(x, y + 1, 32);
                     }
                     case 1 -> {
-                        addFlag(x, y, 10);
-                        addFlag(x, y + 1, 32);
-                        addFlag(x + 1, y, 128);
+                        markFlag(x, y, 10);
+                        markFlag(x, y + 1, 32);
+                        markFlag(x + 1, y, 128);
                     }
                     case 2 -> {
-                        addFlag(x, y, 40);
-                        addFlag(x + 1, y, 128);
-                        addFlag(x, y - 1, 2);
+                        markFlag(x, y, 40);
+                        markFlag(x + 1, y, 128);
+                        markFlag(x, y - 1, 2);
                     }
                     case 3 -> {
-                        addFlag(x, y, 160);
-                        addFlag(x, y - 1, 2);
-                        addFlag(x - 1, y, 8);
+                        markFlag(x, y, 160);
+                        markFlag(x, y - 1, 2);
+                        markFlag(x - 1, y, 8);
                     }
                 }
             }

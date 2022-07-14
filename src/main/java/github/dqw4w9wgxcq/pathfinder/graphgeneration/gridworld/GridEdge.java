@@ -36,7 +36,7 @@ public class GridEdge implements Edge {
 
     @Override
     public int hashCode() {
-        return getId();
+        return  x << 16 | y;
     }
 
     @Override
@@ -44,16 +44,8 @@ public class GridEdge implements Edge {
         return o instanceof GridEdge && hashCode() == o.hashCode();
     }
 
-    public int getId() {
-        return toId(x, y);
-    }
-
-    public static int toId(int x, int y) {
-        return x << 16 | y;
-    }
-
-    public static Point toPoint(int id) {
-        return new Point(id >> 16, id & 0xFFFF);
+    public static Point toPoint(int hash) {
+        return new Point(hash >> 16, hash & 0xFFFF);
     }
 
     @Override

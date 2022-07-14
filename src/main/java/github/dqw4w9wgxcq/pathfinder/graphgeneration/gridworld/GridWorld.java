@@ -23,14 +23,14 @@ public class GridWorld {
     private final TileGrid[] planes;
 
     @VisibleForTesting
-    GridWorld(int sizeX, int sizeY) {
-        log.debug("Creating map world with size x{}y{}", sizeX, sizeY);
+    GridWorld(int regionSizeX, int regionSizeY) {
+        log.info("Creating world with regionSizeX{}Y{}", regionSizeX, regionSizeY);
+
+        this.sizeX = regionSizeX * RegionUtil.SIZE;
+        this.sizeY = regionSizeY * RegionUtil.SIZE;
 
         planes = new TileGrid[PLANES_SIZE];
         Arrays.setAll(planes, x -> new TileGrid(sizeX, sizeY));
-
-        this.sizeX = sizeX;
-        this.sizeY = sizeY;
     }
 
     public static GridWorld create(
@@ -42,11 +42,15 @@ public class GridWorld {
         var out = new GridWorld(highestWorldX, highestWorldY);
 
         for (var region : regions.values()) {
-            addFloorFromRegion(out.planes, region);
+            applyValidityFlag(out.planes, region);
         }
 
         for (var region : regions.values()) {
-            addLocationsFromRegion(out.planes, region.getLocations(), definitions);
+            applyFloorFlags(out.planes, region);
+        }
+
+        for (var region : regions.values()) {
+            applyObjects(out.planes, region.getLocations(), definitions);
         }
 
         return out;
@@ -59,8 +63,15 @@ public class GridWorld {
     }
 
     @VisibleForTesting
-    static void addFloorFromRegion(TileGrid[] planes, Region region) {
-        log.debug("adding region " + region.getRegionID() + " x" + region.getRegionX() + "y" + region.getRegionY());
+    static void applyValidityFlag(TileGrid[] planes, Region region) {
+        for (var plane : planes) {
+            plane.markRegionAsValid(region.getRegionX(), region.getRegionY());
+        }
+    }
+
+    @VisibleForTesting
+    static void applyFloorFlags(TileGrid[] planes, Region region) {
+        log.debug("adding floor from region " + region.getRegionID() + " x" + region.getRegionX() + "y" + region.getRegionY());
         var baseX = region.getBaseX();
         var baseY = region.getBaseY();
 
@@ -76,7 +87,7 @@ public class GridWorld {
                         }
 
                         if (modifiedZ >= 0) {
-                            planes[modifiedZ].addFlag(x + baseX, y + baseY, TileFlags.FLOOR);
+                            planes[modifiedZ].markFlag(x + baseX, y + baseY, TileFlags.FLOOR);
                         }
                     }
                 }
@@ -85,15 +96,17 @@ public class GridWorld {
     }
 
     @VisibleForTesting
-    static void addLocationsFromRegion(TileGrid[] planes, List<Location> locations, Map<Integer, ObjectDefinition> definitions) {
+    static void applyObjects(TileGrid[] planes, List<Location> locations, Map<Integer, ObjectDefinition> definitions) {
+        log.debug("adding objects to planes");
+
         for (var location : locations) {
-            applyObjectLocationFlags(planes[location.getPosition().getZ()], location, definitions);
+            applyObjectFlags(planes[location.getPosition().getZ()], location, definitions);
         }
     }
 
     @VisibleForTesting
-    static void applyObjectLocationFlags(TileGrid grid, Location location, Map<Integer, ObjectDefinition> definitions) {
-        log.debug("adding location " + location);
+    static void applyObjectFlags(TileGrid grid, Location location, Map<Integer, ObjectDefinition> definitions) {
+        log.trace("adding location " + location);
 
         var position = location.getPosition();
 
@@ -102,7 +115,7 @@ public class GridWorld {
 
         var objectDefinition = definitions.get(location.getId());
 
-        log.debug("obj location name : " + objectDefinition.getName());
+        log.trace("obj location name : " + objectDefinition.getName());
 
         var orientation = location.getOrientation();
 
@@ -123,7 +136,7 @@ public class GridWorld {
             //wall objects
             case 0, 1, 2, 3 -> {
                 if (interactType != 0) {
-                    grid.addWallFlags(x, y, locationType, orientation);
+                    grid.markWall(x, y, locationType, orientation);
                 }
             }
             //wall decoration
@@ -133,20 +146,20 @@ public class GridWorld {
             //game object
             case 10, 11 -> {
                 if (interactType != 0) {
-                    grid.addObjectFlags(x, y, sizeX, sizeY, false);
+                    grid.markObject(x, y, sizeX, sizeY, false);
                 }
             }
             //floor decoration
             case 22 -> {
                 if (interactType == 1) {
-                    grid.addObjectFlags(x, y, sizeX, sizeY, true);
+                    grid.markObject(x, y, sizeX, sizeY, true);
                 }
             }
             default -> {
                 //
                 if (locationType >= 12 && locationType <= 21) {
                     if (interactType != 0) {
-                        grid.addObjectFlags(x, y, sizeX, sizeY, false);
+                        grid.markObject(x, y, sizeX, sizeY, false);
                     }
                 } else {
                     throw new IllegalArgumentException("expect:  0 =< locationType <= 22, found:" + locationType);
