@@ -10,13 +10,14 @@ import lombok.extern.slf4j.Slf4j;
  * uses bit flags to store collision data and bitwise operations to check for collisions
  */
 @Slf4j
-public class PlaneGrid {
-    @VisibleForTesting
-    final int[][] flags;
+public class TileGrid {
     @Getter
     private final int sizeX, sizeY;
 
-    public PlaneGrid(int sizeX, int sizeY) {
+    @VisibleForTesting
+    final int[][] flags;
+
+    public TileGrid(int sizeX, int sizeY) {
         log.debug("map inited with size x:" + sizeX + " y:" + sizeY);
 
         flags = new int[sizeX][sizeY];
@@ -63,44 +64,44 @@ public class PlaneGrid {
 
         var checkMask = 0;
         if (dx == 1) {
-            checkMask |= CollisionFlags.E;
+            checkMask |= TileFlags.E;
 
             if (dy == 1) {
-                checkMask |= CollisionFlags.NE;
+                checkMask |= TileFlags.NE;
             } else if (dy == -1) {
-                checkMask |= CollisionFlags.SE;
+                checkMask |= TileFlags.SE;
             }
         } else if (dx == -1) {
-            checkMask |= CollisionFlags.W;
+            checkMask |= TileFlags.W;
 
             if (dy == 1) {
-                checkMask |= CollisionFlags.NW;
+                checkMask |= TileFlags.NW;
             } else if (dy == -1) {
-                checkMask |= CollisionFlags.SW;
+                checkMask |= TileFlags.SW;
             }
         }
 
         if (dy == 1) {
-            checkMask |= CollisionFlags.N;
+            checkMask |= TileFlags.N;
         } else if (dy == -1) {
-            checkMask |= CollisionFlags.S;
+            checkMask |= TileFlags.S;
         }
 
         log.trace("check mask: " + checkMask +
-                " stringed: " + CollisionFlags.describe(checkMask));
+                " stringed: " + TileFlags.describe(checkMask));
 
-        log.trace("flag: " + CollisionFlags.describe(flag));
+        log.trace("flag: " + TileFlags.describe(flag));
         if ((checkMask & flag) != 0) {
             log.trace("wall collision detected");
             return false;
         }
 
-        if ((destinationFlag & CollisionFlags.ANY_FULL) != 0) {
+        if ((destinationFlag & TileFlags.ANY_FULL) != 0) {
             log.trace("full collision detected");
             return false;
         }
 
-        if ((destinationFlag & CollisionFlags.VALID) == 0) {
+        if ((destinationFlag & TileFlags.VALID) == 0) {
             log.trace("destination tile doesn't exist");
             return false;
         }
@@ -116,7 +117,7 @@ public class PlaneGrid {
                 "expected: x <" + sizeX + ", y <" + sizeY + ", found: " + x + "," + y + " flags: " + flag
         );
 
-        flags[x][y] |= (flag | CollisionFlags.VALID);
+        flags[x][y] |= (flag | TileFlags.VALID);
     }
 
     void addObjectFlags(int x, int y, int sizeX, int sizeY, boolean isFloorDecoration) {
@@ -127,11 +128,11 @@ public class PlaneGrid {
                 "expected: sizeXY >=1, found: " + sizeX + "," + sizeY
         );
 
-        var flag = isFloorDecoration ? CollisionFlags.FLOOR_DECORATION : CollisionFlags.OBJECT;
+        var flag = isFloorDecoration ? TileFlags.FLOOR_DECORATION : TileFlags.OBJECT;
 
         for (var i = x; i < x + sizeX; i++) {
             for (var j = y; j < y + sizeY; j++) {
-                //todo, i think can fail if the object size goes off the map (throws index out of bounds exception) but haven't seen it yet
+                //todo, i think can fail if the object size goes off the map (will throw iae) but haven't seen it yet
                 addFlag(i, j, flag);
             }
         }

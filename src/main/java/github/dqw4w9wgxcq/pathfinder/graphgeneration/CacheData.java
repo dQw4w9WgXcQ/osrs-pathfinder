@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,23 +25,10 @@ public record CacheData(
         int highestWorldY,
         Map<Integer, ObjectDefinition> objectDefinitions
 ) {
-    public CacheData(
-            Map<Integer, Region> regions,
-            int highestWorldX,
-            int highestWorldY,
-            Map<Integer, ObjectDefinition> objectDefinitions
-    ) {
-        this.regions = Collections.unmodifiableMap(regions);
-        this.highestWorldX = highestWorldX;
-        this.highestWorldY = highestWorldY;
-        this.objectDefinitions = Collections.unmodifiableMap(objectDefinitions);
-    }
-
     /**
      * loads data from runelite cache tools. no fs io happens after
      *
-     * @param cacheDir  directory containing raw osrs game cache.  <p>
-     *                  the game populates this directory at [userhome]/jagexcache/oldschool/LIVE/
+     * @param cacheDir  directory containing raw osrs game cache.  the game client populates this directory at [userhome]/jagexcache/oldschool/LIVE/
      * @param xteasJson json file containing json array of xteas
      * @throws FileNotFoundException cacheDir(or expected contents) or xteasJson doesn't exist
      * @throws IOException           fs error while reading cache with runelite utils (Store, RegionLoader, ObjectManager)
@@ -74,7 +60,7 @@ public record CacheData(
     record RegionData(Map<Integer, Region> regions, int highestWorldX, int highestWorldY) {
     }
 
-    static RegionData loadRegionData(Store store, XteaKeyManager keyManager) throws IOException {
+    static RegionData loadRegionData(Store store, XteaKeyManager keyManager) throws IOException, JsonIOException, JsonSyntaxException {
         var regionLoader = new RegionLoader(store, keyManager);
         regionLoader.loadRegions();
         regionLoader.calculateBounds();

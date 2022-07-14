@@ -1,6 +1,5 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import lombok.extern.slf4j.Slf4j;
@@ -11,8 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 @Slf4j
-@VisibleForTesting
-public class Main {
+class Main {
     public static class ExitCodes {
         private static final int BASE = 500;
         private static int i = 1;//todo use fixed vlaues
@@ -55,12 +53,14 @@ public class Main {
         } else {
             cacheDir = DEFAULT_CACHE_DIR;
         }
+
         File xteasFile;
         if (cmd.hasOption("xteas")) {
             xteasFile = new File(cmd.getOptionValue("xteas"));
         } else {
             xteasFile = DEFAULT_XTEAS_FILE;
         }
+
         File outDir;
         if (cmd.hasOption("out")) {
             outDir = new File(cmd.getOptionValue("out"));
@@ -68,6 +68,7 @@ public class Main {
             outDir = DEFAULT_OUT_DIR;
         }
 
+        //load game data from cacheDir/xteasFile
         CacheData cacheData;
         try {
             cacheData = CacheData.load(cacheDir, xteasFile);
@@ -93,17 +94,15 @@ public class Main {
             return;
         }
 
-        var graph = PathfinderGraph.generate(cacheData);
+        var graph = Graph.generate(cacheData);
 
-        try {
-            graph.save(outDir);
-        } catch (IOException e) {
-            log.error("saving graph failed");
-            log.info(null, e);
-            System.exit(ExitCodes.WRITE_FAIL);
-            return;
-        }
-
-
+//        try {
+//            graph.save(outDir);
+//        } catch (IOException e) {
+//            log.error("saving graph failed");
+//            log.info(null, e);
+//            System.exit(ExitCodes.WRITE_FAIL);
+//            return;
+//        }
     }
 }

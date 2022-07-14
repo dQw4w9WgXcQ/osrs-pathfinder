@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GridWorldTestUtil {
-    static String stringify(PlaneGrid grid) {
+    static String stringify(TileGrid grid) {
         return stringify(pad(toNames(grid.flags)));
     }
 
@@ -70,7 +70,7 @@ public class GridWorldTestUtil {
         for (var column : flags) {
             var nameRows = new ArrayList<String>();
             for (var flag : column) {
-                var desc = CollisionFlags.describe(flag);
+                var desc = TileFlags.describe(flag);
                 if (desc.length() > 20) {
                     desc = flag + "";
                 }

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @Slf4j
-public class PlaneGridTest {
+public class TileGridTest {
     int X = 2;
     int Y = 7;
 
@@ -22,7 +22,7 @@ public class PlaneGridTest {
     void testWallFlag() {
         var grid = newGrid();
 
-        grid.addFlag(X, Y, CollisionFlags.E);
+        grid.addFlag(X, Y, TileFlags.E);
 
         log.debug("\n" + GridWorldTestUtil.stringify(grid));
 
@@ -33,14 +33,14 @@ public class PlaneGridTest {
     void testObjectFlag() {
         var grid = newGrid();
 
-        grid.addFlag(X + 1, Y, CollisionFlags.OBJECT);
+        grid.addFlag(X + 1, Y, TileFlags.OBJECT);
 
         log.debug("\n" + GridWorldTestUtil.stringify(grid));
 
         Assertions.assertFalse(grid.canTravelInDirection(X, Y, 1, 0));
     }
 
-    PlaneGrid newGrid() {
-        return new PlaneGrid(10, 10);
+    TileGrid newGrid() {
+        return new TileGrid(10, 10);
     }
 }

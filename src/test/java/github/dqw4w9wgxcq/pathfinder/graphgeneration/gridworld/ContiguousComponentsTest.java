@@ -5,36 +5,36 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 @Slf4j
-public class ConnectedComponentsTest {
+public class ContiguousComponentsTest {
     @Test
     public void testFindIn() {
+        var grid = new TileGrid(10, 10);
 
-        var grid = new PlaneGrid(10, 10);
-
-        grid.addFlag(0,1,CollisionFlags.VALID);
-        grid.addFlag(1,1,CollisionFlags.VALID);
-        grid.addFlag(2, 2, CollisionFlags.VALID);
-        grid.addFlag(2, 3, CollisionFlags.VALID);
-        grid.addFlag(5, 5, CollisionFlags.VALID);
-        grid.addFlag(4, 4, CollisionFlags.VALID);
-        grid.addFlag(7, 6, CollisionFlags.VALID);
-        grid.addFlag(7, 7, CollisionFlags.VALID | CollisionFlags.OBJECT);
-        grid.addFlag(7, 8, CollisionFlags.VALID);
+        grid.addFlag(0, 1, TileFlags.VALID);
+        grid.addFlag(1, 1, TileFlags.VALID);
+        grid.addFlag(2, 2, TileFlags.VALID);
+        grid.addFlag(2, 3, TileFlags.VALID);
+        grid.addFlag(5, 5, TileFlags.VALID);
+        grid.addFlag(4, 4, TileFlags.VALID);
+        grid.addFlag(7, 6, TileFlags.VALID);
+        grid.addFlag(7, 7, TileFlags.VALID | TileFlags.OBJECT);
+        grid.addFlag(7, 8, TileFlags.VALID);
 
         var s = GridWorldTestUtil.stringify(grid);
 
         log.debug("\n" + s);
 
-        var components = ConnectedComponents.findIn(grid);
+        var components = ContiguousComponents.findIn(grid);
 
         var stringify = GridWorldTestUtil.stringify(components.map());
         log.debug("\n" + stringify);
 
         log.debug("components: {}", components);
 
-        Assertions.assertEquals(components.count(), 4);
+        Assertions.assertEquals(components.sizes().size(), 4);
 
         //not sure if this is a good idea
+        //maybe ok if move TileFlags.descriptions to test package
 //        Assertions.assertEquals(stringify, """
 //                 - - - - - - - - - -
 //                 - - - - - - - - - -

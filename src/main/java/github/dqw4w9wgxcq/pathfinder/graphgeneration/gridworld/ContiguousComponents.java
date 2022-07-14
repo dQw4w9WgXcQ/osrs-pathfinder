@@ -8,12 +8,14 @@ import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
-public record ConnectedComponents(int[][] map, int count) {
-    public static ConnectedComponents findIn(PlaneGrid grid) {
+public record ContiguousComponents(int[][] map, List<Integer> sizes) {
+    public static ContiguousComponents findIn(TileGrid grid) {
         var componentsMap = new int[grid.getSizeX()][grid.getSizeY()];
         for (var ys : componentsMap) {
             Arrays.fill(ys, -1);
         }
+
+        var sizes = new ArrayList<Integer>();
 
         var count = 0;
 
@@ -23,11 +25,11 @@ public record ConnectedComponents(int[][] map, int count) {
                     continue;
                 }
 
-                if (!grid.checkFlag(x, y, CollisionFlags.VALID)) {
+                if (!grid.checkFlag(x, y, TileFlags.VALID)) {
                     continue;
                 }
 
-                if (grid.checkFlag(x, y, CollisionFlags.ANY_FULL)) {
+                if (grid.checkFlag(x, y, TileFlags.ANY_FULL)) {
                     continue;
                 }
 
@@ -37,21 +39,13 @@ public record ConnectedComponents(int[][] map, int count) {
                 for (var edge : component) {
                     var gridEdge = ((GridEdge) edge);
 
-                    componentsMap[gridEdge.x()][gridEdge.y()] = count;
+                    componentsMap[gridEdge.getX()][gridEdge.getY()] = count;
                 }
+                sizes.add(component.size());
                 count++;
             }
         }
 
-        return new ConnectedComponents(componentsMap, count);
-    }
-
-    public static List<ConnectedComponents> findInPlanes(PlaneGrid[] planes) {
-        var componentsPlanes = new ArrayList<ConnectedComponents>();
-        for (var plane : planes) {
-            componentsPlanes.add(findIn(plane));
-        }
-
-        return componentsPlanes;
+        return new ContiguousComponents(componentsMap, sizes);
     }
 }

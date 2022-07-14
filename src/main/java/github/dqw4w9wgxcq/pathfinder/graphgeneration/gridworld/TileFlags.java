@@ -10,7 +10,7 @@ import java.util.Map;
  * i.e. flag = 0b00000001; flag &= 0b00000100; if (flag & 0b00000100) { //we can/cant walk }
  * <p>
  */
-public class CollisionFlags {
+public class TileFlags {
     //wall
     public static final int NW = 1;
     public static final int N = 1 << 1;//2
@@ -25,18 +25,13 @@ public class CollisionFlags {
     public static final int OBJECT = 1 << 8;//256
     public static final int FLOOR_DECORATION = 1 << 18;//262144
     public static final int FLOOR = 1 << 21;//2097152
-
-    //marker
-    public static final int VALID = 1 << 24;//16777216
-
-    //derived
-    //object
     public static final int ANY_FULL = OBJECT | FLOOR_DECORATION | FLOOR;//2359552
 
     //marker
+    public static final int VALID = 1 << 24;//16777216
     /**
-     * in the game client, index 0 and the last 5 of the flags are filled on init.
-     * this is done to create a boarder and because an object with sizeX/Y > 1 from outside the scene could block movement<p>
+     * in the game client, flags at x/y 0, last 5 of the map are set to BOARDER on init.<p>
+     * this is done because an object with sizeX/Y > 1 from outside the current loaded scene could block movement<p>
      * from decompiled game client:
      * <pre>for (int x = 0; x < this.xSize; ++x)
      * {

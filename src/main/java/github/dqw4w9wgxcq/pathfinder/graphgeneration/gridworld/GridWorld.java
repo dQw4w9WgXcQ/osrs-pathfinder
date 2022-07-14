@@ -2,7 +2,6 @@ package github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.CacheData;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.RegionUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -21,40 +20,46 @@ public class GridWorld {
     @Getter
     private final int sizeX, sizeY;
     @Getter
-    private final PlaneGrid[] planes;
+    private final TileGrid[] planes;
 
     @VisibleForTesting
     GridWorld(int sizeX, int sizeY) {
-        log.info("Creating map world with size x{}y{}", sizeX, sizeY);
+        log.debug("Creating map world with size x{}y{}", sizeX, sizeY);
 
-        planes = new PlaneGrid[PLANES_SIZE];
-        Arrays.setAll(planes, x -> new PlaneGrid(sizeX, sizeY));
+        planes = new TileGrid[PLANES_SIZE];
+        Arrays.setAll(planes, x -> new TileGrid(sizeX, sizeY));
 
         this.sizeX = sizeX;
         this.sizeY = sizeY;
     }
 
-    public static GridWorld create(CacheData data) {
-        var out = new GridWorld(data.highestWorldX(), data.highestWorldY());
+    public static GridWorld create(
+            Map<Integer, Region> regions,
+            int highestWorldX,
+            int highestWorldY,
+            Map<Integer, ObjectDefinition> definitions
+    ) {
+        var out = new GridWorld(highestWorldX, highestWorldY);
 
-        for (var region : data.regions().values()) {
+        for (var region : regions.values()) {
             addFloorFromRegion(out.planes, region);
         }
 
-        for (var region : data.regions().values()) {
-            addLocationsFromRegion(out.planes, region.getLocations(), data.objectDefinitions());
+        for (var region : regions.values()) {
+            addLocationsFromRegion(out.planes, region.getLocations(), definitions);
         }
 
         return out;
     }
 
-    public PlaneGrid getPlane(int plane) {
+    public TileGrid getPlane(int plane) {
         Preconditions.checkArgument(plane >= 0 && plane < PLANES_SIZE, "plane must be between 0 and 3");
 
         return planes[plane];
     }
 
-    static void addFloorFromRegion(PlaneGrid[] planes, Region region) {
+    @VisibleForTesting
+    static void addFloorFromRegion(TileGrid[] planes, Region region) {
         log.debug("adding region " + region.getRegionID() + " x" + region.getRegionX() + "y" + region.getRegionY());
         var baseX = region.getBaseX();
         var baseY = region.getBaseY();
@@ -71,7 +76,7 @@ public class GridWorld {
                         }
 
                         if (modifiedZ >= 0) {
-                            planes[modifiedZ].addFlag(x + baseX, y + baseY, CollisionFlags.FLOOR);
+                            planes[modifiedZ].addFlag(x + baseX, y + baseY, TileFlags.FLOOR);
                         }
                     }
                 }
@@ -79,13 +84,15 @@ public class GridWorld {
         }
     }
 
-    static void addLocationsFromRegion(PlaneGrid[] planes, List<Location> locations, Map<Integer, ObjectDefinition> definitions) {
+    @VisibleForTesting
+    static void addLocationsFromRegion(TileGrid[] planes, List<Location> locations, Map<Integer, ObjectDefinition> definitions) {
         for (var location : locations) {
             applyObjectLocationFlags(planes[location.getPosition().getZ()], location, definitions);
         }
     }
 
-    static void applyObjectLocationFlags(PlaneGrid grid, Location location, Map<Integer, ObjectDefinition> definitions) {
+    @VisibleForTesting
+    static void applyObjectLocationFlags(TileGrid grid, Location location, Map<Integer, ObjectDefinition> definitions) {
         log.debug("adding location " + location);
 
         var position = location.getPosition();

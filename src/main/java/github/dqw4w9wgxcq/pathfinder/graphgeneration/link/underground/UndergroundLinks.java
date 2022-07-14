@@ -1,8 +1,6 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.link.underground;
 
 import lombok.AllArgsConstructor;
-import net.runelite.cache.ObjectManager;
-import net.runelite.cache.region.RegionLoader;
 
 import java.util.List;
 
@@ -11,9 +9,6 @@ import java.util.List;
  */
 @AllArgsConstructor
 public class UndergroundLinks {
-    private final RegionLoader regionLoader;
-    private final ObjectManager objectManager;
-
     public List<UndergroundLink> findLinks() {
         throw new UnsupportedOperationException("Not implemented");//todo
     }
