@@ -36,7 +36,7 @@ public class GridEdge implements Edge {
 
     @Override
     public int hashCode() {
-        return  x << 16 | y;
+        return x << 16 | y;
     }
 
     @Override
@@ -52,7 +52,7 @@ public class GridEdge implements Edge {
     public String toString() {
         return "GridEdge[" +
                 "x=" + x + ", " +
-                "y=" + y + ", " +
+                "y=" + y +
                 ']';
     }
 }

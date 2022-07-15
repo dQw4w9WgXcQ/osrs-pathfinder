@@ -46,6 +46,12 @@ public class TileGrid {
                 "dx and dy must be 1 or -1, found dx: " + dx + " dy: " + dy
         );
 
+        if (Math.abs(dx) == 1 && Math.abs(dy) == 1) {
+            //can do diagonal movement in the future. need additional checks for diagonal collisions
+            log.debug("diagonal movement, x:{} y:{} dx:{} dy:{}", x, y, dx, dy);
+            return false;
+        }
+
         var destinationX = x + dx;
         var destinationY = y + dy;
 
@@ -95,7 +101,7 @@ public class TileGrid {
         }
 
         if ((destinationConfig & TileFlags.HAVE_DATA) == 0) {
-            log.debug("destination tile is not valid");
+            log.debug("dont have data for destination");
             return false;
         }
 

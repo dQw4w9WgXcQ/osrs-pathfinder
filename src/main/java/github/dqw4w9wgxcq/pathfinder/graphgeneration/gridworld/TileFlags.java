@@ -48,13 +48,13 @@ public class TileFlags {
     }
 
     private static final Map<Integer, String> flagDescs = Map.ofEntries(
-            Map.entry(NW, "NW"),
+            Map.entry(NW, "Nw"),
             Map.entry(N, "N"),
-            Map.entry(NE, "NE"),
+            Map.entry(NE, "Ne"),
             Map.entry(E, "E"),
-            Map.entry(SE, "SE"),
+            Map.entry(SE, "Se"),
             Map.entry(S, "S"),
-            Map.entry(SW, "SW"),
+            Map.entry(SW, "Sw"),
             Map.entry(W, "W"),
             Map.entry(OBJECT, "o"),
             Map.entry(FLOOR_DECORATION, "d"),
@@ -102,6 +102,6 @@ public class TileFlags {
     }
 
     public static String describe(int config) {
-        return String.join(",", getDescriptions(config));
+        return String.join("", getDescriptions(config));
     }
 }

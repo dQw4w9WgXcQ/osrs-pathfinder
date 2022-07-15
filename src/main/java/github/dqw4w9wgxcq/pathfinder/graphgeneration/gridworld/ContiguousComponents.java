@@ -27,7 +27,7 @@ public record ContiguousComponents(int[][] map, List<Integer> sizes) {
 
         var sizes = new ArrayList<Integer>();
 
-        var count = 0;
+        var id = 0;
 
         for (var x = 0; x < grid.getSizeX(); x++) {
             for (var y = 0; y < grid.getSizeY(); y++) {
@@ -43,16 +43,21 @@ public record ContiguousComponents(int[][] map, List<Integer> sizes) {
                     continue;
                 }
 
-                log.debug("new component id:{} at x:{} y:{}", count, x, y);
+                log.debug("new component id:{} at x:{} y:{}", id, x, y);
                 var component = Algo.floodFill(new GridEdge(x, y, grid));
                 log.debug("new component size {}", component.size());
                 for (var edge : component) {
                     var gridEdge = ((GridEdge) edge);
 
-                    componentsMap[gridEdge.getX()][gridEdge.getY()] = count;
+                    var oldId = componentsMap[gridEdge.getX()][gridEdge.getY()];
+                    if (componentsMap[gridEdge.getX()][gridEdge.getY()] != -1) {
+                        throw new IllegalStateException("already assigned " + gridEdge + " oldId:" + oldId + " newId:" + id);
+                    }
+
+                    componentsMap[gridEdge.getX()][gridEdge.getY()] = id;
                 }
                 sizes.add(component.size());
-                count++;
+                id++;
             }
         }
 
