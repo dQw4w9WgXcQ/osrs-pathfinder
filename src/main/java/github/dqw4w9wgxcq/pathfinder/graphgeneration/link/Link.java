@@ -6,7 +6,7 @@ public interface Link {
     Position destination();
 
     /**
-     * approximate cost of traversing this link in terms of walking tile units
+     * approximate cost in terms of walking tile units
      */
     int cost();
 }

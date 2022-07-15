@@ -105,7 +105,7 @@ public class GridWorld {
                         var modifiedZ = z;
                         if ((region.getTileSetting(1, x, y) & 2) == 2) {
                             modifiedZ = z - 1;
-                            log.trace("z was modified from " + z + " to " + modifiedZ + " at " + "x" + x + "y" + y);
+                            log.debug("z was modified from " + z + " to " + modifiedZ + " at " + "x" + x + "y" + y);
                         }
 
                         if (modifiedZ >= 0) {
@@ -129,7 +129,7 @@ public class GridWorld {
     //based off code from decompiled game, see end of file for reference
     @VisibleForTesting
     static void applyObjectFlags(TileGrid grid, Location location, Map<Integer, ObjectDefinition> definitions) {
-        log.trace("adding location " + location);
+        log.debug("adding location " + location);
 
         var position = location.getPosition();
 
@@ -138,7 +138,7 @@ public class GridWorld {
 
         var objectDefinition = definitions.get(location.getId());
 
-        log.trace("obj location name : " + objectDefinition.getName());
+        log.debug("obj location name : " + objectDefinition.getName());
 
         var orientation = location.getOrientation();
 

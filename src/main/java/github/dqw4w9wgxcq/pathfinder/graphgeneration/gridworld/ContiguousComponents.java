@@ -13,7 +13,7 @@ public record ContiguousComponents(int[][] map, List<Integer> sizes) {
     public static List<ContiguousComponents> findInPlanes(TileGrid[] planes) {
         log.info("Finding contiguous components");
         return Arrays.stream(planes)
-//                .parallel()//uses too much mem
+                .parallel()//uses too much mem
                 .map(ContiguousComponents::findIn)
                 .toList();
     }
@@ -61,6 +61,12 @@ public record ContiguousComponents(int[][] map, List<Integer> sizes) {
             }
         }
 
+        log.info("Found {} components", sizes.size());
+        log.info("smallest:{} largest:{} average:{} total:{}",
+                sizes.stream().mapToInt(Integer::intValue).min().orElseThrow(),
+                sizes.stream().mapToInt(Integer::intValue).max().orElseThrow(),
+                sizes.stream().mapToInt(Integer::intValue).average().orElseThrow(),
+                sizes.stream().mapToInt(Integer::intValue).sum());
         return new ContiguousComponents(componentsMap, sizes);
     }
 }

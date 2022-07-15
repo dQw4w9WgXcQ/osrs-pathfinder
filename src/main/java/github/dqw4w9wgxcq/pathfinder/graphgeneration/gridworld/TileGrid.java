@@ -18,7 +18,7 @@ public class TileGrid {
     private final int[][] configs;
 
     TileGrid(int sizeX, int sizeY) {
-        log.debug("new TileGrid with size size x:" + sizeX + " y:" + sizeY);
+        log.info("new TileGrid with size size x:" + sizeX + " y:" + sizeY);
 
         configs = new int[sizeX][sizeY];
 
@@ -48,7 +48,7 @@ public class TileGrid {
 
         if (Math.abs(dx) == 1 && Math.abs(dy) == 1) {
             //can do diagonal movement in the future. need additional checks for diagonal collisions
-            log.trace("diagonal movement, x:{} y:{} dx:{} dy:{}", x, y, dx, dy);
+            log.debug("diagonal movement, x:{} y:{} dx:{} dy:{}", x, y, dx, dy);
             return false;
         }
 
@@ -116,8 +116,8 @@ public class TileGrid {
                 "expected: x <" + sizeX + ", y <" + sizeY + ", found: " + x + "," + y + " flags: " + flag
         );
 
-        var newConfig = configs[x][y] |= flag;
-        log.trace("new config: " + TileFlags.describe(newConfig));
+        var updatedConfig = configs[x][y] |= flag;
+        log.debug("updated config: {}",TileFlags.describe(updatedConfig));
     }
 
     void markHaveData(int regionX, int regionY) {
