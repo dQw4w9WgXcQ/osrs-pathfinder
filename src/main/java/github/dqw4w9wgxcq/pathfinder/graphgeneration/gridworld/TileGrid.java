@@ -48,7 +48,7 @@ public class TileGrid {
 
         if (Math.abs(dx) == 1 && Math.abs(dy) == 1) {
             //can do diagonal movement in the future. need additional checks for diagonal collisions
-            log.debug("diagonal movement, x:{} y:{} dx:{} dy:{}", x, y, dx, dy);
+            log.trace("diagonal movement, x:{} y:{} dx:{} dy:{}", x, y, dx, dy);
             return false;
         }
 
