@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 
 @Slf4j
 public class TileGridTest {
-    int X = 5;
-    int Y = 5;
+    int X = 3;
+    int Y = 7;
 
     @Test
     void testValid() {
@@ -23,9 +23,9 @@ public class TileGridTest {
         var grid = newGrid();
 
         grid.markTile(X, Y, TileFlags.E);
-        grid.markTile(X + 1, Y, TileFlags.W);
 
         log.debug("\n" + GridWorldTestUtil.stringify(grid));
+        System.out.println(GridWorldTestUtil.stringify(grid));
 
         Assertions.assertFalse(grid.canTravelInDirection(X, Y, 1, 0));
     }
@@ -48,9 +48,10 @@ public class TileGridTest {
     void testObjectFlag() {
         var grid = newGrid();
 
-        grid.markTile(X + 1, Y, TileFlags.OBJECT);
+        grid.markAreaObject(X, Y, 2, 3, false);
 
         log.debug("\n" + GridWorldTestUtil.stringify(grid));
+        System.out.println("\n" + GridWorldTestUtil.stringify(grid));
 
         Assertions.assertFalse(grid.canTravelInDirection(X, Y, 1, 0));
     }

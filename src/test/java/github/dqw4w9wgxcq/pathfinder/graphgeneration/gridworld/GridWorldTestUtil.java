@@ -1,86 +1,71 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class GridWorldTestUtil {
     static String stringify(TileGrid grid) {
-        return stringify(pad(toNames(grid.getConfigs())));
+        return stringify(toDescriptions(grid.getConfigs()));
     }
 
     static String stringify(int[][] map) {
-        return stringify(pad(toStrings(map)));
+        return stringify(toStrings(map));
     }
 
-    static String stringify(List<List<String>> columns) {
+    private static String stringify(String[][] map) {
+        //the world is described as from bottom left not top left
         var sb = new StringBuilder();
-
-        for (var row : columns) {
-            for (var column : row) {
-                sb.append(column);
+        for (var y = map[0].length - 1; y >= 0; y--) {
+            for (var strings : map) {
+                sb.append(strings[y]);
             }
             sb.append("\n");
         }
         return sb.toString();
     }
 
-    private static List<List<String>> pad(List<List<String>> columns) {
-        var width = 0;
-        for (var column : columns) {
-            for (var s : column) {
-                width = Math.max(width, s.length());
-            }
-        }
-
-        var paddedColumns = new ArrayList<List<String>>();
-        for (var row : columns) {
-            var paddedRow = new ArrayList<String>();
-            for (var flagString : row) {
-                var padding = " ".repeat(width - flagString.length() + 1);
-                paddedRow.add(padding + flagString);
-            }
-            paddedColumns.add(paddedRow);
-        }
-        return paddedColumns;
-    }
-
     //if an int is -1, will be replaced with "-"
-    static List<List<String>> toStrings(int[][] ints) {
-        var stringColumns = new ArrayList<List<String>>();
-        for (var column : ints) {
-            var row = new ArrayList<String>();
-            for (var i : column) {
-                String s;
-                if (i == -1) {
-                    s = "-";
-                } else {
-                    s = String.valueOf(i);
-                }
-
-                row.add(s);
+    private static String[][] toStrings(int[][] map) {
+        var strings = new String[map.length][map[0].length];
+        for (var x = 0; x < map.length; x++) {
+            for (var y = 0; y < map[0].length; y++) {
+                strings[x][y] = map[x][y] == -1 ? "-" : String.valueOf(map[x][y]);
             }
-
-            stringColumns.add(row);
         }
-
-        return stringColumns;
+        return pad(strings);
     }
 
-    static List<List<String>> toNames(int[][] flags) {
-        var nameColumns = new ArrayList<List<String>>();
-        for (var column : flags) {
-            var nameRows = new ArrayList<String>();
-            for (var flag : column) {
-                var desc = TileFlags.describe(flag);
+    private static String[][] toDescriptions(int[][] map) {
+        var descs = new String[map.length][map[0].length];
+        for (var x = 0; x < map.length; x++) {
+            for (var y = 0; y < map[0].length; y++) {
+                var i = map[x][y];
+                var desc = TileFlags.describe(i);
                 if (desc.length() > 20) {
-                    desc = flag + "";
+                    desc = i + "";
                 }
-                nameRows.add(desc);
-            }
 
-            nameColumns.add(nameRows);
+                descs[x][y] = desc;
+            }
         }
 
-        return nameColumns;
+        return pad(descs);
+    }
+
+    private static String[][] pad(String[][] map) {
+        var paddingSize = 0;
+        for (var row : map) {
+            for (var s : row) {
+                paddingSize = Math.max(paddingSize, s.length());
+            }
+        }
+
+        var padded = new String[map.length][map[0].length];
+        for (var x = 0; x < map.length; x++) {
+            for (var y = 0; y < map[0].length; y++) {
+                var s = map[x][y];
+                var padding = " ".repeat(paddingSize - s.length() + 1);
+                padded[x][y] = s + padding;
+            }
+        }
+
+        return padded;
     }
 }

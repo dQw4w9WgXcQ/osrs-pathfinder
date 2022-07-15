@@ -62,7 +62,7 @@ public class GridWorld {
     @VisibleForTesting
     static void markValidFlags(TileGrid[] planes, Region region) {
         for (var plane : planes) {
-            plane.markLoaded(region.getRegionX(), region.getRegionY());
+            plane.markHaveData(region.getRegionX(), region.getRegionY());
         }
     }
 

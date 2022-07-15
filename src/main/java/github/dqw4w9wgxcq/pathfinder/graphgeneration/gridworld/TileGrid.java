@@ -82,9 +82,7 @@ public class TileGrid {
             mask |= TileFlags.S;
         }
 
-        log.debug("check mask: " + mask +
-                " stringed: " + TileFlags.describe(mask) +
-                "config: " + TileFlags.describe(config));
+        log.debug("check mask: {} stringed: {}config: {}", mask, TileFlags.describe(mask), TileFlags.describe(config));
 
         if ((config & mask) != 0) {
             log.debug("wall collision detected");
@@ -112,10 +110,11 @@ public class TileGrid {
                 "expected: x <" + sizeX + ", y <" + sizeY + ", found: " + x + "," + y + " flags: " + flag
         );
 
-        configs[x][y] |= flag;
+        var newConfig = configs[x][y] |= flag;
+        log.trace("new config: " + TileFlags.describe(newConfig));
     }
 
-    void markLoaded(int regionX, int regionY) {
+    void markHaveData(int regionX, int regionY) {
         var baseX = regionX * RegionUtil.SIZE;
         var baseY = regionY * RegionUtil.SIZE;
         for (var x = baseX; x < baseX + RegionUtil.SIZE; x++) {

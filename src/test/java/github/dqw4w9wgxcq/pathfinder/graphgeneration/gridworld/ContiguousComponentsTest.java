@@ -10,18 +10,21 @@ public class ContiguousComponentsTest {
     @Test
     public void testFindIn() {
         var grid = new TileGrid(RegionUtil.SIZE, RegionUtil.SIZE);
-        grid.markLoaded(0,0);
+        grid.markHaveData(0, 0);
+
+        grid.markTile(0, 0, TileFlags.W);
+        grid.markTile(0, 0, TileFlags.S);
+        grid.markTile(0, 0, TileFlags.SW);
 
         var s = GridWorldTestUtil.stringify(grid);
-
         log.debug("\n" + s);
         System.out.println("\n" + s);
 
         var components = ContiguousComponents.findIn(grid);
 
-        var stringify = GridWorldTestUtil.stringify(components.map());
-        log.debug("\n" + stringify);
-        System.out.println("components: " + "\n" + stringify);
+        var s2 = GridWorldTestUtil.stringify(components.map());
+        log.debug("\n" + s2);
+        System.out.println("components: " + "\n" + s2);
 
         log.debug("components: {}", components);
 

@@ -92,7 +92,7 @@ public class TileFlags {
 
         var loaded = (config & HAVE_DATA) == HAVE_DATA;
         if (!loaded) {
-            //tile can not have data but still have flags if an object goes off the edge of a region into an unloaded region
+            //tile can be not marked as have data but still have flags if an object goes off the edge of a region into an unloaded region
             log.debug("found tile without HAVE_DATA flag, but has other flags: " + config + " (" + Integer.toBinaryString(config) + ")");
 
             list.add("x");
