@@ -18,13 +18,11 @@ public class ContiguousComponentsTest {
 
         var s = GridWorldTestUtil.stringify(grid);
         log.debug("\n" + s);
-        System.out.println("\n" + s);
 
         var components = ContiguousComponents.findIn(grid);
 
         var s2 = GridWorldTestUtil.stringify(components.map());
         log.debug("\n" + s2);
-        System.out.println("\n" + s2);
 
         log.debug("components: {}", components);
 
@@ -48,13 +46,11 @@ public class ContiguousComponentsTest {
 
         var s = GridWorldTestUtil.stringify(grid);
         log.debug("\n" + s);
-        System.out.println("\n" + s);
 
         var components = ContiguousComponents.findIn(grid);
 
         var s2 = GridWorldTestUtil.stringify(components.map());
         log.debug("\n" + s2);
-        System.out.println("\n" + s2);
 
         log.debug("components: {}", components);
 
@@ -73,7 +69,6 @@ public class ContiguousComponentsTest {
         var components = ContiguousComponents.findIn(grid);
         var s = GridWorldTestUtil.stringify(components.map());
         log.debug("\n{}", s);
-        System.out.println("\n" + s);
 
         Assertions.assertEquals(2, components.sizes().size());
     }
@@ -87,7 +82,6 @@ public class ContiguousComponentsTest {
         var components = ContiguousComponents.findIn(grid);
         var s = GridWorldTestUtil.stringify(components.map());
         log.debug("\n{}", s);
-        System.out.println("\n" + s);
 
         var sum = components.sizes().stream().mapToInt(Integer::intValue).sum();
         Assertions.assertEquals(0, sum);

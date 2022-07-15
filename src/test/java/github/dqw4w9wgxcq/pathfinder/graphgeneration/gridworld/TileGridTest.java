@@ -14,7 +14,6 @@ public class TileGridTest {
         var grid = newGrid();
 
         log.debug("\n" + GridWorldTestUtil.stringify(grid));
-        System.out.println(GridWorldTestUtil.stringify(grid));
 
         Assertions.assertTrue(grid.canTravelInDirection(X, Y, 1, 0));
     }
@@ -26,7 +25,6 @@ public class TileGridTest {
         grid.markTile(X, Y, TileFlags.E);
 
         log.debug("\n" + GridWorldTestUtil.stringify(grid));
-        System.out.println(GridWorldTestUtil.stringify(grid));
 
         Assertions.assertFalse(grid.canTravelInDirection(X, Y, 1, 0));
     }
@@ -37,7 +35,6 @@ public class TileGridTest {
         grid.markTile(X, Y, TileFlags.NE);
 
         log.debug("\n" + GridWorldTestUtil.stringify(grid));
-        System.out.println("\n" + GridWorldTestUtil.stringify(grid));
 
         //diagonal movement disabled temporarily
         //Assertions.assertFalse(grid.canTravelInDirection(X, Y, 1, 1));
@@ -53,7 +50,6 @@ public class TileGridTest {
         grid.markAreaObject(X, Y, 2, 3, false);
 
         log.debug("\n" + GridWorldTestUtil.stringify(grid));
-        System.out.println("\n" + GridWorldTestUtil.stringify(grid));
 
         Assertions.assertFalse(grid.canTravelInDirection(X, Y, 1, 0));
     }
