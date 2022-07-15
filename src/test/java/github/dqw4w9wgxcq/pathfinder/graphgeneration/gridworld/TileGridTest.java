@@ -22,7 +22,8 @@ public class TileGridTest {
     void testWallFlag() {
         var grid = newGrid();
 
-        grid.markFlag(X, Y, TileFlags.E);
+        grid.markTile(X, Y, TileFlags.E);
+        grid.markTile(X + 1, Y, TileFlags.W);
 
         log.debug("\n" + GridWorldTestUtil.stringify(grid));
 
@@ -32,21 +33,22 @@ public class TileGridTest {
     @Test
     void testDiagonalWallFlag() {
         var grid = newGrid();
-        grid.markFlag(X, Y, TileFlags.NE);
-        grid.markFlag(X + 1, Y + 1, TileFlags.SW);
+        grid.markTile(X, Y, TileFlags.NW);
+        grid.markTile(X + 1, Y + 1, TileFlags.SE);
 
         log.debug("\n" + GridWorldTestUtil.stringify(grid));
+        System.out.println("\n" + GridWorldTestUtil.stringify(grid));
 
         Assertions.assertFalse(grid.canTravelInDirection(X, Y, 1, 1));
-        Assertions.assertTrue(grid.canTravelInDirection(X, Y, 1, 0));
-        Assertions.assertTrue(grid.canTravelInDirection(X, Y, 0, 1));
+        Assertions.assertFalse(grid.canTravelInDirection(X, Y, 1, 0));
+        Assertions.assertFalse(grid.canTravelInDirection(X, Y, 0, 1));
     }
 
     @Test
     void testObjectFlag() {
         var grid = newGrid();
 
-        grid.markFlag(X + 1, Y, TileFlags.OBJECT);
+        grid.markTile(X + 1, Y, TileFlags.OBJECT);
 
         log.debug("\n" + GridWorldTestUtil.stringify(grid));
 
@@ -57,7 +59,7 @@ public class TileGridTest {
         var grid = new TileGrid(10, 10);
         for (var x = 0; x < grid.getSizeX(); x++) {
             for (var y = 0; y < grid.getSizeY(); y++) {
-                grid.markFlag(x, y, TileFlags.VALID);
+                grid.markTile(x, y, TileFlags.HAVE_DATA);
             }
         }
         return grid;

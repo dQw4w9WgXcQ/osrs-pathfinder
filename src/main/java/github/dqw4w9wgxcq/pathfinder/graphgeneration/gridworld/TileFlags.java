@@ -1,15 +1,17 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Bitwise flags to game uses to determine if a tile is walkable.
+ * Bitwise flags to game client uses to determine if a tile is walkable.
  * <p>
  * i.e. flag = 0b00000001; flag &= 0b00000100; if (flag & 0b00000100) { //we can/cant walk }
- * <p>
  */
+@Slf4j
 public class TileFlags {
     //wall
     public static final int NW = 1;
@@ -28,27 +30,8 @@ public class TileFlags {
     public static final int ANY_FULL = OBJECT | FLOOR_DECORATION | FLOOR;//2359552
 
     //marker
-    public static final int VALID = 1 << 24;//16777216
-    /**
-     * in the game client, flags at x/y 0, last 5 of the map are set to BOARDER on init.<p>
-     * this is done because an object with sizeX/Y > 1 from outside the current loaded scene could block movement<p>
-     * from decompiled game client:
-     * <pre>for (int x = 0; x < this.xSize; ++x)
-     * {
-     *     for (int y = 0; y < this.ySize; ++y)
-     *     {
-     *         if (x == 0 || y == 0 || x >= this.xSize - 5 || y >= this.ySize - 5)
-     *         {
-     *             this.flags[x][y] = 16777215;//SCENE_BORDER
-     *         }
-     *         else
-     *         {
-     *             this.flags[x][y] = 16777216;//VALID
-     *         }
-     *     }
-     * }</pre>
-     */
-    public static final int BORDER = VALID - 1;//16777215
+    //this flag is used in the game client to represent "valid" tiles in a loaded scene
+    public static final int HAVE_DATA = 1 << 24;//16777216
 
     public static int getOpposite(int cardinalFlag) {
         return switch (cardinalFlag) {
@@ -64,7 +47,7 @@ public class TileFlags {
         };
     }
 
-    private static final Map<Integer, String> plainFlagDescs = Map.ofEntries(
+    private static final Map<Integer, String> flagDescs = Map.ofEntries(
             Map.entry(NW, "NW"),
             Map.entry(N, "N"),
             Map.entry(NE, "NE"),
@@ -76,34 +59,30 @@ public class TileFlags {
             Map.entry(OBJECT, "o"),
             Map.entry(FLOOR_DECORATION, "d"),
             Map.entry(FLOOR, "f"),
-            Map.entry(VALID, "v")
+            Map.entry(HAVE_DATA, ".")
     );
 
-    static String getDescription(int plainFlag) {
-        var name = plainFlagDescs.get(plainFlag);
+    static String getDescriptionForFlag(int flag) {
+        var name = flagDescs.get(flag);
         if (name == null) {
-            throw new IllegalArgumentException("no description found for: " + plainFlag);
+            throw new IllegalArgumentException("not a flag: " + flag + " (" + Integer.toBinaryString(flag) + ")");
         }
         return name;
     }
 
-    static List<String> getDescriptions(int flag) {
-        if (flag == 0) {
+    static List<String> getDescriptions(int config) {
+        if (config == 0) {
             return List.of("?");
         }
 
-        if (flag == BORDER) {
-            return List.of("=");
-        }
-
-        if (flag == VALID) {
+        if (config == HAVE_DATA) {
             return List.of(".");
         }
 
         var list = new ArrayList<String>();
-        for (var e : plainFlagDescs.entrySet()) {
-            if ((e.getKey() & flag) == e.getKey()) {
-                if (e.getKey() == VALID) {
+        for (var e : flagDescs.entrySet()) {
+            if ((e.getKey() & config) == e.getKey()) {
+                if (e.getKey() == HAVE_DATA) {
                     continue;
                 }
                 var value = e.getValue();
@@ -111,10 +90,18 @@ public class TileFlags {
             }
         }
 
+        var loaded = (config & HAVE_DATA) == HAVE_DATA;
+        if (!loaded) {
+            //tile can not have data but still have flags if an object goes off the edge of a region into an unloaded region
+            log.debug("found tile without HAVE_DATA flag, but has other flags: " + config + " (" + Integer.toBinaryString(config) + ")");
+
+            list.add("x");
+        }
+
         return list;
     }
 
-    public static String describe(int flag) {
-        return String.join(",", getDescriptions(flag));
+    public static String describe(int config) {
+        return String.join(",", getDescriptions(config));
     }
 }

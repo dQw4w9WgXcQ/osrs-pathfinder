@@ -5,7 +5,7 @@ import java.util.List;
 
 public class GridWorldTestUtil {
     static String stringify(TileGrid grid) {
-        return stringify(pad(toNames(grid.flags)));
+        return stringify(pad(toNames(grid.getConfigs())));
     }
 
     static String stringify(int[][] map) {
@@ -14,9 +14,10 @@ public class GridWorldTestUtil {
 
     static String stringify(List<List<String>> columns) {
         var sb = new StringBuilder();
-        for (var column : columns) {
-            for (var row : column) {
-                sb.append(row);
+
+        for (var row : columns) {
+            for (var column : row) {
+                sb.append(column);
             }
             sb.append("\n");
         }

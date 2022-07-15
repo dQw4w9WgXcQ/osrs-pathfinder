@@ -1,7 +1,7 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.link.door;
 
+import com.google.common.annotations.VisibleForTesting;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.link.Link;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.cache.definitions.ObjectDefinition;
 import net.runelite.cache.region.Position;
@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-@AllArgsConstructor
 @Slf4j
 public class DoorLinks {
     public static final String OPEN_ACTION = "Open";
@@ -22,15 +21,17 @@ public class DoorLinks {
             new Position(3108, 3353, 0), new Position(3109, 3353, 0)//draynor manor entrance
     );
 
-    public static List<Link> find(Map<Integer, ObjectDefinition> definitions, Map<Integer, Region> regions) {
+    public static List<DoorLink> find(Map<Integer, ObjectDefinition> definitions, Map<Integer, Region> regions) {
+        log.info("Finding door links");
+
         var doorIds = findDoorIds(definitions.values());
 
-        log.debug(doorIds.size() + " doors found");
-
+        log.info("found {} doorIds", doorIds.size());
 
         throw new RuntimeException("Not implemented");//todo
     }
 
+    @VisibleForTesting
     static List<Integer> findDoorIds(Collection<ObjectDefinition> definitions) {
         return definitions
                 .parallelStream()
@@ -39,6 +40,7 @@ public class DoorLinks {
                 .toList();
     }
 
+    @VisibleForTesting
     static boolean isDoor(ObjectDefinition def) {
         var name = def.getName();
         if (!NAMES.contains(name)) {

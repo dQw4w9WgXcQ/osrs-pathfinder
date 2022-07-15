@@ -1,12 +1,5 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld;
 
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.CacheData;
-import org.junit.jupiter.api.Test;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-
 //todo
 public class GridWorldTest {
 //    CacheData loadCacheData() {

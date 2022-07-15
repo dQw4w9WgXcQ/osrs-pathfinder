@@ -1,5 +1,6 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld;
 
+import com.google.common.annotations.VisibleForTesting;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.algo.Algo;
 import lombok.extern.slf4j.Slf4j;
 
@@ -9,10 +10,19 @@ import java.util.List;
 
 @Slf4j
 public record ContiguousComponents(int[][] map, List<Integer> sizes) {
-    public static ContiguousComponents findIn(TileGrid grid) {
+    public static List<ContiguousComponents> findInPlanes(TileGrid[] planes) {
+        log.info("Finding contiguous components");
+        return Arrays.stream(planes)
+//                .parallel()//uses too much mem
+                .map(ContiguousComponents::findIn)
+                .toList();
+    }
+
+    @VisibleForTesting
+    static ContiguousComponents findIn(TileGrid grid) {
         var componentsMap = new int[grid.getSizeX()][grid.getSizeY()];
-        for (var ys : componentsMap) {
-            Arrays.fill(ys, -1);
+        for (var column : componentsMap) {
+            Arrays.fill(column, -1);
         }
 
         var sizes = new ArrayList<Integer>();
@@ -25,7 +35,7 @@ public record ContiguousComponents(int[][] map, List<Integer> sizes) {
                     continue;
                 }
 
-                if (!grid.checkFlag(x, y, TileFlags.VALID)) {
+                if (!grid.checkFlag(x, y, TileFlags.HAVE_DATA)) {
                     continue;
                 }
 
