@@ -6,14 +6,15 @@ import org.junit.jupiter.api.Test;
 
 @Slf4j
 public class TileGridTest {
-    int X = 3;
-    int Y = 7;
+    int X = 2;
+    int Y = 5;
 
     @Test
     void testValid() {
         var grid = newGrid();
 
         log.debug("\n" + GridWorldTestUtil.stringify(grid));
+        System.out.println(GridWorldTestUtil.stringify(grid));
 
         Assertions.assertTrue(grid.canTravelInDirection(X, Y, 1, 0));
     }
@@ -33,15 +34,15 @@ public class TileGridTest {
     @Test
     void testDiagonalWallFlag() {
         var grid = newGrid();
-        grid.markTile(X, Y, TileFlags.NW);
-        grid.markTile(X + 1, Y + 1, TileFlags.SE);
+        grid.markTile(X, Y, TileFlags.NE);
 
         log.debug("\n" + GridWorldTestUtil.stringify(grid));
         System.out.println("\n" + GridWorldTestUtil.stringify(grid));
 
         Assertions.assertFalse(grid.canTravelInDirection(X, Y, 1, 1));
-        Assertions.assertFalse(grid.canTravelInDirection(X, Y, 1, 0));
-        Assertions.assertFalse(grid.canTravelInDirection(X, Y, 0, 1));
+        Assertions.assertTrue(grid.canTravelInDirection(X + 1, Y + 1, -1, -1));
+        Assertions.assertTrue(grid.canTravelInDirection(X, Y, 1, 0));
+        Assertions.assertTrue(grid.canTravelInDirection(X, Y, 0, 1));
     }
 
     @Test
