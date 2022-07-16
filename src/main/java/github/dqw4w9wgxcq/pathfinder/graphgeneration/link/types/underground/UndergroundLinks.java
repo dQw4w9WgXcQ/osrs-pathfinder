@@ -1,11 +1,11 @@
-package github.dqw4w9wgxcq.pathfinder.graphgeneration.link.underground;
+package github.dqw4w9wgxcq.pathfinder.graphgeneration.link.types.underground;
 
 import lombok.AllArgsConstructor;
 
 import java.util.List;
 
 /**
- * searches for stairs/ladders on plane 0 going down and links them to a stair/ladder in the underground area (100 regions aka 6400 tiles up)
+ * searches for dungeon entrances in the normal map and links them to the underground area (100 regions aka 6400 tiles up)
  */
 @AllArgsConstructor
 public class UndergroundLinks {

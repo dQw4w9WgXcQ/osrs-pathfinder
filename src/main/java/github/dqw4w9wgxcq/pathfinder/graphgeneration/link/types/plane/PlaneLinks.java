@@ -1,4 +1,4 @@
-package github.dqw4w9wgxcq.pathfinder.graphgeneration.link.plane;
+package github.dqw4w9wgxcq.pathfinder.graphgeneration.link.types.plane;
 
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.link.Link;
 import lombok.AllArgsConstructor;
@@ -9,6 +9,9 @@ import net.runelite.cache.region.RegionLoader;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * searches for ladders/stairs and links them to ladders/stairs in plane+-1
+ */
 @AllArgsConstructor
 public class PlaneLinks {
     public static final String UP_ACTION = "Climb-up";
