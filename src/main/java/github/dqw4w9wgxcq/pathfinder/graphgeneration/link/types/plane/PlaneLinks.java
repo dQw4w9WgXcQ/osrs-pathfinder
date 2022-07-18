@@ -1,10 +1,10 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.link.types.plane;
 
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.link.Link;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.ObjectData;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.RegionData;
 import lombok.AllArgsConstructor;
-import net.runelite.cache.ObjectManager;
+import lombok.extern.slf4j.Slf4j;
 import net.runelite.cache.definitions.ObjectDefinition;
-import net.runelite.cache.region.RegionLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,18 +13,30 @@ import java.util.List;
  * searches for ladders/stairs and links them to ladders/stairs in plane+-1
  */
 @AllArgsConstructor
+@Slf4j
 public class PlaneLinks {
     public static final String UP_ACTION = "Climb-up";
     public static final String DOWN_ACTION = "Climb-down";
 
-    private final RegionLoader regionLoader;
-    private final ObjectManager objectManager;
-
-    public List<Link> findEdges() {
-        var regions = regionLoader.getRegions();
-        var out = new ArrayList<Link>();
+    public static List<PlaneLink> find(RegionData regionData, ObjectData objectData) {
+        var regions = regionData.regions().values();
+        var definitions = objectData.definitions();
+        var out = new ArrayList<PlaneLink>();
         for (var region : regions) {
-            throw new UnsupportedOperationException("Not implemented");//todo
+            for (var location : region.getLocations()) {
+                var id = location.getId();
+                var definition = definitions.get(id);
+
+                assert definition != null;
+
+                if (isUpObject(definition)) {
+                    log.debug("Found up object: {} at {}", definition.getName(), location.getPosition());
+                }
+
+                if (isDownObject(definition)) {
+                    log.debug("Found down object: {} at {}", definition.getName(), location.getPosition());
+                }
+            }
         }
 
         return out;
