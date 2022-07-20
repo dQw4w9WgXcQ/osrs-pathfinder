@@ -1,7 +1,7 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld;
 
 import com.google.common.annotations.VisibleForTesting;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.algo.Algo;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Point;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -44,19 +44,11 @@ public record ContiguousComponents(int[][] map, List<Integer> sizes) {
                 }
 
                 log.debug("new component id:{} at x:{} y:{}", id, x, y);
-                var component = Algo.floodFill(new GridEdge(x, y, grid));
-                log.debug("new component size {}", component.size());
-                for (var edge : component) {
-                    var gridEdge = ((GridEdge) edge);
+                var size = flood(componentsMap, grid, x, y, id);
+                log.debug("new component id:{} size:{}", id, size);
 
-                    var oldId = componentsMap[gridEdge.getX()][gridEdge.getY()];
-                    if (componentsMap[gridEdge.getX()][gridEdge.getY()] != -1) {
-                        throw new IllegalStateException("already assigned " + gridEdge + " oldId:" + oldId + " newId:" + id);
-                    }
+                sizes.add(size);
 
-                    componentsMap[gridEdge.getX()][gridEdge.getY()] = id;
-                }
-                sizes.add(component.size());
                 id++;
             }
         }
@@ -68,5 +60,38 @@ public record ContiguousComponents(int[][] map, List<Integer> sizes) {
                 sizes.stream().mapToInt(Integer::intValue).average().orElseThrow(),
                 sizes.stream().mapToInt(Integer::intValue).sum());
         return new ContiguousComponents(componentsMap, sizes);
+    }
+
+    private static int flood(int[][] map, TileGrid grid, int startX, int startY, int id) {
+        var frontier = new ArrayList<Point>();
+        map[startX][startY] = id;
+        frontier.add(new Point(startX, startY));
+        var size = 0;
+        while (!frontier.isEmpty()) {
+            var edge = frontier.remove(0);
+            for (var dx = -1; dx <= 1; dx++) {
+                for (var dy = -1; dy <= 1; dy++) {
+                    if (dx == 0 && dy == 0) {
+                        continue;
+                    }
+
+                    if (grid.canTravelInDirection(edge.x(), edge.y(), dx, dy)) {
+                        var x = edge.x() + dx;
+                        var y = edge.y() + dy;
+                        if (map[x][y] == -1) {
+                            map[x][y] = id;
+                            frontier.add(new Point(x, y));
+                            size++;
+                        }
+                    }
+                }
+            }
+        }
+
+        return size;
+    }
+
+    public int hash(int x, int y) {
+        return x << 16 | y;
     }
 }

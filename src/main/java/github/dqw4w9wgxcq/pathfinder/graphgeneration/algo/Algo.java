@@ -33,23 +33,24 @@ public class Algo {
     }
 
     //not a real flood fill rn
-    public static Set<Edge> floodFill(Edge start) {
-        var frontier = new LinkedList<Edge>();
-        var seen = new HashSet<Edge>();
-
-        seen.add(start);
-        frontier.add(start);
-
-        while (!frontier.isEmpty()) {
-            var current = frontier.pop();
-            for (var adjacent : current.adjacent()) {
-                if (!seen.contains(adjacent)) {
-                    seen.add(adjacent);
-                    frontier.add(adjacent);
-                }
-            }
-        }
-
-        return seen;
-    }
+    //creating a new obj for every edge was using huge mem
+//    public static Set<Edge> floodFill(Edge start) {
+//        var frontier = new LinkedList<Edge>();
+//        var seen = new HashSet<Edge>();
+//
+//        seen.add(start);
+//        frontier.add(start);
+//
+//        while (!frontier.isEmpty()) {
+//            var current = frontier.pop();
+//            for (var adjacent : current.adjacent()) {
+//                if (!seen.contains(adjacent)) {
+//                    seen.add(adjacent);
+//                    frontier.add(adjacent);
+//                }
+//            }
+//        }
+//
+//        return seen;
+//    }
 }
