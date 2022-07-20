@@ -83,8 +83,7 @@ public class ContiguousComponentsTest {
         var s = GridWorldTestUtil.stringify(components.map());
         log.debug("\n{}", s);
 
-        var sum = components.sizes().stream().mapToInt(Integer::intValue).sum();
-        Assertions.assertEquals(0, sum);
+        Assertions.assertEquals(0, components.sizes().stream().mapToInt(Integer::intValue).sum());
 
         Assertions.assertEquals(0, components.sizes().size());
     }

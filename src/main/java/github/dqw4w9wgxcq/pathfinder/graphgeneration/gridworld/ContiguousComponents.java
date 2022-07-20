@@ -55,9 +55,9 @@ public record ContiguousComponents(int[][] map, List<Integer> sizes) {
 
         log.info("Found {} components", sizes.size());
         log.info("smallest:{} largest:{} average:{} total:{}",
-                sizes.stream().mapToInt(Integer::intValue).min().orElseThrow(),
-                sizes.stream().mapToInt(Integer::intValue).max().orElseThrow(),
-                sizes.stream().mapToInt(Integer::intValue).average().orElseThrow(),
+                sizes.stream().mapToInt(Integer::intValue).min().orElse(0),
+                sizes.stream().mapToInt(Integer::intValue).max().orElse(0),
+                sizes.stream().mapToInt(Integer::intValue).average().orElse(0),
                 sizes.stream().mapToInt(Integer::intValue).sum());
         return new ContiguousComponents(componentsMap, sizes);
     }
@@ -66,7 +66,7 @@ public record ContiguousComponents(int[][] map, List<Integer> sizes) {
         var frontier = new ArrayList<Point>();
         map[startX][startY] = id;
         frontier.add(new Point(startX, startY));
-        var size = 0;
+        var size = 1;
         while (!frontier.isEmpty()) {
             var edge = frontier.remove(0);
             for (var dx = -1; dx <= 1; dx++) {
@@ -89,9 +89,5 @@ public record ContiguousComponents(int[][] map, List<Integer> sizes) {
         }
 
         return size;
-    }
-
-    public int hash(int x, int y) {
-        return x << 16 | y;
     }
 }
