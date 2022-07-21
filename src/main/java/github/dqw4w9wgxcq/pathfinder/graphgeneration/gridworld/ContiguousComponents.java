@@ -6,14 +6,15 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 @Slf4j
 public record ContiguousComponents(int[][] map, List<Integer> sizes) {
-    public static List<ContiguousComponents> findInPlanes(TileGrid[] planes) {
+    public static List<ContiguousComponents> findIn(GridWorld gridWorld) {
         log.info("Finding contiguous components");
-        return Arrays.stream(planes)
-                .parallel()//uses too much mem
+        return Arrays.stream(gridWorld.getPlanes())
+                .parallel()
                 .map(ContiguousComponents::findIn)
                 .toList();
     }
@@ -63,7 +64,7 @@ public record ContiguousComponents(int[][] map, List<Integer> sizes) {
     }
 
     private static int flood(int[][] map, TileGrid grid, int startX, int startY, int id) {
-        var frontier = new ArrayList<Point>();
+        var frontier = new LinkedList<Point>();
         map[startX][startY] = id;
         frontier.add(new Point(startX, startY));
         var size = 1;
@@ -82,6 +83,8 @@ public record ContiguousComponents(int[][] map, List<Integer> sizes) {
                             map[x][y] = id;
                             frontier.add(new Point(x, y));
                             size++;
+                        } else {
+                            assert map[x][y] == id;
                         }
                     }
                 }
