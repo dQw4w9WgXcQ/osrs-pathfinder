@@ -37,14 +37,8 @@ public class TileGrid {
     public boolean canTravelInDirection(int x, int y, int dx, int dy) {
         log.debug("canTravelInDirection x:{} y:{} dx:{} dy:{}", x, y, dx, dy);
 
-        Preconditions.checkArgument(
-                dx != 0 || dy != 0,
-                "dx and dy cant both be 0, found dx: " + dx + " dy: " + dy
-        );
-        Preconditions.checkArgument(
-                Math.abs(dx) <= 1 && Math.abs(dy) <= 1,
-                "dx and dy must be 1 or -1, found dx: " + dx + " dy: " + dy
-        );
+        assert dx != 0 || dy != 0 : "dx and dy cant both be 0, found dx: " + dx + " dy: " + dy;
+        assert Math.abs(dx) <= 1 && Math.abs(dy) <= 1 : "dx and dy must be 1 or -1, found dx: " + dx + " dy: " + dy;
 
         if (Math.abs(dx) == 1 && Math.abs(dy) == 1) {
             //can do diagonal movement in the future. need additional checks for diagonal collisions
@@ -117,7 +111,7 @@ public class TileGrid {
         );
 
         var updatedConfig = configs[x][y] |= flag;
-        log.debug("updated config: {}",TileFlags.describe(updatedConfig));
+        log.debug("updated config: {}", TileFlags.describe(updatedConfig));
     }
 
     void markHaveData(int regionX, int regionY) {

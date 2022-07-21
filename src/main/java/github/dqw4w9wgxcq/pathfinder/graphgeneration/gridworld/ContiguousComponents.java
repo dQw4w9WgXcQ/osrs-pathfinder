@@ -4,10 +4,7 @@ import com.google.common.annotations.VisibleForTesting;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Point;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 public record ContiguousComponents(int[][] map, List<Integer> sizes) {
@@ -63,13 +60,15 @@ public record ContiguousComponents(int[][] map, List<Integer> sizes) {
         return new ContiguousComponents(componentsMap, sizes);
     }
 
+    //in place algo cuts mem usage by ~4gb
     private static int flood(int[][] map, TileGrid grid, int startX, int startY, int id) {
-        var frontier = new LinkedList<Point>();
+        var frontier = new ArrayDeque<Point>();
         map[startX][startY] = id;
         frontier.add(new Point(startX, startY));
         var size = 1;
+        //dfs
         while (!frontier.isEmpty()) {
-            var edge = frontier.remove(0);
+            var edge = frontier.pop();
             for (var dx = -1; dx <= 1; dx++) {
                 for (var dy = -1; dy <= 1; dy++) {
                     if (dx == 0 && dy == 0) {
@@ -81,10 +80,10 @@ public record ContiguousComponents(int[][] map, List<Integer> sizes) {
                         var y = edge.y() + dy;
                         if (map[x][y] == -1) {
                             map[x][y] = id;
-                            frontier.add(new Point(x, y));
+                            frontier.push(new Point(x, y));
                             size++;
                         } else {
-                            assert map[x][y] == id;
+                            assert map[x][y] == id;//means canTravelInDirection is not bidirectional somewhere
                         }
                     }
                 }
