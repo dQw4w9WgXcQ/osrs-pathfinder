@@ -72,6 +72,7 @@ public class LeafletImages {
 
     private static final int[] COLORS = {
             Color.GRAY.getRGB(),
+            Color.WHITE.getRGB(),
             Color.BLUE.getRGB(),
             Color.RED.getRGB(),
             Color.YELLOW.getRGB(),
@@ -80,6 +81,5 @@ public class LeafletImages {
             Color.MAGENTA.getRGB(),
             Color.ORANGE.getRGB(),
             Color.PINK.getRGB(),
-            Color.WHITE.getRGB(),
     };
 }

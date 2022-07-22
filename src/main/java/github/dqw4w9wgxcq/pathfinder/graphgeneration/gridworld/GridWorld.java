@@ -12,7 +12,6 @@ import net.runelite.cache.region.Location;
 import net.runelite.cache.region.Region;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -47,7 +46,7 @@ public class GridWorld {
         }
 
         for (var region : regionData.regions().values()) {
-            markObjectFlags(out.planes, region.getLocations(), objectData.definitions());
+            markObjectFlags(out.planes, region, objectData.definitions());
         }
 
         return out;
@@ -118,11 +117,23 @@ public class GridWorld {
     }
 
     @VisibleForTesting
-    static void markObjectFlags(TileGrid[] planes, List<Location> locations, Map<Integer, ObjectDefinition> definitions) {
+    static void markObjectFlags(TileGrid[] planes, Region region, Map<Integer, ObjectDefinition> definitions) {
         log.debug("adding objects to planes");
 
-        for (var location : locations) {
-            applyObjectFlags(planes[location.getPosition().getZ()], location, definitions);
+        for (var location : region.getLocations()) {
+            var position = location.getPosition();
+            var x = position.getX() - region.getBaseX();
+            var y = position.getY() - region.getBaseY();
+            var z = position.getZ();
+            var modifiedZ = z;
+            if ((region.getTileSetting(1, x, y) & 2) == 2) {
+                modifiedZ = z - 1;
+                log.debug("z was modified from " + z + " to " + modifiedZ + " at " + "x" + x + "y" + y);
+            }
+
+            if (modifiedZ >= 0) {
+                applyObjectFlags(planes[modifiedZ], location, definitions);
+            }
         }
     }
 
