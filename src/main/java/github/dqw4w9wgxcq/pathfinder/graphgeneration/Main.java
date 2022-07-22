@@ -3,6 +3,7 @@ package github.dqw4w9wgxcq.pathfinder.graphgeneration;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.leafletimages.LeafletImages;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.*;
 
@@ -20,7 +21,7 @@ class Main {
         public static final int CACHE_READ_FAIL = BASE + i++;
         public static final int XTEAS_READ_FAIL = BASE + i++;
         public static final int XTEAS_MALFORMED = BASE + i++;
-        public static final int WRITE_FAIL = BASE + i++;
+        public static final int LEAFLET_IMAGE_WRITE_FAIL = BASE + i++;
     }
 
     public static final File DESKTOP_DIR = new File(System.getProperty("user.home"), "Desktop");
@@ -52,6 +53,7 @@ class Main {
         if (cmd.hasOption("cache")) {
             cacheDir = new File(cmd.getOptionValue("cache"));
         } else {
+            log.info("No cache dir specified.  Using default: {}", DEFAULT_CACHE_DIR);
             cacheDir = DEFAULT_CACHE_DIR;
         }
 
@@ -59,6 +61,7 @@ class Main {
         if (cmd.hasOption("xteas")) {
             xteasFile = new File(cmd.getOptionValue("xteas"));
         } else {
+            log.info("No xteas file specified.  Using default: {}", DEFAULT_XTEAS_FILE);
             xteasFile = DEFAULT_XTEAS_FILE;
         }
 
@@ -66,6 +69,7 @@ class Main {
         if (cmd.hasOption("out")) {
             outDir = new File(cmd.getOptionValue("out"));
         } else {
+            log.info("No output dir specified.  Using default: {}", DEFAULT_OUT_DIR);
             outDir = DEFAULT_OUT_DIR;
         }
 
@@ -96,7 +100,16 @@ class Main {
         }
 
         var graph = Graph.generate(cacheData);
-        
+
+        try {
+            LeafletImages.write(graph,new File(outDir,"leaflet"));
+        } catch (IOException e) {
+            log.error("writing leaflet images failed");
+            log.info(null, e);
+            System.exit(ExitCodes.LEAFLET_IMAGE_WRITE_FAIL);
+            return;
+        }
+
 //        try {
 //            graph.save(outDir);
 //        } catch (IOException e) {

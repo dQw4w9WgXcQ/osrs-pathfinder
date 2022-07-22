@@ -37,6 +37,7 @@ public class TileGrid {
     public boolean canTravelInDirection(int x, int y, int dx, int dy) {
         log.debug("canTravelInDirection x:{} y:{} dx:{} dy:{}", x, y, dx, dy);
 
+        //assert over iae to disable for performance
         assert dx != 0 || dy != 0 : "dx and dy cant both be 0, found dx: " + dx + " dy: " + dy;
         assert Math.abs(dx) <= 1 && Math.abs(dy) <= 1 : "dx and dy must be 1 or -1, found dx: " + dx + " dy: " + dy;
 

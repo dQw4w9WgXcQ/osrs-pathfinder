@@ -1,5 +1,6 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.link.types.plane;
 
+import com.google.common.base.Preconditions;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.ObjectData;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.RegionData;
 import lombok.AllArgsConstructor;
@@ -27,7 +28,7 @@ public class PlaneLinks {
                 var id = location.getId();
                 var definition = definitions.get(id);
 
-                assert definition != null;
+                Preconditions.checkState(definition != null, "definition for id {} shouldn't be null at this point", id);
 
                 if (isUpObject(definition)) {
                     log.debug("Found up object: {} at {}", definition.getName(), location.getPosition());
