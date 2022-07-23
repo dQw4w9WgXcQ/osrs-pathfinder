@@ -38,15 +38,15 @@ public class GridWorld {
         var out = new GridWorld(regionData.highestRegionX(), regionData.highestRegionY());
 
         for (var region : regionData.regions().values()) {
-            markValidFlags(out.planes, region);
+            markRegionValid(out.planes, region);
         }
 
         for (var region : regionData.regions().values()) {
-            markFloorFlags(out.planes, region);
+            markFloorFromRegion(out.planes, region);
         }
 
         for (var region : regionData.regions().values()) {
-            markObjectFlags(out.planes, region, objectData.definitions());
+            markObjectFromRegion(out.planes, region, objectData.definitions());
         }
 
         return out;
@@ -59,56 +59,30 @@ public class GridWorld {
     }
 
     @VisibleForTesting
-    static void markValidFlags(TileGrid[] planes, Region region) {
+    static void markRegionValid(TileGrid[] planes, Region region) {
         for (var plane : planes) {
             plane.markHaveData(region.getRegionX(), region.getRegionY());
         }
     }
 
-    //based off code from decompiled game
-//    private void method2905(int[][][] renderFlags) {
-//        int var2;
-//        int var3;
-//        int var4;
-//        int var5;
-//        for (var2 = 0; var2 < 4; ++var2) {
-//            for (var3 = 0; var3 < 104; ++var3) {
-//                for (var4 = 0; var4 < 104; ++var4) {
-//                    if ((renderFlags[var2][var3][var4] & 1) == 1) {
-//                        var5 = var2;
-//                        if ((renderFlags[1][var3][var4] & 2) == 2) {
-//                            var5 = var2 - 1;
-//                        }
-//
-//                        if (var5 >= 0) {
-//                            addTileFlag(var2, var3, var4, 2097152);
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//
-//      ...
-//    }
     @VisibleForTesting
-    static void markFloorFlags(TileGrid[] planes, Region region) {
+    static void markFloorFromRegion(TileGrid[] planes, Region region) {
         log.debug("adding floor from region " + region.getRegionID() + " x" + region.getRegionX() + "y" + region.getRegionY());
         var baseX = region.getBaseX();
         var baseY = region.getBaseY();
 
-        for (var z = 0; z < planes.length; z++) {
+        for (var renderPlane = 0; renderPlane < planes.length; renderPlane++) {
             for (var x = 0; x < RegionUtil.SIZE; x++) {
                 for (var y = 0; y < RegionUtil.SIZE; y++) {
-                    var tileSetting = region.getTileSetting(z, x, y);
+                    var tileSetting = region.getTileSetting(renderPlane, x, y);
                     if ((tileSetting & 1) == 1) {
-                        var modifiedZ = z;
+                        var collisionPlane = renderPlane;
                         if ((region.getTileSetting(1, x, y) & 2) == 2) {
-                            modifiedZ = z - 1;
-                            log.debug("z was modified from " + z + " to " + modifiedZ + " at " + "x" + x + "y" + y);
+                            collisionPlane = renderPlane - 1;
                         }
 
-                        if (modifiedZ >= 0) {
-                            planes[modifiedZ].markTile(x + baseX, y + baseY, TileFlags.FLOOR);
+                        if (collisionPlane >= 0) {
+                            planes[collisionPlane].markTile(x + baseX, y + baseY, TileFlags.FLOOR);
                         }
                     }
                 }
@@ -117,39 +91,36 @@ public class GridWorld {
     }
 
     @VisibleForTesting
-    static void markObjectFlags(TileGrid[] planes, Region region, Map<Integer, ObjectDefinition> definitions) {
+    static void markObjectFromRegion(TileGrid[] planes, Region region, Map<Integer, ObjectDefinition> definitions) {
         log.debug("adding objects to planes");
 
         for (var location : region.getLocations()) {
             var position = location.getPosition();
             var x = position.getX() - region.getBaseX();
             var y = position.getY() - region.getBaseY();
-            var z = position.getZ();
-            var modifiedZ = z;
+            var renderPlane = position.getZ();
+            var collisionPlane = renderPlane;
             if ((region.getTileSetting(1, x, y) & 2) == 2) {
-                modifiedZ = z - 1;
-                log.debug("z was modified from " + z + " to " + modifiedZ + " at " + "x" + x + "y" + y);
+                collisionPlane = renderPlane - 1;
             }
 
-            if (modifiedZ >= 0) {
-                applyObjectFlags(planes[modifiedZ], location, definitions);
+            if (collisionPlane >= 0) {
+                markObject(planes[collisionPlane], location, definitions.get(location.getId()));
             }
         }
     }
 
     //based off code from decompiled game, see end of file for reference
     @VisibleForTesting
-    static void applyObjectFlags(TileGrid grid, Location location, Map<Integer, ObjectDefinition> definitions) {
-        log.debug("adding location " + location);
+    static void markObject(TileGrid grid, Location location, ObjectDefinition definition) {
+        log.debug("adding object " + location);
 
         var position = location.getPosition();
 
         var x = position.getX();
         var y = position.getY();
 
-        var objectDefinition = definitions.get(location.getId());
-
-        log.debug("obj location name : " + objectDefinition.getName());
+        log.debug("obj location name : " + definition.getName());
 
         var orientation = location.getOrientation();
 
@@ -157,15 +128,15 @@ public class GridWorld {
         int sizeX;
         int sizeY;
         if (orientation == 1 || orientation == 3) {
-            sizeX = objectDefinition.getSizeY();
-            sizeY = objectDefinition.getSizeX();
+            sizeX = definition.getSizeY();
+            sizeY = definition.getSizeX();
         } else {
-            sizeX = objectDefinition.getSizeX();
-            sizeY = objectDefinition.getSizeY();
+            sizeX = definition.getSizeX();
+            sizeY = definition.getSizeY();
         }
 
         var locationType = location.getType();
-        var interactType = objectDefinition.getInteractType();
+        var interactType = definition.getInteractType();
         switch (locationType) {
             //wall objects
             case 0, 1, 2, 3 -> {
@@ -174,11 +145,11 @@ public class GridWorld {
                 }
             }
             //wall decoration
-            case 4, 5, 6, 7, 8, 9 -> {
+            case 4, 5, 6, 7, 8 -> {
                 //no collisions
             }
             //game object
-            case 10, 11 -> {
+            case 9,10, 11 -> {
                 if (interactType != 0) {
                     grid.markAreaObject(x, y, sizeX, sizeY, false);
                 }
