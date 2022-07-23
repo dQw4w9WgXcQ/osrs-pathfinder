@@ -81,5 +81,8 @@ public class LeafletImages {
             Color.MAGENTA.getRGB(),
             Color.ORANGE.getRGB(),
             Color.PINK.getRGB(),
+            Color.BLACK.getRGB(),
+            Color.LIGHT_GRAY.getRGB(),
+            Color.DARK_GRAY.getRGB(),
     };
 }
