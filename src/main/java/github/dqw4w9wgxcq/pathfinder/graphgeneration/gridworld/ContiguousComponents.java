@@ -75,6 +75,10 @@ public record ContiguousComponents(int[][] map, List<Integer> sizes) {
                         continue;
                     }
 
+                    if (dx != 0 && dy != 0) {//no diagonals
+                        continue;
+                    }
+
                     if (grid.canTravelInDirection(edge.x(), edge.y(), dx, dy)) {
                         var x = edge.x() + dx;
                         var y = edge.y() + dy;
