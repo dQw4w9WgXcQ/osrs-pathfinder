@@ -42,7 +42,7 @@ public class TileGrid {
         assert Math.abs(dx) <= 1 && Math.abs(dy) <= 1 : "dx and dy must be 1 or -1, found dx: " + dx + " dy: " + dy;
 
         if (Math.abs(dx) == 1 && Math.abs(dy) == 1) {
-            //can do diagonal movement in the future. need additional checks for diagonal collisions
+            //todo can do diagonal movement in the future. need additional checks for diagonal collisions
             log.debug("diagonal movement, x:{} y:{} dx:{} dy:{}", x, y, dx, dy);
             return false;
         }

@@ -1,6 +1,5 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.algo;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 
 public interface Edge extends Comparable<Edge> {
@@ -8,7 +7,7 @@ public interface Edge extends Comparable<Edge> {
 
     int cost();
 
-    default int compareTo(@Nonnull Edge other) {
+    default int compareTo(Edge other) {
         return cost() - other.cost();
     }
 }
