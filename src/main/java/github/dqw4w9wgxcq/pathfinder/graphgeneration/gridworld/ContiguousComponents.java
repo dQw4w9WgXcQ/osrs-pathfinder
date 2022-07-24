@@ -83,7 +83,7 @@ public record ContiguousComponents(int[][] map, List<Integer> sizes) {
                             frontier.push(new Point(x, y));
                             size++;
                         } else {
-                            //assert over iae to disable for performance
+                            //assert over ISE to disable for performance
                             assert map[x][y] == id : "tile already assigned to another component at x:" + x + "y:" + y + ".  means canTravelInDirection is not bidirectional somewhere";
                         }
                     }

@@ -14,12 +14,14 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class DoorLinks {
-    public static final String OPEN_ACTION = "Open";
     public static final List<String> NAMES = List.of("Door", "Large door", "Gate");
     public static final Set<Position> IGNORE_LOCATIONS = Set.of(
             new Position(3115, 3450, 0),//hill giant hut
             new Position(3143, 3443, 0),//cooks guild
             new Position(3108, 3353, 0), new Position(3109, 3353, 0)//draynor manor entrance
+    );
+    public static final Set<Integer> IGNORE_IDS = Set.of(
+            
     );
 
     public static List<DoorLink> find(RegionData regionData, ObjectData objectData) {
@@ -57,7 +59,22 @@ public class DoorLinks {
             return false;
         }
 
-        log.debug("found a door name:{} id:{}", name, def.getId());
-        return true;
+        if (IGNORE_IDS.contains(def.getId())) {
+            log.debug("Ignoring door id {}", def.getId());
+            return false;
+        }
+
+        for (var action : def.getActions()) {
+            if (action == null) {
+                continue;
+            }
+
+            if (action.equals("Open")) {
+                log.debug("found a door name:{} id:{}", name, def.getId());
+                return true;
+            }
+        }
+
+        return false;
     }
 }
