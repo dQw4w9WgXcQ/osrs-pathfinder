@@ -53,28 +53,56 @@ public class DoorLinks {
                 .collect(Collectors.toMap(ObjectDefinition::getId, x -> x));
     }
 
-    private static boolean isDoor(ObjectDefinition def) {
-        var name = def.getName();
+    private static boolean isDoor(ObjectDefinition definition) {
+        var name = definition.getName();
         if (!NAMES.contains(name)) {
             return false;
         }
 
-        if (IGNORE_IDS.contains(def.getId())) {
-            log.debug("Ignoring door id {}", def.getId());
+        if (IGNORE_IDS.contains(definition.getId())) {
+            log.debug("Ignoring door id {}", definition.getId());
             return false;
         }
 
-        for (var action : def.getActions()) {
-            if (action == null) {
-                continue;
-            }
-
-            if (action.equals("Open")) {
-                log.debug("found a door name:{} id:{}", name, def.getId());
+        for (var action : definition.getActions()) {
+            if ("Open".equals(action)) {
+                log.debug("found a door name:{} id:{}", name, definition.getId());
                 return true;
             }
         }
 
         return false;
+    }
+
+    private static Cardinal determineDoorDirection(int type, int orientation) {
+        return switch (type) {
+            case 0 -> {
+                switch (orientation) {
+                    case 0 -> {
+                        yield Cardinal.W;
+                    }
+                    case 1 -> {
+                        yield Cardinal.N;
+                    }
+                    case 2 -> {
+                        yield Cardinal.E;
+                    }
+                    case 3 -> {
+                        yield Cardinal.S;
+                    }
+                    default -> throw new RuntimeException("type " + type + " orientation " + orientation);
+                }
+            }
+            default -> {
+                throw new RuntimeException("no handler for type " + type);
+            }
+        };
+    }
+
+    private enum Cardinal {
+        N,
+        E,
+        S,
+        W,
     }
 }

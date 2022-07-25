@@ -60,27 +60,27 @@ public class TileGrid {
 
         var mask = 0;
         if (dx == 1) {
-            mask |= TileFlags.E;
+            mask |= TileFlags.E_WALL;
 
             if (dy == 1) {
-                mask |= TileFlags.NE;
+                mask |= TileFlags.NE_WALL;
             } else if (dy == -1) {
-                mask |= TileFlags.SE;
+                mask |= TileFlags.SE_WALL;
             }
         } else if (dx == -1) {
-            mask |= TileFlags.W;
+            mask |= TileFlags.W_WALL;
 
             if (dy == 1) {
-                mask |= TileFlags.NW;
+                mask |= TileFlags.NW_WALL;
             } else if (dy == -1) {
-                mask |= TileFlags.SW;
+                mask |= TileFlags.SW_WALL;
             }
         }
 
         if (dy == 1) {
-            mask |= TileFlags.N;
+            mask |= TileFlags.N_WALL;
         } else if (dy == -1) {
-            mask |= TileFlags.S;
+            mask |= TileFlags.S_WALL;
         }
 
         log.debug("check mask: {} stringed: {}config: {}", mask, TileFlags.describe(mask), TileFlags.describe(config));
@@ -166,39 +166,40 @@ public class TileGrid {
             case 0 -> {
                 switch (orientation) {
                     case 0 -> {
-                        markTile(x, y, TileFlags.W);
+                        markTile(x, y, TileFlags.W_WALL);
                         markTile(x - 1, y, 8);
                     }
                     case 1 -> {
-                        markTile(x, y, TileFlags.N);
+                        markTile(x, y, TileFlags.N_WALL);
                         markTile(x, y + 1, 32);
                     }
                     case 2 -> {
-                        markTile(x, y, TileFlags.E);
+                        markTile(x, y, TileFlags.E_WALL);
                         markTile(x + 1, y, 128);
                     }
                     case 3 -> {
-                        markTile(x, y, TileFlags.S);
+                        markTile(x, y, TileFlags.S_WALL);
                         markTile(x, y - 1, 2);
                     }
                 }
             }
             case 1, 3 -> {
+                //pillar
                 switch (orientation) {
                     case 0 -> {
-                        markTile(x, y, TileFlags.NW);
+                        markTile(x, y, TileFlags.NW_WALL);
                         markTile(x - 1, y + 1, 16);
                     }
                     case 1 -> {
-                        markTile(x, y, TileFlags.NE);
+                        markTile(x, y, TileFlags.NE_WALL);
                         markTile(x + 1, y + 1, 64);
                     }
                     case 2 -> {
-                        markTile(x, y, TileFlags.SE);
+                        markTile(x, y, TileFlags.SE_WALL);
                         markTile(x + 1, y - 1, 1);
                     }
                     case 3 -> {
-                        markTile(x, y, TileFlags.SW);
+                        markTile(x, y, TileFlags.SW_WALL);
                         markTile(x - 1, y - 1, 4);
                     }
                 }
@@ -206,22 +207,22 @@ public class TileGrid {
             case 2 -> {
                 switch (orientation) {
                     case 0 -> {
-                        markTile(x, y, TileFlags.N | TileFlags.W);
+                        markTile(x, y, TileFlags.N_WALL | TileFlags.W_WALL);
                         markTile(x - 1, y, 8);
                         markTile(x, y + 1, 32);
                     }
                     case 1 -> {
-                        markTile(x, y, TileFlags.N | TileFlags.E);
+                        markTile(x, y, TileFlags.N_WALL | TileFlags.E_WALL);
                         markTile(x, y + 1, 32);
                         markTile(x + 1, y, 128);
                     }
                     case 2 -> {
-                        markTile(x, y, TileFlags.S | TileFlags.E);
+                        markTile(x, y, TileFlags.S_WALL | TileFlags.E_WALL);
                         markTile(x + 1, y, 128);
                         markTile(x, y - 1, 2);
                     }
                     case 3 -> {
-                        markTile(x, y, TileFlags.S | TileFlags.W);
+                        markTile(x, y, TileFlags.S_WALL | TileFlags.W_WALL);
                         markTile(x, y - 1, 2);
                         markTile(x - 1, y, 8);
                     }

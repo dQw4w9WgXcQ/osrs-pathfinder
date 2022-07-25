@@ -1,5 +1,6 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld;
 
+import com.google.common.annotations.VisibleForTesting;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -14,14 +15,14 @@ import java.util.Map;
 @Slf4j
 public class TileFlags {
     //wall
-    public static final int NW = 1;
-    public static final int N = 1 << 1;//2
-    public static final int NE = 1 << 2;//4
-    public static final int E = 1 << 3;//8
-    public static final int SE = 1 << 4;//16
-    public static final int S = 1 << 5;//32
-    public static final int SW = 1 << 6;//64
-    public static final int W = 1 << 7;//128
+    public static final int NW_WALL = 1;
+    public static final int N_WALL = 1 << 1;//2
+    public static final int NE_WALL = 1 << 2;//4
+    public static final int E_WALL = 1 << 3;//8
+    public static final int SE_WALL = 1 << 4;//16
+    public static final int S_WALL = 1 << 5;//32
+    public static final int SW_WALL = 1 << 6;//64
+    public static final int W_WALL = 1 << 7;//128
 
     //object
     public static final int OBJECT = 1 << 8;//256
@@ -35,27 +36,27 @@ public class TileFlags {
 
     public static int getOpposite(int cardinalFlag) {
         return switch (cardinalFlag) {
-            case NW -> SE;
-            case N -> S;
-            case NE -> SW;
-            case E -> W;
-            case SE -> NW;
-            case S -> N;
-            case SW -> NE;
-            case W -> E;
+            case NW_WALL -> SE_WALL;
+            case N_WALL -> S_WALL;
+            case NE_WALL -> SW_WALL;
+            case E_WALL -> W_WALL;
+            case SE_WALL -> NW_WALL;
+            case S_WALL -> N_WALL;
+            case SW_WALL -> NE_WALL;
+            case W_WALL -> E_WALL;
             default -> throw new IllegalArgumentException("not a cardinal flag: " + cardinalFlag);
         };
     }
 
     private static final Map<Integer, String> flagDescs = Map.ofEntries(
-            Map.entry(NW, "Nw"),
-            Map.entry(N, "N"),
-            Map.entry(NE, "Ne"),
-            Map.entry(E, "E"),
-            Map.entry(SE, "Se"),
-            Map.entry(S, "S"),
-            Map.entry(SW, "Sw"),
-            Map.entry(W, "W"),
+            Map.entry(NW_WALL, "Nw"),
+            Map.entry(N_WALL, "N"),
+            Map.entry(NE_WALL, "Ne"),
+            Map.entry(E_WALL, "E"),
+            Map.entry(SE_WALL, "Se"),
+            Map.entry(S_WALL, "S"),
+            Map.entry(SW_WALL, "Sw"),
+            Map.entry(W_WALL, "W"),
             Map.entry(OBJECT, "o"),
             Map.entry(FLOOR_DECORATION, "d"),
             Map.entry(FLOOR, "f"),
@@ -70,6 +71,7 @@ public class TileFlags {
         return name;
     }
 
+    @VisibleForTesting
     static List<String> getDescriptions(int config) {
         if (config == 0) {
             return List.of("?");

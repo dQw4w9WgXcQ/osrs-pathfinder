@@ -22,7 +22,7 @@ public class TileGridTest {
     void testWallFlag() {
         var grid = newGrid();
 
-        grid.markTile(X, Y, TileFlags.E);
+        grid.markTile(X, Y, TileFlags.E_WALL);
 
         log.debug("\n" + GridWorldTestUtil.stringify(grid));
 
@@ -32,7 +32,7 @@ public class TileGridTest {
     @Test
     void testDiagonalWallFlag() {
         var grid = newGrid();
-        grid.markTile(X, Y, TileFlags.NE);
+        grid.markTile(X, Y, TileFlags.NE_WALL);
 
         log.debug("\n" + GridWorldTestUtil.stringify(grid));
 

@@ -11,10 +11,10 @@ public class ContiguousComponentsTest {
     public void wall() {
         var grid = newGrid();
 
-        grid.markTile(0, 0, TileFlags.E);
-        grid.markTile(0, 0, TileFlags.N);
-        grid.markTile(1, 0, TileFlags.W);
-        grid.markTile(0, 1, TileFlags.S);
+        grid.markTile(0, 0, TileFlags.E_WALL);
+        grid.markTile(0, 0, TileFlags.N_WALL);
+        grid.markTile(1, 0, TileFlags.W_WALL);
+        grid.markTile(0, 1, TileFlags.S_WALL);
 
         var s = GridWorldTestUtil.stringify(grid);
         log.debug("\n" + s);
@@ -39,10 +39,10 @@ public class ContiguousComponentsTest {
         grid.markTile(0, 2, TileFlags.OBJECT);
         grid.markTile(1, 1, TileFlags.OBJECT);
         grid.markTile(2, 0, TileFlags.OBJECT);
-        grid.markTile(0, 1, TileFlags.NE);
-        grid.markTile(1, 0, TileFlags.NE);
-        grid.markTile(1, 2, TileFlags.SW);
-        grid.markTile(2, 1, TileFlags.SW);
+        grid.markTile(0, 1, TileFlags.NE_WALL);
+        grid.markTile(1, 0, TileFlags.NE_WALL);
+        grid.markTile(1, 2, TileFlags.SW_WALL);
+        grid.markTile(2, 1, TileFlags.SW_WALL);
 
         var s = GridWorldTestUtil.stringify(grid);
         log.debug("\n" + s);
