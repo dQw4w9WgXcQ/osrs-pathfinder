@@ -14,14 +14,14 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class DoorLinks {
-    public static final List<String> NAMES = List.of("Door", "Large door", "Gate");
+    public static final Set<String> NAMES = Set.of("Door", "Large door", "Gate");
     public static final Set<Position> IGNORE_LOCATIONS = Set.of(
             new Position(3115, 3450, 0),//hill giant hut
             new Position(3143, 3443, 0),//cooks guild
             new Position(3108, 3353, 0), new Position(3109, 3353, 0)//draynor manor entrance
     );
     public static final Set<Integer> IGNORE_IDS = Set.of(
-            
+
     );
 
     public static List<DoorLink> find(RegionData regionData, ObjectData objectData) {
@@ -46,7 +46,7 @@ public class DoorLinks {
         throw new RuntimeException("Not implemented");//todo
     }
 
-    static Map<Integer, ObjectDefinition> findDoorIds(Collection<ObjectDefinition> allDefinitions) {
+    private static Map<Integer, ObjectDefinition> findDoorIds(Collection<ObjectDefinition> allDefinitions) {
         return allDefinitions
                 .stream()
                 .filter(DoorLinks::isDoor)

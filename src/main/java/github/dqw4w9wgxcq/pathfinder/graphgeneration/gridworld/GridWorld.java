@@ -42,11 +42,11 @@ public class GridWorld {
         }
 
         for (var region : regionData.regions().values()) {
-            markFloorFromRegion(out.planes, region);
+            markFloorForRegion(out.planes, region);
         }
 
         for (var region : regionData.regions().values()) {
-            markObjectFromRegion(out.planes, region, objectData.definitions());
+            markObjectsForRegion(out.planes, region, objectData.definitions());
         }
 
         return out;
@@ -66,7 +66,7 @@ public class GridWorld {
     }
 
     @VisibleForTesting
-    static void markFloorFromRegion(TileGrid[] planes, Region region) {
+    static void markFloorForRegion(TileGrid[] planes, Region region) {
         log.debug("adding floor from region " + region.getRegionID() + " x" + region.getRegionX() + "y" + region.getRegionY());
         var baseX = region.getBaseX();
         var baseY = region.getBaseY();
@@ -91,7 +91,7 @@ public class GridWorld {
     }
 
     @VisibleForTesting
-    static void markObjectFromRegion(TileGrid[] planes, Region region, Map<Integer, ObjectDefinition> definitions) {
+    static void markObjectsForRegion(TileGrid[] planes, Region region, Map<Integer, ObjectDefinition> definitions) {
         log.debug("adding objects to planes");
 
         for (var location : region.getLocations()) {
