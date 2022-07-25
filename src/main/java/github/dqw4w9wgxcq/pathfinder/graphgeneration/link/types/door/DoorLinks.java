@@ -2,12 +2,14 @@ package github.dqw4w9wgxcq.pathfinder.graphgeneration.link.types.door;
 
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.ObjectData;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.RegionData;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.cache.definitions.ObjectDefinition;
 import net.runelite.cache.region.Position;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -15,27 +17,50 @@ import java.util.stream.Collectors;
 @Slf4j
 public class DoorLinks {
     public static final Set<String> NAMES = Set.of("Door", "Large door", "Gate");
-    public static final Set<Position> IGNORE_LOCATIONS = Set.of(
-            new Position(3115, 3450, 0),//hill giant hut
-            new Position(3143, 3443, 0),//cooks guild
-            new Position(3108, 3353, 0), new Position(3109, 3353, 0)//draynor manor entrance
-    );
     public static final Set<Integer> IGNORE_IDS = Set.of(
 
     );
+    public static final Set<Integer> ALLOW_IDS = Set.of(
 
-    public static List<DoorLink> find(RegionData regionData, ObjectData objectData) {
+    );
+
+    public static Map<Position, DoorLink> find(RegionData regionData, ObjectData objectData) {
         log.info("door links");
 
         var doorIds = findDoorIds(objectData.definitions().values());
         log.info("found {} doorIds", doorIds.size());
 
+        Map<Position, DoorLink> links = new HashMap<>();
         for (var region : regionData.regions().values()) {
             var doorCount = 0;
             for (var location : region.getLocations()) {
-                if (doorIds.containsKey(location.getId())) {
-                    doorCount++;
+                if (!doorIds.contains(location.getId())) {
+                    continue;
                 }
+
+                switch (location.getType()) {
+                    case 0, 1, 2, 3 -> {
+                        log.debug("found door at {}", location.getPosition());
+                        doorCount++;
+                    }
+                    default -> {
+                        log.info("found non-wall door type:{} id:{} at {}", location.getType(), location.getId(), location.getPosition());
+                        continue;
+                    }
+                }
+
+                var direction = determineDoorDirection(location.getType(), location.getOrientation());
+                var position = location.getPosition();
+                var destination = new Position(
+                        position.getX() + direction.getDx(),
+                        position.getY() + direction.getDy(),
+                        position.getZ()
+                );
+
+                var link = new DoorLink(destination, location.getId());
+                log.debug("new door link {}", link);
+                links.put(position, link);
+                doorCount++;
             }
 
             if (doorCount != 0) {
@@ -43,19 +68,19 @@ public class DoorLinks {
             }
         }
 
-        throw new RuntimeException("Not implemented");//todo
+        return links;
     }
 
-    private static Map<Integer, ObjectDefinition> findDoorIds(Collection<ObjectDefinition> allDefinitions) {
+    private static Set<Integer> findDoorIds(Collection<ObjectDefinition> allDefinitions) {
         return allDefinitions
                 .stream()
                 .filter(DoorLinks::isDoor)
-                .collect(Collectors.toMap(ObjectDefinition::getId, x -> x));
+                .map(ObjectDefinition::getId)
+                .collect(Collectors.toSet());
     }
 
     private static boolean isDoor(ObjectDefinition definition) {
-        var name = definition.getName();
-        if (!NAMES.contains(name)) {
+        if (!NAMES.contains(definition.getName())) {
             return false;
         }
 
@@ -64,45 +89,50 @@ public class DoorLinks {
             return false;
         }
 
-        for (var action : definition.getActions()) {
-            if ("Open".equals(action)) {
-                log.debug("found a door name:{} id:{}", name, definition.getId());
-                return true;
+        if (ALLOW_IDS.contains(definition.getId())) {
+            log.debug("Allowing door id {}", definition.getId());
+            return true;
+        }
+
+        var actions = definition.getActions();
+        if (!"Open".equals(actions[0])) {
+            log.info("door id:{} but has actions:{}", definition.getId(), actions);
+            return false;
+        }
+
+        for (var i = 1; i < actions.length; i++) {
+            if (actions[i] != null) {
+                log.info("door id:{} but has actions:{}", definition.getId(), actions);
+                return false;
             }
         }
 
-        return false;
+        return true;
     }
 
-    private static Cardinal determineDoorDirection(int type, int orientation) {
-        return switch (type) {
-            case 0 -> {
-                switch (orientation) {
-                    case 0 -> {
-                        yield Cardinal.W;
-                    }
-                    case 1 -> {
-                        yield Cardinal.N;
-                    }
-                    case 2 -> {
-                        yield Cardinal.E;
-                    }
-                    case 3 -> {
-                        yield Cardinal.S;
-                    }
-                    default -> throw new RuntimeException("type " + type + " orientation " + orientation);
-                }
-            }
-            default -> {
-                throw new RuntimeException("no handler for type " + type);
-            }
+    private static Cardinal determineDoorDirection(int locationType, int orientation) {
+        return switch (locationType) {
+            case 0 -> switch (orientation) {
+                case 0 -> Cardinal.W;
+                case 1 -> Cardinal.N;
+                case 2 -> Cardinal.E;
+                case 3 -> Cardinal.S;
+                default ->
+                        throw new IllegalArgumentException("cant handle locationType:" + locationType + " orientation:" + orientation);
+            };
+            default -> throw new IllegalArgumentException("cant handle locationType " + locationType);
         };
     }
 
+    @AllArgsConstructor
     private enum Cardinal {
-        N,
-        E,
-        S,
-        W,
+        N(0, -1),
+        E(1, 0),
+        S(0, 1),
+        W(-1, 0),
+        ;
+
+        @Getter
+        private final int dx, dy;
     }
 }

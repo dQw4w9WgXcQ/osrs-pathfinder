@@ -6,9 +6,14 @@ import net.runelite.cache.region.Position;
 
 import java.util.List;
 
-public record DoorLink(Position destination, List<LinkRequirement> requirements) implements Link {
+public record DoorLink(Position destination, int objectId) implements Link {
     @Override
     public int cost() {
         return 10;
+    }
+
+    @Override
+    public List<LinkRequirement> requirements() {
+        return List.of();
     }
 }

@@ -27,7 +27,7 @@ class Main {
     public static final File DESKTOP_DIR = new File(System.getProperty("user.home"), "Desktop");
     public static final File DEFAULT_CACHE_DIR = new File(DESKTOP_DIR, "cache");
     public static final File DEFAULT_XTEAS_FILE = new File(DESKTOP_DIR, "xteas.json");
-    public static final File DEFAULT_OUT_DIR = new File(DESKTOP_DIR, "graph");
+    public static final File DEFAULT_OUT_DIR = DESKTOP_DIR;
 
     public static void main(String... args) {
         var outFileOpt = new Option("out", true, "Output directory");
@@ -101,14 +101,14 @@ class Main {
 
         var graph = Graph.generate(cacheData);
 
-        try {
-            LeafletImages.write(graph,new File(outDir,"leaflet"));
-        } catch (IOException e) {
-            log.error("writing leaflet images failed");
-            log.info(null, e);
-            System.exit(ExitCodes.LEAFLET_IMAGE_WRITE_FAIL);
-            return;
-        }
+//        try {
+//            LeafletImages.write(graph,new File(outDir,"leaflet"));
+//        } catch (IOException e) {
+//            log.error("writing leaflet images failed");
+//            log.info(null, e);
+//            System.exit(ExitCodes.LEAFLET_IMAGE_WRITE_FAIL);
+//            return;
+//        }
 
 //        try {
 //            graph.save(outDir);

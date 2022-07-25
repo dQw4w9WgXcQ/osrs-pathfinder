@@ -1,4 +1,4 @@
-package github.dqw4w9wgxcq.pathfinder.graphgeneration.link.types.plane;
+package github.dqw4w9wgxcq.pathfinder.graphgeneration.link.types.stair;
 
 import com.google.common.base.Preconditions;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.ObjectData;
@@ -15,14 +15,14 @@ import java.util.List;
  */
 @AllArgsConstructor
 @Slf4j
-public class PlaneLinks {
+public class StairLinks {
     public static final String UP_ACTION = "Climb-up";
     public static final String DOWN_ACTION = "Climb-down";
 
-    public static List<PlaneLink> find(RegionData regionData, ObjectData objectData) {
+    public static List<StairLink> find(RegionData regionData, ObjectData objectData) {
         var regions = regionData.regions().values();
         var definitions = objectData.definitions();
-        var out = new ArrayList<PlaneLink>();
+        var out = new ArrayList<StairLink>();
         for (var region : regions) {
             for (var location : region.getLocations()) {
                 var id = location.getId();

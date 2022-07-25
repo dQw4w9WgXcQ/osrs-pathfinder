@@ -149,7 +149,7 @@ public class GridWorld {
                 //no collisions
             }
             //game object
-            case 9,10, 11 -> {
+            case 9, 10, 11 -> {
                 if (interactType != 0) {
                     grid.markAreaObject(x, y, sizeX, sizeY, false);
                 }
