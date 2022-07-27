@@ -16,4 +16,9 @@ public record DoorLink(Position destination, int objectId) implements Link {
     public List<LinkRequirement> requirements() {
         return List.of();
     }
+
+    @Override
+    public boolean bidirectional() {
+        return true;
+    }
 }

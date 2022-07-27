@@ -2,16 +2,14 @@ package github.dqw4w9wgxcq.pathfinder.graphgeneration.link.types.door;
 
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.ObjectData;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.RegionData;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld.ContiguousComponents;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld.GridWorld;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld.Wall;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.cache.definitions.ObjectDefinition;
 import net.runelite.cache.region.Position;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -44,7 +42,7 @@ public class DoorLinks {
                         doorCount++;
                     }
                     default -> {
-                        log.info("found non-wall door type:{} id:{} at {}", location.getType(), location.getId(), location.getPosition());
+                        log.debug("found non-wall door type:{} id:{} at {}", location.getType(), location.getId(), location.getPosition());
                         continue;
                     }
                 }
@@ -69,6 +67,41 @@ public class DoorLinks {
         }
 
         return links;
+    }
+
+    /**
+     * Some doors can be within the same component, just remove wall flags from world in that case
+     *
+     * @return remaining doors that actually link between two different components
+     */
+    public static Map<Position, DoorLink> removeInterComponentDoorsFromWorld(Map<Position, DoorLink> doorLinks, List<ContiguousComponents> componentsPlanes, GridWorld world) {
+        log.info("removing inter-component doors, {} links", doorLinks.size());
+
+        var remainingDoors = new HashMap<Position, DoorLink>();
+        for (var entry : doorLinks.entrySet()) {
+            var position = entry.getKey();
+            var doorLink = entry.getValue();
+
+            var x = position.getX();
+            var y = position.getY();
+            var destX = doorLink.destination().getX();
+            var destY = doorLink.destination().getY();
+
+            var idMap = componentsPlanes.get(position.getZ()).idMap();
+            var component = idMap[x][y];
+            var destComponent = idMap[destX][destY];
+
+            if (component == destComponent) {
+                log.info("intercomponent door {},{} to {},{} component:{} to:{}, in plane:{}", x, y, x, y, component, destComponent, position.getZ());
+                var wall = Wall.fromDXY(destX - x, destY - y);
+                world.getPlane(position.getZ()).unmarkWall(x, y, wall);
+            } else {
+                remainingDoors.put(position, doorLink);
+            }
+        }
+
+        log.info("remaining doors {}/{}", remainingDoors.size(), doorLinks.size());
+        return remainingDoors;
     }
 
     private static Set<Integer> findDoorIds(Collection<ObjectDefinition> allDefinitions) {
@@ -96,13 +129,13 @@ public class DoorLinks {
 
         var actions = definition.getActions();
         if (!"Open".equals(actions[0])) {
-            log.info("door id:{} but has actions:{}", definition.getId(), actions);
+            log.debug("door id:{} but has actions:{}", definition.getId(), actions);
             return false;
         }
 
         for (var i = 1; i < actions.length; i++) {
             if (actions[i] != null) {
-                log.info("door id:{} but has actions:{}", definition.getId(), actions);
+                log.debug("door id:{} but has actions:{}", definition.getId(), actions);
                 return false;
             }
         }
@@ -110,29 +143,17 @@ public class DoorLinks {
         return true;
     }
 
-    private static Cardinal determineDoorDirection(int locationType, int orientation) {
+    private static Wall determineDoorDirection(int locationType, int orientation) {
         return switch (locationType) {
             case 0 -> switch (orientation) {
-                case 0 -> Cardinal.W;
-                case 1 -> Cardinal.N;
-                case 2 -> Cardinal.E;
-                case 3 -> Cardinal.S;
+                case 0 -> Wall.W;
+                case 1 -> Wall.N;
+                case 2 -> Wall.E;
+                case 3 -> Wall.S;
                 default ->
                         throw new IllegalArgumentException("cant handle locationType:" + locationType + " orientation:" + orientation);
             };
             default -> throw new IllegalArgumentException("cant handle locationType " + locationType);
         };
-    }
-
-    @AllArgsConstructor
-    private enum Cardinal {
-        N(0, -1),
-        E(1, 0),
-        S(0, 1),
-        W(-1, 0),
-        ;
-
-        @Getter
-        private final int dx, dy;
     }
 }

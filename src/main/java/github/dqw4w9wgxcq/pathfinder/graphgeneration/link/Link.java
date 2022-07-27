@@ -14,4 +14,8 @@ public interface Link {
     int cost();
 
     List<LinkRequirement> requirements();
+
+    default boolean bidirectional() {
+        return false;
+    }
 }

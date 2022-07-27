@@ -15,23 +15,23 @@ public class TileGrid {
     @Getter
     private final int sizeX, sizeY;
 
-    private final int[][] configs;
+    private final int[][] tiles;
 
     TileGrid(int sizeX, int sizeY) {
         log.info("new TileGrid with size size x:" + sizeX + " y:" + sizeY);
 
-        configs = new int[sizeX][sizeY];
+        tiles = new int[sizeX][sizeY];
 
         this.sizeX = sizeX;
         this.sizeY = sizeY;
     }
 
     public int getConfig(int x, int y) {
-        return configs[x][y];
+        return tiles[x][y];
     }
 
     public boolean checkFlag(int x, int y, int mask) {
-        return (configs[x][y] & mask) != 0;
+        return (tiles[x][y] & mask) != 0;
     }
 
     public boolean canTravelInDirection(int x, int y, int dx, int dy) {
@@ -55,8 +55,8 @@ public class TileGrid {
             return false;
         }
 
-        var config = configs[x][y];
-        var destinationConfig = configs[x + dx][y + dy];
+        var config = tiles[x][y];
+        var destinationConfig = tiles[x + dx][y + dy];
 
         var mask = 0;
         if (dx == 1) {
@@ -103,6 +103,18 @@ public class TileGrid {
         return true;
     }
 
+    public void unmarkWall(int x, int y, Wall wall) {
+        log.debug("unmarking wall at " + x + "," + y + " wall:" + wall);
+
+        Preconditions.checkArgument(
+                x >= 0 && y >= 0 && x < sizeX && y < sizeY,
+                "out of bounds: size:" + sizeX + "," + sizeY + ", point: " + x + "," + y
+        );
+
+        tiles[x][y] &= ~wall.getFlag();
+        tiles[x + wall.getDx()][y + wall.getDy()] &= ~wall.oppositeFlag();
+    }
+
     void markTile(int x, int y, int flag) {
         log.debug("marking flag " + flag + " " + x + "x " + y + "y");
 
@@ -111,7 +123,7 @@ public class TileGrid {
                 "expected: x <" + sizeX + ", y <" + sizeY + ", found: " + x + "," + y + " flags: " + flag
         );
 
-        var updatedConfig = configs[x][y] |= flag;
+        var updatedConfig = tiles[x][y] |= flag;
         log.debug("updated config: {}", TileFlags.describe(updatedConfig));
     }
 
@@ -155,14 +167,8 @@ public class TileGrid {
                 "expected: 3 >= locationType >= 0, 3 >= orientation >= 0, found: x:%d y:%d locationType:%d orientation:%d", x, y, locationType, orientation
         );
 
-        method3878(x, y, locationType, orientation);
-    }
-
-    /**
-     * copy pasted from decompiled game client
-     */
-    private void method3878(int x, int y, int type, int orientation) {
-        switch (type) {
+        //copy-pasted from decompiled client
+        switch (locationType) {
             case 0 -> {
                 switch (orientation) {
                     case 0 -> {
@@ -232,8 +238,8 @@ public class TileGrid {
     }
 
     @VisibleForTesting
-    int[][] getConfigs() {
-        return configs;
+    int[][] getTileArray() {
+        return tiles;
     }
 
     @Override

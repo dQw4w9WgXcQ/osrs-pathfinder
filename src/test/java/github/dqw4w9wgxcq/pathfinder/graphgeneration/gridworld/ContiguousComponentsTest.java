@@ -21,7 +21,7 @@ public class ContiguousComponentsTest {
 
         var components = ContiguousComponents.findIn(grid);
 
-        var s2 = GridWorldTestUtil.stringify(components.map());
+        var s2 = GridWorldTestUtil.stringify(components.idMap());
         log.debug("\n" + s2);
 
         log.debug("components: {}", components);
@@ -49,7 +49,7 @@ public class ContiguousComponentsTest {
 
         var components = ContiguousComponents.findIn(grid);
 
-        var s2 = GridWorldTestUtil.stringify(components.map());
+        var s2 = GridWorldTestUtil.stringify(components.idMap());
         log.debug("\n" + s2);
 
         log.debug("components: {}", components);
@@ -67,7 +67,7 @@ public class ContiguousComponentsTest {
         grid.markAreaObject(1, 0, 1, 1, false);
         grid.markAreaObject(1, 1, 1, 1, true);
         var components = ContiguousComponents.findIn(grid);
-        var s = GridWorldTestUtil.stringify(components.map());
+        var s = GridWorldTestUtil.stringify(components.idMap());
         log.debug("\n{}", s);
 
         Assertions.assertEquals(2, components.sizes().size());
@@ -80,7 +80,7 @@ public class ContiguousComponentsTest {
         grid.markAreaObject(1, 0, 1, 1, false);
         grid.markAreaObject(1, 1, 1, 1, true);
         var components = ContiguousComponents.findIn(grid);
-        var s = GridWorldTestUtil.stringify(components.map());
+        var s = GridWorldTestUtil.stringify(components.idMap());
         log.debug("\n{}", s);
 
         Assertions.assertEquals(0, components.sizes().stream().mapToInt(Integer::intValue).sum());

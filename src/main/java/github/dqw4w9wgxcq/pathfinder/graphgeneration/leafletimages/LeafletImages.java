@@ -24,7 +24,7 @@ public class LeafletImages {
         var planes = graph.components();
         for (var plane = 0; plane < planes.size(); plane++) {
             var components = planes.get(plane);
-            var map = components.map();
+            var map = components.idMap();
             var mapWidth = map.length;
             var mapHeight = map[0].length;
 

@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.*;
 
 @Slf4j
-public record ContiguousComponents(int[][] map, List<Integer> sizes) {
+public record ContiguousComponents(int[][] idMap, List<Integer> sizes) {
     public static List<ContiguousComponents> findIn(GridWorld gridWorld) {
         log.info("Finding contiguous components");
         return Arrays.stream(gridWorld.getPlanes())

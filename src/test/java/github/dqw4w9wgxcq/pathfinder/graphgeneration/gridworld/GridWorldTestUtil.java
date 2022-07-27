@@ -2,7 +2,7 @@ package github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld;
 
 public class GridWorldTestUtil {
     static String stringify(TileGrid grid) {
-        return stringify(toDescriptions(grid.getConfigs()));
+        return stringify(toDescriptions(grid.getTileArray()));
     }
 
     static String stringify(int[][] map) {

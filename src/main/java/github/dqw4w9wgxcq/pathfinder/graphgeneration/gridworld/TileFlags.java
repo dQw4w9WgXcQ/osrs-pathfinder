@@ -34,8 +34,8 @@ public class TileFlags {
     //this flag is used in the game client to represent "valid" tiles in a loaded scene
     public static final int HAVE_DATA = 1 << 24;//16777216
 
-    public static int getOpposite(int cardinalFlag) {
-        return switch (cardinalFlag) {
+    public static int getOpposite(int wallFlag) {
+        return switch (wallFlag) {
             case NW_WALL -> SE_WALL;
             case N_WALL -> S_WALL;
             case NE_WALL -> SW_WALL;
@@ -44,7 +44,7 @@ public class TileFlags {
             case S_WALL -> N_WALL;
             case SW_WALL -> NE_WALL;
             case W_WALL -> E_WALL;
-            default -> throw new IllegalArgumentException("not a cardinal flag: " + cardinalFlag);
+            default -> throw new IllegalArgumentException("not a cardinal flag: " + wallFlag);
         };
     }
 
