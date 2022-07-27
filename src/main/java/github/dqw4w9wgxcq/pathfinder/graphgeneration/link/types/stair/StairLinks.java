@@ -20,7 +20,7 @@ public class StairLinks {
     public static final String DOWN_ACTION = "Climb-down";
 
     public static List<StairLink> find(RegionData regionData, ObjectData objectData) {
-        var regions = regionData.regions().values();
+        var regions = regionData.regions();
         var definitions = objectData.definitions();
         var out = new ArrayList<StairLink>();
         for (var region : regions) {

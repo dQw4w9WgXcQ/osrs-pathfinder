@@ -12,6 +12,7 @@ import net.runelite.cache.region.Location;
 import net.runelite.cache.region.Region;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -34,20 +35,18 @@ public class GridWorld {
         Arrays.setAll(planes, x -> new TileGrid(sizeX, sizeY));
     }
 
-    public static GridWorld create(RegionData regionData, ObjectData objectData) {
+    public static GridWorld create(RegionData regionData, ObjectData objectData, List<Location> objectLocations) {
         var out = new GridWorld(regionData.highestRegionX(), regionData.highestRegionY());
 
-        for (var region : regionData.regions().values()) {
+        for (var region : regionData.regions()) {
             markRegionValid(out.planes, region);
         }
 
-        for (var region : regionData.regions().values()) {
+        for (var region : regionData.regions()) {
             markFloorForRegion(out.planes, region);
         }
 
-        for (var region : regionData.regions().values()) {
-            markObjectsForRegion(out.planes, region, objectData.definitions());
-        }
+        markObjectLocations(out.planes, objectLocations, objectData.definitions());
 
         return out;
     }
@@ -74,11 +73,10 @@ public class GridWorld {
         for (var renderPlane = 0; renderPlane < planes.length; renderPlane++) {
             for (var x = 0; x < RegionUtil.SIZE; x++) {
                 for (var y = 0; y < RegionUtil.SIZE; y++) {
-                    var tileSetting = region.getTileSetting(renderPlane, x, y);
-                    if ((tileSetting & 1) == 1) {
+                    if ((region.getTileSetting(renderPlane, x, y) & 0x1) == 0x1) {
                         var collisionPlane = renderPlane;
-                        if ((region.getTileSetting(1, x, y) & 2) == 2) {
-                            collisionPlane = renderPlane - 1;
+                        if ((region.getTileSetting(1, x, y) & 0x2) == 0x2) {
+                            collisionPlane--;
                         }
 
                         if (collisionPlane >= 0) {
@@ -91,22 +89,11 @@ public class GridWorld {
     }
 
     @VisibleForTesting
-    static void markObjectsForRegion(TileGrid[] planes, Region region, Map<Integer, ObjectDefinition> definitions) {
+    static void markObjectLocations(TileGrid[] planes, List<Location> locations, Map<Integer, ObjectDefinition> definitions) {
         log.debug("adding objects to planes");
 
-        for (var location : region.getLocations()) {
-            var position = location.getPosition();
-            var x = position.getX() - region.getBaseX();
-            var y = position.getY() - region.getBaseY();
-            var renderPlane = position.getZ();
-            var collisionPlane = renderPlane;
-            if ((region.getTileSetting(1, x, y) & 2) == 2) {
-                collisionPlane = renderPlane - 1;
-            }
-
-            if (collisionPlane >= 0) {
-                markObject(planes[collisionPlane], location, definitions.get(location.getId()));
-            }
+        for (var location : locations) {
+            markObject(planes[location.getPosition().getZ()], location, definitions.get(location.getId()));
         }
     }
 
@@ -161,7 +148,6 @@ public class GridWorld {
                 }
             }
             default -> {
-                //
                 if (locationType >= 12 && locationType <= 21) {
                     if (interactType != 0) {
                         grid.markAreaObject(x, y, sizeX, sizeY, false);

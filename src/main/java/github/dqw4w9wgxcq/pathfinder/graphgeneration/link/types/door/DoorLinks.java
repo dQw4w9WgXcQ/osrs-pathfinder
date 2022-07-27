@@ -7,6 +7,7 @@ import github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld.GridWorld;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld.Wall;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.cache.definitions.ObjectDefinition;
+import net.runelite.cache.region.Location;
 import net.runelite.cache.region.Position;
 
 import java.util.*;
@@ -22,48 +23,39 @@ public class DoorLinks {
 
     );
 
-    public static Map<Position, DoorLink> find(RegionData regionData, ObjectData objectData) {
+    public static Map<Position, DoorLink> find(List<Location> objectLocations, Map<Integer, ObjectDefinition> objectDefinitions) {
         log.info("door links");
 
-        var doorIds = findDoorIds(objectData.definitions().values());
+        var doorIds = findDoorIds(objectDefinitions.values());
         log.info("found {} doorIds", doorIds.size());
 
         Map<Position, DoorLink> links = new HashMap<>();
-        for (var region : regionData.regions().values()) {
-            var doorCount = 0;
-            for (var location : region.getLocations()) {
-                if (!doorIds.contains(location.getId())) {
+        for (var location : objectLocations) {
+            if (!doorIds.contains(location.getId())) {
+                continue;
+            }
+
+            switch (location.getType()) {
+                case 0, 1, 2, 3 -> {
+                    log.debug("found door at {}", location.getPosition());
+                }
+                default -> {
+                    log.debug("found non-wall door type:{} id:{} at {}", location.getType(), location.getId(), location.getPosition());
                     continue;
                 }
-
-                switch (location.getType()) {
-                    case 0, 1, 2, 3 -> {
-                        log.debug("found door at {}", location.getPosition());
-                        doorCount++;
-                    }
-                    default -> {
-                        log.debug("found non-wall door type:{} id:{} at {}", location.getType(), location.getId(), location.getPosition());
-                        continue;
-                    }
-                }
-
-                var direction = determineDoorDirection(location.getType(), location.getOrientation());
-                var position = location.getPosition();
-                var destination = new Position(
-                        position.getX() + direction.getDx(),
-                        position.getY() + direction.getDy(),
-                        position.getZ()
-                );
-
-                var link = new DoorLink(destination, location.getId());
-                log.debug("new door link {}", link);
-                links.put(position, link);
-                doorCount++;
             }
 
-            if (doorCount != 0) {
-                log.debug("Found {} doors in region x:{} y:{}", doorCount, region.getRegionX(), region.getRegionY());
-            }
+            var direction = determineDoorDirection(location.getType(), location.getOrientation());
+            var position = location.getPosition();
+            var destination = new Position(
+                    position.getX() + direction.getDx(),
+                    position.getY() + direction.getDy(),
+                    position.getZ()
+            );
+
+            var link = new DoorLink(destination, location.getId());
+            log.debug("new door link {}", link);
+            links.put(position, link);
         }
 
         return links;
@@ -74,7 +66,7 @@ public class DoorLinks {
      *
      * @return remaining doors that actually link between two different components
      */
-    public static Map<Position, DoorLink> removeInterComponentDoorsFromWorld(Map<Position, DoorLink> doorLinks, List<ContiguousComponents> componentsPlanes, GridWorld world) {
+    public static Map<Position, DoorLink> removeInterComponentDoorsFromWorld(Map<Position, DoorLink> doorLinks, List<ContiguousComponents> components, GridWorld world) {
         log.info("removing inter-component doors, {} links", doorLinks.size());
 
         var remainingDoors = new HashMap<Position, DoorLink>();
@@ -87,12 +79,12 @@ public class DoorLinks {
             var destX = doorLink.destination().getX();
             var destY = doorLink.destination().getY();
 
-            var idMap = componentsPlanes.get(position.getZ()).idMap();
+            var idMap = components.get(position.getZ()).idMap();
             var component = idMap[x][y];
             var destComponent = idMap[destX][destY];
 
             if (component == destComponent) {
-                log.info("intercomponent door {},{} to {},{} component:{} to:{}, in plane:{}", x, y, x, y, component, destComponent, position.getZ());
+                log.info("intercomponent door {},{} dest:{},{} component:{} dest:{}, in plane:{}", x, y, destX, destY, component, destComponent, position.getZ());
                 var wall = Wall.fromDXY(destX - x, destY - y);
                 world.getPlane(position.getZ()).unmarkWall(x, y, wall);
             } else {

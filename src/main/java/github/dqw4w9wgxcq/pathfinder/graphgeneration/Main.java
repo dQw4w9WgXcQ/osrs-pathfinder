@@ -101,14 +101,14 @@ class Main {
 
         var graph = Graph.generate(cacheData);
 
-//        try {
-//            LeafletImages.write(graph,new File(outDir,"leaflet"));
-//        } catch (IOException e) {
-//            log.error("writing leaflet images failed");
-//            log.info(null, e);
-//            System.exit(ExitCodes.LEAFLET_IMAGE_WRITE_FAIL);
-//            return;
-//        }
+        try {
+            LeafletImages.write(graph,new File(outDir,"leaflet"));
+        } catch (IOException e) {
+            log.error("writing leaflet images failed");
+            log.info(null, e);
+            System.exit(ExitCodes.LEAFLET_IMAGE_WRITE_FAIL);
+            return;
+        }
 
 //        try {
 //            graph.save(outDir);
