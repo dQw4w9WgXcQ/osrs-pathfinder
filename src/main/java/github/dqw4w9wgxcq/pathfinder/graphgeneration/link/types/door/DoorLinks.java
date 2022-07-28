@@ -1,7 +1,5 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.link.types.door;
 
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.ObjectData;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.RegionData;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld.ContiguousComponents;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld.GridWorld;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld.Wall;
@@ -83,8 +81,13 @@ public class DoorLinks {
             var component = idMap[x][y];
             var destComponent = idMap[destX][destY];
 
+            if (component == -1 || destComponent == -1) {
+                log.debug("door at {} has component/destComponent -1", position);
+                continue;
+            }
+
             if (component == destComponent) {
-                log.info("intercomponent door {},{} dest:{},{} component:{} dest:{}, in plane:{}", x, y, destX, destY, component, destComponent, position.getZ());
+                log.debug("intercomponent door {},{} dest:{},{} component:{} dest:{}, in plane:{}", x, y, destX, destY, component, destComponent, position.getZ());
                 var wall = Wall.fromDXY(destX - x, destY - y);
                 world.getPlane(position.getZ()).unmarkWall(x, y, wall);
             } else {
