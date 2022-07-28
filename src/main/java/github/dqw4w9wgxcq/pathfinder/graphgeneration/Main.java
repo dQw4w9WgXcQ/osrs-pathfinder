@@ -3,7 +3,7 @@ package github.dqw4w9wgxcq.pathfinder.graphgeneration;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.leafletimages.LeafletImages;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.output.leafletimages.LeafletImages;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.*;
 
@@ -102,7 +102,7 @@ class Main {
         var graph = Graph.generate(cacheData);
 
         try {
-            LeafletImages.write(graph,new File(outDir,"leaflet"));
+            LeafletImages.write(graph.components(), new File(outDir, "leaflet"));
         } catch (IOException e) {
             log.error("writing leaflet images failed");
             log.info(null, e);

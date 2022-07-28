@@ -1,7 +1,5 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.link.types.door;
 
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld.ContiguousComponents;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld.GridWorld;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld.Wall;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.cache.definitions.ObjectDefinition;
@@ -57,46 +55,6 @@ public class DoorLinks {
         }
 
         return links;
-    }
-
-    /**
-     * Some doors can be within the same component, just remove wall flags from world in that case
-     *
-     * @return remaining doors that actually link between two different components
-     */
-    public static Map<Position, DoorLink> removeInterComponentDoorsFromWorld(Map<Position, DoorLink> doorLinks, List<ContiguousComponents> components, GridWorld world) {
-        log.info("removing inter-component doors, {} links", doorLinks.size());
-
-        var remainingDoors = new HashMap<Position, DoorLink>();
-        for (var entry : doorLinks.entrySet()) {
-            var position = entry.getKey();
-            var doorLink = entry.getValue();
-
-            var x = position.getX();
-            var y = position.getY();
-            var destX = doorLink.destination().getX();
-            var destY = doorLink.destination().getY();
-
-            var idMap = components.get(position.getZ()).idMap();
-            var component = idMap[x][y];
-            var destComponent = idMap[destX][destY];
-
-            if (component == -1 || destComponent == -1) {
-                log.debug("door at {} has component/destComponent -1", position);
-                continue;
-            }
-
-            if (component == destComponent) {
-                log.debug("intercomponent door {},{} dest:{},{} component:{} dest:{}, in plane:{}", x, y, destX, destY, component, destComponent, position.getZ());
-                var wall = Wall.fromDXY(destX - x, destY - y);
-                world.getPlane(position.getZ()).unmarkWall(x, y, wall);
-            } else {
-                remainingDoors.put(position, doorLink);
-            }
-        }
-
-        log.info("remaining doors {}/{}", remainingDoors.size(), doorLinks.size());
-        return remainingDoors;
     }
 
     private static Set<Integer> findDoorIds(Collection<ObjectDefinition> allDefinitions) {

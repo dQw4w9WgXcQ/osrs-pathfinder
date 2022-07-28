@@ -1,14 +1,15 @@
-package github.dqw4w9wgxcq.pathfinder.graphgeneration.leafletimages;
+package github.dqw4w9wgxcq.pathfinder.graphgeneration.output.leafletimages;
 
 import com.google.common.base.Preconditions;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.Graph;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.RegionUtil;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld.ContiguousComponents;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * creates images used by <a href="https://leafletjs.com/">leaflet</a> in visualizer website
@@ -17,14 +18,13 @@ public class LeafletImages {
     public static final int MAX_ZOOM = 1;
     public static final int MIN_ZOOM = -3;
 
-    public static void write(Graph graph, File outDir) throws IOException {
+    public static void write(ContiguousComponents components, File outDir) throws IOException {
         var componentsDir = new File(outDir, "components");
         componentsDir.mkdirs();
 
-        var planes = graph.components();
-        for (var plane = 0; plane < planes.size(); plane++) {
-            var components = planes.get(plane);
-            var map = components.idMap();
+        var planes = components.map();
+        for (var plane = 0; plane < planes.length; plane++) {
+            var map = planes[plane];
             var mapWidth = map.length;
             var mapHeight = map[0].length;
 

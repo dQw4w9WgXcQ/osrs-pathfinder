@@ -11,7 +11,7 @@ import java.util.*;
 public class Algo {
     public static @Nullable List<Point> aStar(TileGrid map, Point start, Point end) {
         var seenFrom = new HashMap<Point, Point>();
-        var frontier = new PriorityQueue<Point>(Comparator.comparingDouble(p -> chebyshev(p, end)));
+        var frontier = new PriorityQueue<Point>(Comparator.comparingInt(p -> chebyshevDistance(p, end)));
 
         frontier.add(start);
         while (!frontier.isEmpty()) {
@@ -48,7 +48,7 @@ public class Algo {
         return null;
     }
 
-    private static int chebyshev(Point from, Point to) {
+    public static int chebyshevDistance(Point from, Point to) {
         return Math.max(Math.abs(from.x() - to.x()), Math.abs(from.y() - to.y()));
     }
 

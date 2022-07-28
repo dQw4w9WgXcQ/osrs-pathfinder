@@ -10,24 +10,25 @@ public class ContiguousComponentsTest {
     @Test
     public void wall() {
         var grid = newGrid();
-
         grid.markTile(0, 0, TileFlags.E_WALL);
         grid.markTile(0, 0, TileFlags.N_WALL);
         grid.markTile(1, 0, TileFlags.W_WALL);
         grid.markTile(0, 1, TileFlags.S_WALL);
 
-        var s = GridWorldTestUtil.stringify(grid);
+        var planes = new TileGrid[]{grid};
+
+        var s = GridWorldTestUtil.stringify(planes[0]);
         log.debug("\n" + s);
 
-        var components = ContiguousComponents.findIn(grid);
+        var components = ContiguousComponents.findIn(planes);
 
-        var s2 = GridWorldTestUtil.stringify(components.idMap());
+        var s2 = GridWorldTestUtil.stringify(components.map()[0]);
         log.debug("\n" + s2);
 
         log.debug("components: {}", components);
 
         var sum = components.sizes().stream().mapToInt(Integer::intValue).sum();
-        Assertions.assertEquals(grid.getSizeX() * grid.getSizeY(), sum);
+        Assertions.assertEquals(planes[0].getSizeX() * planes[0].getSizeY(), sum);
 
         Assertions.assertEquals(2, components.sizes().size());
     }
@@ -47,9 +48,9 @@ public class ContiguousComponentsTest {
         var s = GridWorldTestUtil.stringify(grid);
         log.debug("\n" + s);
 
-        var components = ContiguousComponents.findIn(grid);
+        var components = ContiguousComponents.findIn(new TileGrid[]{grid});
 
-        var s2 = GridWorldTestUtil.stringify(components.idMap());
+        var s2 = GridWorldTestUtil.stringify(components.map()[0]);
         log.debug("\n" + s2);
 
         log.debug("components: {}", components);
@@ -66,8 +67,8 @@ public class ContiguousComponentsTest {
         grid.markAreaObject(0, 1, 1, 1, true);
         grid.markAreaObject(1, 0, 1, 1, false);
         grid.markAreaObject(1, 1, 1, 1, true);
-        var components = ContiguousComponents.findIn(grid);
-        var s = GridWorldTestUtil.stringify(components.idMap());
+        var components = ContiguousComponents.findIn(new TileGrid[]{grid});
+        var s = GridWorldTestUtil.stringify(components.map()[0]);
         log.debug("\n{}", s);
 
         Assertions.assertEquals(2, components.sizes().size());
@@ -79,8 +80,8 @@ public class ContiguousComponentsTest {
         grid.markAreaObject(0, 1, 1, 1, true);
         grid.markAreaObject(1, 0, 1, 1, false);
         grid.markAreaObject(1, 1, 1, 1, true);
-        var components = ContiguousComponents.findIn(grid);
-        var s = GridWorldTestUtil.stringify(components.idMap());
+        var components = ContiguousComponents.findIn(new TileGrid[]{grid});
+        var s = GridWorldTestUtil.stringify(components.map()[0]);
         log.debug("\n{}", s);
 
         Assertions.assertEquals(0, components.sizes().stream().mapToInt(Integer::intValue).sum());

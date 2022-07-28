@@ -1,53 +1,56 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld;
 
-import com.google.common.annotations.VisibleForTesting;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Point;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
-public record ContiguousComponents(int[][] idMap, List<Integer> sizes) {
-    public static List<ContiguousComponents> findIn(GridWorld gridWorld) {
-        log.info("Finding contiguous components");
-        return Arrays.stream(gridWorld.getPlanes())
-                .parallel()
-                .map(ContiguousComponents::findIn)
-                .toList();
+public record ContiguousComponents(int[][][] map, List<Integer> sizes) {
+    public int count() {
+        return sizes.size();
     }
 
-    @VisibleForTesting
-    static ContiguousComponents findIn(TileGrid grid) {
-        var componentsMap = new int[grid.getSizeX()][grid.getSizeY()];
-        for (var column : componentsMap) {
-            Arrays.fill(column, -1);
-        }
-
+    public static ContiguousComponents findIn(TileGrid[] planes) {
         var sizes = new ArrayList<Integer>();
+
+        var map = new int[planes.length][planes[0].getSizeX()][planes[0].getSizeY()];
+        for (var plane : map) {
+            for (var row : plane) {
+                Arrays.fill(row, -1);
+            }
+        }
 
         var id = 0;
 
-        for (var x = 0; x < grid.getSizeX(); x++) {
-            for (var y = 0; y < grid.getSizeY(); y++) {
-                if (componentsMap[x][y] != -1) {
-                    continue;
+        for (var z = 0; z < planes.length; z++) {
+            var grid = planes[z];
+
+            for (var x = 0; x < grid.getSizeX(); x++) {
+                for (var y = 0; y < grid.getSizeY(); y++) {
+                    if (map[z][x][y] != -1) {
+                        continue;
+                    }
+
+                    if (!grid.checkFlag(x, y, TileFlags.HAVE_DATA)) {
+                        continue;
+                    }
+
+                    if (grid.checkFlag(x, y, TileFlags.ANY_FULL)) {
+                        continue;
+                    }
+
+                    log.debug("new component id:{} at x:{} y:{}", id, x, y);
+                    var size = flood(map[z], grid, x, y, id);
+                    log.debug("new component id:{} size:{}", id, size);
+
+                    sizes.add(size);
+
+                    id++;
                 }
-
-                if (!grid.checkFlag(x, y, TileFlags.HAVE_DATA)) {
-                    continue;
-                }
-
-                if (grid.checkFlag(x, y, TileFlags.ANY_FULL)) {
-                    continue;
-                }
-
-                log.debug("new component id:{} at x:{} y:{}", id, x, y);
-                var size = flood(componentsMap, grid, x, y, id);
-                log.debug("new component id:{} size:{}", id, size);
-
-                sizes.add(size);
-
-                id++;
             }
         }
 
@@ -57,7 +60,7 @@ public record ContiguousComponents(int[][] idMap, List<Integer> sizes) {
                 sizes.stream().mapToInt(Integer::intValue).max().orElse(0),
                 sizes.stream().mapToInt(Integer::intValue).average().orElse(0),
                 sizes.stream().mapToInt(Integer::intValue).sum());
-        return new ContiguousComponents(componentsMap, sizes);
+        return new ContiguousComponents(map, sizes);
     }
 
     //in place algo cuts mem usage by ~4gb
@@ -87,7 +90,6 @@ public record ContiguousComponents(int[][] idMap, List<Integer> sizes) {
                             frontier.push(new Point(x, y));
                             size++;
                         } else {
-                            //assert over ISE to disable for performance
                             assert map[x][y] == id : "tile already assigned to another component at x:" + x + "y:" + y + ".  means canTravelInDirection is not bidirectional somewhere";
                         }
                     }
