@@ -9,7 +9,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * creates images used by <a href="https://leafletjs.com/">leaflet</a> in visualizer website
@@ -20,6 +19,7 @@ public class LeafletImages {
 
     public static void write(ContiguousComponents components, File outDir) throws IOException {
         var componentsDir = new File(outDir, "components");
+        //noinspection ResultOfMethodCallIgnored
         componentsDir.mkdirs();
 
         var planes = components.map();

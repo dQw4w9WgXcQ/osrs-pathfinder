@@ -18,7 +18,7 @@ public class TileGrid {
     private final int[][] tiles;
 
     TileGrid(int sizeX, int sizeY) {
-        log.info("new TileGrid with size size x:" + sizeX + " y:" + sizeY);
+        log.info("new TileGrid with size x:" + sizeX + " y:" + sizeY);
 
         tiles = new int[sizeX][sizeY];
 

@@ -24,7 +24,7 @@ public record Graph(ContiguousComponents components) {
 
         var doorLinks = DoorLinks.find(objectLocations, data.objectData().definitions());
 
-        doorLinks = removeInterComponentDoorsFromWorld(gridWorld, doorLinks, components);
+        doorLinks = removeInterComponentDoors(gridWorld, doorLinks, components);
 
         return new Graph(components);
     }
@@ -68,7 +68,7 @@ public record Graph(ContiguousComponents components) {
      *
      * @return remaining doors that actually link between two different components
      */
-    private static Map<Position, DoorLink> removeInterComponentDoorsFromWorld(GridWorld world, Map<Position, DoorLink> doorLinks, ContiguousComponents components) {
+    private static Map<Position, DoorLink> removeInterComponentDoors(GridWorld world, Map<Position, DoorLink> doorLinks, ContiguousComponents components) {
         log.info("removing inter-component doors, {} links", doorLinks.size());
 
         var remainingDoors = new HashMap<Position, DoorLink>();

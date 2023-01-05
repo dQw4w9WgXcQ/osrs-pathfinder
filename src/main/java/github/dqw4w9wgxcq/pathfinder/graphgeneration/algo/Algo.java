@@ -9,6 +9,9 @@ import java.util.*;
 
 @Slf4j
 public class Algo {
+    /**
+     * @return the path or null if not reachable
+     */
     public static @Nullable List<Point> aStar(TileGrid map, Point start, Point end) {
         var seenFrom = new HashMap<Point, Point>();
         var frontier = new PriorityQueue<Point>(Comparator.comparingInt(p -> chebyshevDistance(p, end)));
@@ -52,6 +55,9 @@ public class Algo {
         return Math.max(Math.abs(from.x() - to.x()), Math.abs(from.y() - to.y()));
     }
 
+    /**
+     * @return the path or null if not reachable
+     */
     public static @Nullable List<Edge> dijkstra(Edge start, Edge end) {
         var seenFrom = new HashMap<Edge, Edge>();
         var frontier = new PriorityQueue<Edge>();
