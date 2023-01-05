@@ -13,64 +13,58 @@ import java.io.IOException;
 
 @Slf4j
 class Main {
-    public static class ExitCodes {
-        private static final int BASE = 500;
-        private static int i = 1;//todo use fixed vlaues
-        public static final int ARGS_MALFORMED = BASE + i++;
-        public static final int CACHE_OR_XTEAS_NOT_FOUND = BASE + i++;
-        public static final int CACHE_READ_FAIL = BASE + i++;
-        public static final int XTEAS_READ_FAIL = BASE + i++;
-        public static final int XTEAS_MALFORMED = BASE + i++;
-        public static final int LEAFLET_IMAGE_WRITE_FAIL = BASE + i++;
-    }
+    public static void main(String[] args) {
+        var cacheOpt = new Option("c", "cache", true, "Path to osrs cache dir that the game populates at C:\\Users\\user\\jagexcache\\oldschool\\LIVE\\");
+        cacheOpt.setRequired(true);
 
-    public static final File DESKTOP_DIR = new File(System.getProperty("user.home"), "Desktop");
-    public static final File DEFAULT_CACHE_DIR = new File(DESKTOP_DIR, "cache");
-    public static final File DEFAULT_XTEAS_FILE = new File(DESKTOP_DIR, "xteas.json");
-    public static final File DEFAULT_OUT_DIR = DESKTOP_DIR;
+        var xteasOpt = new Option("x", "xteas", true, "Path to xteas JSON file");
+        xteasOpt.setRequired(true);
 
-    public static void main(String... args) {
-        var outFileOpt = new Option("out", true, "Output directory");
-        var cacheOpt = new Option("cache", true, "path to osrs cache dir.  the game populates at C:\\Users\\user\\jagexcache\\oldschool\\LIVE\\");
-        var xteasOpt = new Option("xteas", true, "path to xteas json file");
+        var outOpt = new Option("o", "out", true, "Output directory");
+
+        var leafletOpt = new Option("l", "leaflet", false, "Generate leaflet images");
+
+        var skipGraphOpt = new Option("s", "skip-graph", false, "Skip graph output (-l is required)");
 
         var options = new Options();
-        options.addOption(outFileOpt);
         options.addOption(cacheOpt);
         options.addOption(xteasOpt);
+        options.addOption(outOpt);
+        options.addOption(leafletOpt);
 
         CommandLine cmd;
         try {
             cmd = new DefaultParser().parse(options, args);
         } catch (ParseException e) {
-            log.error(e.getMessage());
-            log.info(null, e);
-            System.exit(ExitCodes.ARGS_MALFORMED);
+            System.out.println(e.getMessage());
+            new HelpFormatter().printHelp("pathfinder", options);
+            System.exit(1);
             return;
         }
 
-        File cacheDir;
-        if (cmd.hasOption("cache")) {
-            cacheDir = new File(cmd.getOptionValue("cache"));
-        } else {
-            log.info("No cache dir specified.  Using default: {}", DEFAULT_CACHE_DIR);
-            cacheDir = DEFAULT_CACHE_DIR;
+        if (cmd.hasOption("skip-graph") && !cmd.hasOption("leaflet")) {
+            System.out.println("Cannot skip graph output if not generating leaflet images");
+            new HelpFormatter().printHelp("pathfinder", options);
+            System.exit(1);
+            return;
         }
 
-        File xteasFile;
-        if (cmd.hasOption("xteas")) {
-            xteasFile = new File(cmd.getOptionValue("xteas"));
-        } else {
-            log.info("No xteas file specified.  Using default: {}", DEFAULT_XTEAS_FILE);
-            xteasFile = DEFAULT_XTEAS_FILE;
+        var outDir = new File(cmd.getOptionValue("out", System.getProperty("user.dir")));
+        //noinspection ResultOfMethodCallIgnored
+        outDir.mkdir();
+
+        var cacheDir = new File(cmd.getOptionValue("cache"));
+        if (!cacheDir.exists()) {
+            System.out.println("Cache dir does not exist");
+            System.exit(1);
+            return;
         }
 
-        File outDir;
-        if (cmd.hasOption("out")) {
-            outDir = new File(cmd.getOptionValue("out"));
-        } else {
-            log.info("No output dir specified.  Using default: {}", DEFAULT_OUT_DIR);
-            outDir = DEFAULT_OUT_DIR;
+        var xteasFile = new File(cmd.getOptionValue("xteas"));
+        if (!xteasFile.exists()) {
+            System.out.println("Xteas file does not exist");
+            System.exit(1);
+            return;
         }
 
         //load game data from cacheDir/xteasFile
@@ -78,45 +72,49 @@ class Main {
         try {
             cacheData = CacheData.load(cacheDir, xteasFile);
         } catch (FileNotFoundException e) {
-            log.error("cache dir(or expected contents) or xteas file not found");
-            log.info(null, e);
-            System.exit(ExitCodes.CACHE_OR_XTEAS_NOT_FOUND);
+            log.error(null, e);
+            System.out.println("cache dir missing expected content");
+            System.exit(1);
             return;
         } catch (IOException e) {
-            log.error("reading cache data failed");
-            log.info(null, e);
-            System.exit(ExitCodes.CACHE_READ_FAIL);
+            log.error(null, e);
+            System.out.println("reading cache data failed");
+            System.exit(1);
             return;
         } catch (JsonIOException e) {
-            log.error("reading xtea failed");
-            log.info(null, e);
-            System.exit(ExitCodes.XTEAS_READ_FAIL);
+            log.error(null, e);
+            System.out.println("reading xtea failed");
+            System.exit(1);
             return;
         } catch (JsonSyntaxException e) {
-            log.error("xteas json malformed");
-            log.info(null, e);
-            System.exit(ExitCodes.XTEAS_MALFORMED);
+            log.error(null, e);
+            System.out.println("xteas json malformed");
+            System.exit(1);
             return;
         }
 
         var graph = Graph.generate(cacheData);
 
-        try {
-            LeafletImages.write(graph.components(), new File(outDir, "leaflet"));
-        } catch (IOException e) {
-            log.error("writing leaflet images failed");
-            log.info(null, e);
-            System.exit(ExitCodes.LEAFLET_IMAGE_WRITE_FAIL);
-            return;
+        if (cmd.hasOption("leaflet")) {
+            try {
+                LeafletImages.write(graph.components(), new File(outDir, "leaflet"));
+            } catch (IOException e) {
+                log.error(null, e);
+                System.out.println("writing leaflet images failed");
+                System.exit(1);
+                return;
+            }
         }
 
+        if (!cmd.hasOption("skip-graph")) {
 //        try {
 //            graph.save(outDir);
 //        } catch (IOException e) {
 //            log.error("saving graph failed");
 //            log.info(null, e);
-//            System.exit(ExitCodes.WRITE_FAIL);
+//            System.exit(1);
 //            return;
 //        }
+        }
     }
 }
