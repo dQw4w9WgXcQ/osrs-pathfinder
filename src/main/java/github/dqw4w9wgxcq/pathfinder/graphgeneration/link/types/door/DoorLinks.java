@@ -1,12 +1,16 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.link.types.door;
 
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld.Wall;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.cache.definitions.ObjectDefinition;
 import net.runelite.cache.region.Location;
 import net.runelite.cache.region.Position;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -19,13 +23,13 @@ public class DoorLinks {
 
     );
 
-    public static Map<Position, DoorLink> find(List<Location> objectLocations, Map<Integer, ObjectDefinition> objectDefinitions) {
+    public static List<DoorLink> find(CacheData cacheData, List<Location> objectLocations) {
         log.info("door links");
 
-        var doorIds = findDoorIds(objectDefinitions.values());
+        var doorIds = findDoorIds(cacheData.objectData().definitions().values());
         log.info("found {} doorIds", doorIds.size());
 
-        Map<Position, DoorLink> links = new HashMap<>();
+        List<DoorLink> links = new ArrayList<>();
         for (var location : objectLocations) {
             if (!doorIds.contains(location.getId())) {
                 continue;
@@ -49,16 +53,16 @@ public class DoorLinks {
                     position.getZ()
             );
 
-            var link = new DoorLink(destination, location.getId());
+            var link = new DoorLink(position, destination, location.getId());
             log.debug("new door link {}", link);
-            links.put(position, link);
+            links.add(link);
         }
 
         return links;
     }
 
-    private static Set<Integer> findDoorIds(Collection<ObjectDefinition> allDefinitions) {
-        return allDefinitions
+    private static Set<Integer> findDoorIds(Collection<ObjectDefinition> definitions) {
+        return definitions
                 .stream()
                 .filter(DoorLinks::isDoor)
                 .map(ObjectDefinition::getId)

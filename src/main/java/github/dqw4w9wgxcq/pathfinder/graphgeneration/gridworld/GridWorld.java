@@ -2,8 +2,7 @@ package github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.ObjectData;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.RegionData;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.RegionUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +34,8 @@ public class GridWorld {
         Arrays.setAll(planes, x -> new TileGrid(sizeX, sizeY));
     }
 
-    public static GridWorld create(RegionData regionData, ObjectData objectData, List<Location> objectLocations) {
+    public static GridWorld create(CacheData cacheData, List<Location> objectLocations) {
+        var regionData = cacheData.regionData();
         var out = new GridWorld(regionData.highestRegionX(), regionData.highestRegionY());
 
         for (var region : regionData.regions()) {
@@ -46,7 +46,7 @@ public class GridWorld {
             markFloorForRegion(out.planes, region);
         }
 
-        markObjectLocations(out.planes, objectLocations, objectData.definitions());
+        markObjectLocations(out.planes, objectLocations, cacheData.objectData().definitions());
 
         return out;
     }

@@ -2,7 +2,7 @@ package github.dqw4w9wgxcq.pathfinder.graphgeneration.output.leafletimages;
 
 import com.google.common.base.Preconditions;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.RegionUtil;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld.ContiguousComponents;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.componentgraph.ContiguousComponents;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -16,6 +16,22 @@ import java.io.IOException;
 public class LeafletImages {
     public static final int MAX_ZOOM = 1;
     public static final int MIN_ZOOM = -3;
+
+    private static final int[] COLORS = {
+            Color.GRAY.getRGB(),
+            Color.WHITE.getRGB(),
+            Color.BLUE.getRGB(),
+            Color.RED.getRGB(),
+            Color.YELLOW.getRGB(),
+            Color.GREEN.getRGB(),
+            Color.CYAN.getRGB(),
+            Color.MAGENTA.getRGB(),
+            Color.ORANGE.getRGB(),
+            Color.PINK.getRGB(),
+            Color.BLACK.getRGB(),
+            Color.LIGHT_GRAY.getRGB(),
+            Color.DARK_GRAY.getRGB(),
+    };
 
     public static void write(ContiguousComponents components, File outDir) throws IOException {
         var componentsDir = new File(outDir, "components");
@@ -69,20 +85,4 @@ public class LeafletImages {
     private static int getColor(int id) {
         return COLORS[id % COLORS.length];
     }
-
-    private static final int[] COLORS = {
-            Color.GRAY.getRGB(),
-            Color.WHITE.getRGB(),
-            Color.BLUE.getRGB(),
-            Color.RED.getRGB(),
-            Color.YELLOW.getRGB(),
-            Color.GREEN.getRGB(),
-            Color.CYAN.getRGB(),
-            Color.MAGENTA.getRGB(),
-            Color.ORANGE.getRGB(),
-            Color.PINK.getRGB(),
-            Color.BLACK.getRGB(),
-            Color.LIGHT_GRAY.getRGB(),
-            Color.DARK_GRAY.getRGB(),
-    };
 }

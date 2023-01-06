@@ -6,7 +6,13 @@ import net.runelite.cache.region.Position;
 
 import java.util.List;
 
-public record DoorLink(Position destination, int objectId) implements Link {
+/**
+ * A simple door(or gate etc.).  Doors with requirements or that are unidirectional are SpecialLinks.
+ *
+ * @param destination
+ * @param objectId
+ */
+public record DoorLink(Position origin, Position destination, int objectId) implements Link {
     @Override
     public int cost() {
         return 10;

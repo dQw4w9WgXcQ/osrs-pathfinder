@@ -1,6 +1,8 @@
-package github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld;
+package github.dqw4w9wgxcq.pathfinder.graphgeneration.componentgraph;
 
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Point;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld.TileFlags;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld.TileGrid;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayDeque;
@@ -14,7 +16,7 @@ public record ContiguousComponents(int[][][] map, List<Integer> sizes) {
         return sizes.size();
     }
 
-    public static ContiguousComponents findIn(TileGrid[] planes) {
+    public static ContiguousComponents create(TileGrid[] planes) {
         var sizes = new ArrayList<Integer>();
 
         var map = new int[planes.length][planes[0].getSizeX()][planes[0].getSizeY()];
@@ -58,7 +60,7 @@ public record ContiguousComponents(int[][][] map, List<Integer> sizes) {
         log.info("smallest:{} largest:{} average:{} total:{}",
                 sizes.stream().mapToInt(Integer::intValue).min().orElse(0),
                 sizes.stream().mapToInt(Integer::intValue).max().orElse(0),
-                sizes.stream().mapToInt(Integer::intValue).average().orElse(0),
+                (int) sizes.stream().mapToInt(Integer::intValue).average().orElse(0),
                 sizes.stream().mapToInt(Integer::intValue).sum());
         return new ContiguousComponents(map, sizes);
     }

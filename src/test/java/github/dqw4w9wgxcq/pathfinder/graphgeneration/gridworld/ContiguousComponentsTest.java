@@ -1,6 +1,7 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld;
 
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.RegionUtil;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.componentgraph.ContiguousComponents;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,7 @@ public class ContiguousComponentsTest {
         var s = GridWorldTestUtil.stringify(planes[0]);
         log.debug("\n" + s);
 
-        var components = ContiguousComponents.findIn(planes);
+        var components = ContiguousComponents.create(planes);
 
         var s2 = GridWorldTestUtil.stringify(components.map()[0]);
         log.debug("\n" + s2);
@@ -48,7 +49,7 @@ public class ContiguousComponentsTest {
         var s = GridWorldTestUtil.stringify(grid);
         log.debug("\n" + s);
 
-        var components = ContiguousComponents.findIn(new TileGrid[]{grid});
+        var components = ContiguousComponents.create(new TileGrid[]{grid});
 
         var s2 = GridWorldTestUtil.stringify(components.map()[0]);
         log.debug("\n" + s2);
@@ -67,7 +68,7 @@ public class ContiguousComponentsTest {
         grid.markAreaObject(0, 1, 1, 1, true);
         grid.markAreaObject(1, 0, 1, 1, false);
         grid.markAreaObject(1, 1, 1, 1, true);
-        var components = ContiguousComponents.findIn(new TileGrid[]{grid});
+        var components = ContiguousComponents.create(new TileGrid[]{grid});
         var s = GridWorldTestUtil.stringify(components.map()[0]);
         log.debug("\n{}", s);
 
@@ -80,7 +81,7 @@ public class ContiguousComponentsTest {
         grid.markAreaObject(0, 1, 1, 1, true);
         grid.markAreaObject(1, 0, 1, 1, false);
         grid.markAreaObject(1, 1, 1, 1, true);
-        var components = ContiguousComponents.findIn(new TileGrid[]{grid});
+        var components = ContiguousComponents.create(new TileGrid[]{grid});
         var s = GridWorldTestUtil.stringify(components.map()[0]);
         log.debug("\n{}", s);
 

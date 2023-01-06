@@ -6,6 +6,8 @@ import net.runelite.cache.region.Position;
 import java.util.List;
 
 public interface Link {
+    Position origin();
+
     Position destination();
 
     /**
