@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * creates images used by <a href="https://leafletjs.com/">leaflet</a> in visualizer website
+ * creates images used by Leaflet in visualizer website
  */
 public class LeafletImages {
     public static final int MAX_ZOOM = 1;
@@ -44,8 +44,8 @@ public class LeafletImages {
             var mapWidth = map.length;
             var mapHeight = map[0].length;
 
-            Preconditions.checkArgument(mapWidth % RegionUtil.SIZE == 0, "map width must be multiple of {} (region size), found {}", RegionUtil.SIZE, mapWidth);
-            Preconditions.checkArgument(mapHeight % RegionUtil.SIZE == 0, "map height must be multiple of {} (region size), found {}", RegionUtil.SIZE, mapHeight);
+            Preconditions.checkArgument(mapWidth % RegionUtil.SIZE == 0, "grid width must be multiple of {} (region size), found {}", RegionUtil.SIZE, mapWidth);
+            Preconditions.checkArgument(mapHeight % RegionUtil.SIZE == 0, "grid height must be multiple of {} (region size), found {}", RegionUtil.SIZE, mapHeight);
 
             var imgSize = RegionUtil.SIZE * 4;
 

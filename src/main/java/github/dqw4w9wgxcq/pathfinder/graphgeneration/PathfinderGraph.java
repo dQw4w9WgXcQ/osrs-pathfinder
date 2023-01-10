@@ -3,8 +3,8 @@ package github.dqw4w9wgxcq.pathfinder.graphgeneration;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.componentgraph.ComponentGraph;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.componentgraph.ContiguousComponents;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld.GridWorld;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.link.Links;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileWorld;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.cache.region.Location;
 import net.runelite.cache.region.Position;
@@ -15,11 +15,11 @@ import java.util.Collection;
 import java.util.List;
 
 @Slf4j
-public record Graph(ContiguousComponents components, ComponentGraph componentGraph, Links links) {
-    public static Graph generate(CacheData cacheData) {
+public record PathfinderGraph(ContiguousComponents components, ComponentGraph componentGraph, Links links) {
+    public static PathfinderGraph generate(CacheData cacheData) {
         var objectLocations = getLocationsAdjustedFor0x2(cacheData.regionData().regions());
 
-        var gridWorld = GridWorld.create(cacheData, objectLocations);
+        var gridWorld = TileWorld.create(cacheData, objectLocations);
 
         var components = ContiguousComponents.create(gridWorld.getPlanes());
 
@@ -27,11 +27,11 @@ public record Graph(ContiguousComponents components, ComponentGraph componentGra
 
         var componentsGraph = ComponentGraph.create(components, links);
 
-        return new Graph(components, componentsGraph, links);
+        return new PathfinderGraph(components, componentsGraph, links);
     }
 
     /**
-     * 0x2 is a render flag that signifies that objects from the plane above should affect the collision map of the plane below.  mostly used for bridges and multi-level buildings.
+     * The 0x2 render flag signifies that objects from the plane above should affect the collision map of the plane below.  Used for bridges and multi-level buildings.
      */
     private static List<Location> getLocationsAdjustedFor0x2(Collection<Region> regions) {
         log.info("getting 0x2 adjusted locations");

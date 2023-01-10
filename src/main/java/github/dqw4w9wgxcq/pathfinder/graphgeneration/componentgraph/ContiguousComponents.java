@@ -1,21 +1,17 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.componentgraph;
 
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Point;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld.TileFlags;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld.TileGrid;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileFlags;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileGrid;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
+//index of sizes is the ID of the component (values in the map array)
 @Slf4j
-public record ContiguousComponents(int[][][] map, List<Integer> sizes) {
-    public int count() {
-        return sizes.size();
-    }
-
+public record ContiguousComponents(int[][][] map, ArrayList<Integer> sizes) {
     public static ContiguousComponents create(TileGrid[] planes) {
         var sizes = new ArrayList<Integer>();
 

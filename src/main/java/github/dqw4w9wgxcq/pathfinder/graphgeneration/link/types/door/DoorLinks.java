@@ -1,7 +1,7 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.link.types.door;
 
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld.Wall;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.Wall;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.cache.definitions.ObjectDefinition;
 import net.runelite.cache.region.Location;

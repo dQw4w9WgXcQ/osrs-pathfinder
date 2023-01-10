@@ -24,7 +24,7 @@ class Main {
 
         var leafletOpt = new Option("l", "leaflet", false, "Generate leaflet images");
 
-        var skipGraphOpt = new Option("s", "skip-graph", false, "Skip graph output (-l is required)");
+        var skipGraphOpt = new Option("s", "skip-graph", false, "Skip graph output (-l is now required)");
 
         var options = new Options();
         options.addOption(cacheOpt);
@@ -49,10 +49,6 @@ class Main {
             return;
         }
 
-        var outDir = new File(cmd.getOptionValue("out", System.getProperty("user.dir")));
-        //noinspection ResultOfMethodCallIgnored
-        outDir.mkdir();
-
         var cacheDir = new File(cmd.getOptionValue("cache"));
         if (!cacheDir.exists()) {
             System.out.println("Cache dir does not exist");
@@ -66,6 +62,10 @@ class Main {
             System.exit(1);
             return;
         }
+
+        var outDir = new File(cmd.getOptionValue("out", System.getProperty("user.dir")));
+        //noinspection ResultOfMethodCallIgnored
+        outDir.mkdir();
 
         //load game data from cacheDir/xteasFile
         CacheData cacheData;
@@ -93,7 +93,7 @@ class Main {
             return;
         }
 
-        var graph = Graph.generate(cacheData);
+        var graph = PathfinderGraph.generate(cacheData);
 
         if (cmd.hasOption("leaflet")) {
             try {

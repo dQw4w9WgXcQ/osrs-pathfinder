@@ -1,6 +1,5 @@
-package github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld;
+package github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld;
 
-import com.google.common.annotations.VisibleForTesting;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -63,7 +62,12 @@ public class TileFlags {
             Map.entry(HAVE_DATA, ".")
     );
 
-    static String getDescriptionForFlag(int flag) {
+
+    public static String describe(int flags) {
+        return String.join("", getDescriptions(flags));
+    }
+
+    private static String getDescription(int flag) {
         var name = flagDescs.get(flag);
         if (name == null) {
             throw new IllegalArgumentException("not a flag: " + flag + " (" + Integer.toBinaryString(flag) + ")");
@@ -71,19 +75,18 @@ public class TileFlags {
         return name;
     }
 
-    @VisibleForTesting
-    static List<String> getDescriptions(int config) {
-        if (config == 0) {
+    private static List<String> getDescriptions(int flags) {
+        if (flags == 0) {
             return List.of("?");
         }
 
-        if (config == HAVE_DATA) {
+        if (flags == HAVE_DATA) {
             return List.of(".");
         }
 
         var list = new ArrayList<String>();
         for (var e : flagDescs.entrySet()) {
-            if ((e.getKey() & config) == e.getKey()) {
+            if ((e.getKey() & flags) == e.getKey()) {
                 if (e.getKey() == HAVE_DATA) {
                     continue;
                 }
@@ -92,18 +95,14 @@ public class TileFlags {
             }
         }
 
-        var loaded = (config & HAVE_DATA) == HAVE_DATA;
+        var loaded = (flags & HAVE_DATA) == HAVE_DATA;
         if (!loaded) {
             //tile can be not marked as have data but still have flags if an object goes off the edge of a region into an unloaded region
-            log.debug("found tile without HAVE_DATA flag, but has other flags: " + config + " (" + Integer.toBinaryString(config) + ")");
+            log.debug("found tile without HAVE_DATA flag, but has other flags: " + flags + " (" + Integer.toBinaryString(flags) + ")");
 
             list.add("x");
         }
 
         return list;
-    }
-
-    public static String describe(int config) {
-        return String.join("", getDescriptions(config));
     }
 }

@@ -1,11 +1,14 @@
-package github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld;
+package github.dqw4w9wgxcq.pathfinder.graphgeneration;
 
-public class GridWorldTestUtil {
-    static String stringify(TileGrid grid) {
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileFlags;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileGrid;
+
+public class GridTestUtil {
+    public static String stringify(TileGrid grid) {
         return stringify(toDescriptions(grid.getTileArray()));
     }
 
-    static String stringify(int[][] map) {
+    public static String stringify(int[][] map) {
         return stringify(toStrings(map));
     }
 

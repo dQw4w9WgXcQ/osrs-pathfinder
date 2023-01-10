@@ -1,4 +1,4 @@
-package github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld;
+package github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
@@ -7,8 +7,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * this class is modeled after the collision map from the decompiled game client, but is global instead of scene.
- * uses bit flags to store collision data and bitwise operations to check for collisions
+ * Uses bitwise because it's based off the decompiled game client.
  */
 @Slf4j
 public class TileGrid {
@@ -17,7 +16,7 @@ public class TileGrid {
 
     private final int[][] tiles;
 
-    TileGrid(int sizeX, int sizeY) {
+    public TileGrid(int sizeX, int sizeY) {
         log.info("new TileGrid with size x:" + sizeX + " y:" + sizeY);
 
         tiles = new int[sizeX][sizeY];
@@ -115,7 +114,7 @@ public class TileGrid {
         tiles[x + wall.getDx()][y + wall.getDy()] &= ~wall.oppositeFlag();
     }
 
-    void markTile(int x, int y, int flag) {
+    public void markTile(int x, int y, int flag) {
         log.debug("marking flag " + flag + " " + x + "x " + y + "y");
 
         Preconditions.checkArgument(
@@ -127,7 +126,7 @@ public class TileGrid {
         log.debug("updated config: {}", TileFlags.describe(updatedConfig));
     }
 
-    void markHaveData(int regionX, int regionY) {
+    public void markRegionHaveData(int regionX, int regionY) {
         var baseX = regionX * RegionUtil.SIZE;
         var baseY = regionY * RegionUtil.SIZE;
         for (var x = baseX; x < baseX + RegionUtil.SIZE; x++) {
@@ -137,7 +136,7 @@ public class TileGrid {
         }
     }
 
-    void markAreaObject(int x, int y, int sizeX, int sizeY, boolean isFloorDecoration) {
+    public void markAreaObject(int x, int y, int sizeX, int sizeY, boolean isFloorDecoration) {
         log.debug("marking game object at " + x + "," + y + " sizeX:" + sizeX + " sizeY:" + sizeY);
 
         Preconditions.checkArgument(
@@ -159,7 +158,7 @@ public class TileGrid {
      * adds flags for a wall object and opposing flags.
      * i.e. if a wall blocks movement west, then it will set flags on the west tile to block east
      */
-    void markWallObject(int x, int y, int locationType, int orientation) {
+    public void markWallObject(int x, int y, int locationType, int orientation) {
         log.debug("marking wall object at " + x + "," + y + " locationType:" + locationType + " orientation:" + orientation);
 
         Preconditions.checkArgument(
@@ -238,7 +237,7 @@ public class TileGrid {
     }
 
     @VisibleForTesting
-    int[][] getTileArray() {
+    public int[][] getTileArray() {
         return tiles;
     }
 

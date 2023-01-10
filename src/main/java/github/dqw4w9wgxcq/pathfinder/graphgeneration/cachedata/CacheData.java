@@ -12,19 +12,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 @Slf4j
-public record CacheData(
-        RegionData regionData,
-        ObjectData objectData
-) {
+public record CacheData(RegionData regionData, ObjectData objectData) {
     /**
-     * loads data from runelite cache tools. no fs io happens after
+     * Eager loads data from runelite cache tools. No filesystem IO happens after.
      *
-     * @param cacheDir  directory containing the osrs game cache.  the game client populates this directory at [userhome]/jagexcache/oldschool/LIVE/
-     * @param xteasJson json file containing json array of xteas (format specified by net.runelite.cache.util.XteaKey)
      * @throws FileNotFoundException cacheDir(or expected contents) or xteasJson doesn't exist
-     * @throws IOException           fs error while reading cache with runelite utils (Store, RegionLoader, ObjectManager)
-     * @throws JsonIOException       gson fs error reading xteas
-     * @throws JsonSyntaxException   gson says xteas malformed
+     * @throws IOException           FS error while reading cache with runelite utils (Store, RegionLoader, ObjectManager)
+     * @throws JsonIOException       Gson FS error reading xteas
+     * @throws JsonSyntaxException   Gson says XTEAs malformed
      */
     public static CacheData load(File cacheDir, File xteasJson) throws FileNotFoundException, IOException, JsonIOException, JsonSyntaxException {
         var store = new Store(cacheDir);

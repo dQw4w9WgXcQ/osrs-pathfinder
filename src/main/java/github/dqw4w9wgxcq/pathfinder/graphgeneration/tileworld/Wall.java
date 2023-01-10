@@ -1,4 +1,4 @@
-package github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld;
+package github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

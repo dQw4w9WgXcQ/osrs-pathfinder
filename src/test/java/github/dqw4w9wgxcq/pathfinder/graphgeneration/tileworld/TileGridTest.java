@@ -1,5 +1,6 @@
-package github.dqw4w9wgxcq.pathfinder.graphgeneration.gridworld;
+package github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld;
 
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.GridTestUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,7 @@ public class TileGridTest {
     void testValid() {
         var grid = newGrid();
 
-        log.debug("\n" + GridWorldTestUtil.stringify(grid));
+        log.debug("\n" + GridTestUtil.stringify(grid));
 
         Assertions.assertTrue(grid.canTravelInDirection(X, Y, 1, 0));
     }
@@ -24,7 +25,7 @@ public class TileGridTest {
 
         grid.markTile(X, Y, TileFlags.E_WALL);
 
-        log.debug("\n" + GridWorldTestUtil.stringify(grid));
+        log.debug("\n" + GridTestUtil.stringify(grid));
 
         Assertions.assertFalse(grid.canTravelInDirection(X, Y, 1, 0));
     }
@@ -34,7 +35,7 @@ public class TileGridTest {
         var grid = newGrid();
         grid.markTile(X, Y, TileFlags.NE_WALL);
 
-        log.debug("\n" + GridWorldTestUtil.stringify(grid));
+        log.debug("\n" + GridTestUtil.stringify(grid));
 
         //diagonal movement disabled temporarily
         //Assertions.assertFalse(grid.canTravelInDirection(X, Y, 1, 1));
@@ -49,7 +50,7 @@ public class TileGridTest {
 
         grid.markAreaObject(X, Y, 2, 3, false);
 
-        log.debug("\n" + GridWorldTestUtil.stringify(grid));
+        log.debug("\n" + GridTestUtil.stringify(grid));
 
         Assertions.assertFalse(grid.canTravelInDirection(X, Y, 1, 0));
     }
