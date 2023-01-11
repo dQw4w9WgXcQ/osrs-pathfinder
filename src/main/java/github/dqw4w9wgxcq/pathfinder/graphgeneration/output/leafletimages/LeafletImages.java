@@ -2,7 +2,7 @@ package github.dqw4w9wgxcq.pathfinder.graphgeneration.output.leafletimages;
 
 import com.google.common.base.Preconditions;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.RegionUtil;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.componentgraph.ContiguousComponents;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.ContiguousComponents;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -38,7 +38,7 @@ public class LeafletImages {
         //noinspection ResultOfMethodCallIgnored
         componentsDir.mkdirs();
 
-        var planes = components.map();
+        var planes = components.planes();
         for (var plane = 0; plane < planes.length; plane++) {
             var map = planes[plane];
             var mapWidth = map.length;

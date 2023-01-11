@@ -1,8 +1,8 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration;
 
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.componentgraph.ComponentGraph;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.componentgraph.ContiguousComponents;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.ContiguousComponents;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.LinkedComponents;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.link.Links;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileWorld;
 import lombok.extern.slf4j.Slf4j;
@@ -15,21 +15,21 @@ import java.util.Collection;
 import java.util.List;
 
 @Slf4j
-public record PathfinderGraph(ContiguousComponents components, ComponentGraph componentGraph, Links links) {
+public record PathfinderGraph(
+        ContiguousComponents contiguousComponents,
+        LinkedComponents linkedComponents,
+        Links links
+) {
     public static PathfinderGraph generate(CacheData cacheData) {
         var objectLocations = getLocationsAdjustedFor0x2(cacheData.regionData().regions());
-
         var gridWorld = TileWorld.create(cacheData, objectLocations);
-
-        var components = ContiguousComponents.create(gridWorld.getPlanes());
-
-        var links = Links.create(cacheData, objectLocations);
-
-        var componentsGraph = ComponentGraph.create(components, links);
-
-        return new PathfinderGraph(components, componentsGraph, links);
+        var contiguousComponents = ContiguousComponents.create(gridWorld.getPlanes());
+        var links = Links.create(cacheData, objectLocations, contiguousComponents);
+        var linkedComponents = LinkedComponents.create(contiguousComponents, links);
+        return new PathfinderGraph(contiguousComponents, linkedComponents, links);
     }
 
+    //todo move this to a better place
     /**
      * The 0x2 render flag signifies that objects from the plane above should affect the collision map of the plane below.  Used for bridges and multi-level buildings.
      */

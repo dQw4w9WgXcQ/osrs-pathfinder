@@ -12,7 +12,7 @@ public class Algo {
     /**
      * @return the path or null if not reachable
      */
-    public static @Nullable List<Point> aStar(TileGrid map, Point start, Point end) {
+    public static @Nullable List<Point> aStar(TileGrid grid, Point start, Point end) {
         var seenFrom = new HashMap<Point, Point>();
         var frontier = new PriorityQueue<Point>(Comparator.comparingInt(p -> chebyshevDistance(p, end)));
 
@@ -40,7 +40,7 @@ public class Algo {
                         continue;
                     }
 
-                    if (map.canTravelInDirection(curr.x(), curr.y(), dx, dy)) {
+                    if (grid.canTravelInDirection(curr.x(), curr.y(), dx, dy)) {
                         frontier.add(adjacent);
                         seenFrom.put(adjacent, curr);
                     }
@@ -51,22 +51,18 @@ public class Algo {
         return null;
     }
 
-    public static int chebyshevDistance(Point from, Point to) {
-        return Math.max(Math.abs(from.x() - to.x()), Math.abs(from.y() - to.y()));
-    }
-
     /**
      * @return the path or null if not reachable
      */
-    public static @Nullable List<Edge> dijkstra(Edge start, Edge end) {
-        var seenFrom = new HashMap<Edge, Edge>();
-        var frontier = new PriorityQueue<Edge>();
+    public static <E extends Edge<E>> @Nullable List<E> dijkstra(E start, E end) {
+        var seenFrom = new HashMap<E, E>();
+        var frontier = new PriorityQueue<E>();
 
         frontier.add(start);
         while (!frontier.isEmpty()) {
             var curr = frontier.remove();
             if (curr.equals(end)) {
-                var path = new ArrayList<Edge>();
+                var path = new ArrayList<E>();
                 while (!curr.equals(start)) {
                     path.add(0, curr);
                     curr = seenFrom.get(curr);
@@ -83,5 +79,9 @@ public class Algo {
         }
 
         return null;
+    }
+
+    public static int chebyshevDistance(Point from, Point to) {
+        return Math.max(Math.abs(from.x() - to.x()), Math.abs(from.y() - to.y()));
     }
 }

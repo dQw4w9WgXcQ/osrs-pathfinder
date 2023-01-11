@@ -1,4 +1,4 @@
-package github.dqw4w9wgxcq.pathfinder.graphgeneration.componentgraph;
+package github.dqw4w9wgxcq.pathfinder.graphgeneration.component;
 
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Point;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileFlags;
@@ -11,25 +11,28 @@ import java.util.Arrays;
 
 //index of sizes is the ID of the component (values in the map array)
 @Slf4j
-public record ContiguousComponents(int[][][] map, ArrayList<Integer> sizes) {
+public record ContiguousComponents(int[][][] planes, int[] sizes) {
+    public int count() {
+        return sizes.length;
+    }
+
     public static ContiguousComponents create(TileGrid[] planes) {
         var sizes = new ArrayList<Integer>();
 
-        var map = new int[planes.length][planes[0].getSizeX()][planes[0].getSizeY()];
-        for (var plane : map) {
+        var componentsPlanes = new int[planes.length][planes[0].getSizeX()][planes[0].getSizeY()];
+        for (var plane : componentsPlanes) {
             for (var row : plane) {
                 Arrays.fill(row, -1);
             }
         }
 
-        var id = 0;
-
+        var index = 0;
         for (var z = 0; z < planes.length; z++) {
             var grid = planes[z];
 
             for (var x = 0; x < grid.getSizeX(); x++) {
                 for (var y = 0; y < grid.getSizeY(); y++) {
-                    if (map[z][x][y] != -1) {
+                    if (componentsPlanes[z][x][y] != -1) {
                         continue;
                     }
 
@@ -41,13 +44,13 @@ public record ContiguousComponents(int[][][] map, ArrayList<Integer> sizes) {
                         continue;
                     }
 
-                    log.debug("new component id:{} at x:{} y:{}", id, x, y);
-                    var size = flood(map[z], grid, x, y, id);
-                    log.debug("new component id:{} size:{}", id, size);
+                    log.debug("new component id:{} at x:{} y:{}", index, x, y);
+                    var size = flood(componentsPlanes[z], grid, x, y, index);
+                    log.debug("new component id:{} size:{}", index, size);
 
                     sizes.add(size);
 
-                    id++;
+                    index++;
                 }
             }
         }
@@ -58,7 +61,7 @@ public record ContiguousComponents(int[][][] map, ArrayList<Integer> sizes) {
                 sizes.stream().mapToInt(Integer::intValue).max().orElse(0),
                 (int) sizes.stream().mapToInt(Integer::intValue).average().orElse(0),
                 sizes.stream().mapToInt(Integer::intValue).sum());
-        return new ContiguousComponents(map, sizes);
+        return new ContiguousComponents(componentsPlanes, sizes.stream().mapToInt(i -> i).toArray());
     }
 
     //in place algo cuts mem usage by ~4gb

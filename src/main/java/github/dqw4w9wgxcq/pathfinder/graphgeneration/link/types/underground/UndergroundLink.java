@@ -7,7 +7,7 @@ import net.runelite.cache.region.Position;
 import java.util.List;
 
 public record UndergroundLink(
-        Position origin,
+        Position source,
         Position destination,
         List<LinkRequirement> requirements,
         int objectId,

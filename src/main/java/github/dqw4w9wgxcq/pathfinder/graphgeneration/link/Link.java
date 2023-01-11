@@ -6,7 +6,7 @@ import net.runelite.cache.region.Position;
 import java.util.List;
 
 public interface Link {
-    Position origin();
+    Position source();
 
     Position destination();
 
@@ -16,8 +16,4 @@ public interface Link {
     int cost();
 
     List<LinkRequirement> requirements();
-
-    default boolean bidirectional() {
-        return false;
-    }
 }

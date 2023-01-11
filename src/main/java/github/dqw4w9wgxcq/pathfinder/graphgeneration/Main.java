@@ -97,7 +97,7 @@ class Main {
 
         if (cmd.hasOption("leaflet")) {
             try {
-                LeafletImages.write(graph.components(), new File(outDir, "leaflet"));
+                LeafletImages.write(graph.contiguousComponents(), new File(outDir, "leaflet"));
             } catch (IOException e) {
                 log.error(null, e);
                 System.out.println("writing leaflet images failed");
