@@ -1,6 +1,7 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration;
 
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.ComponentGraph;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.ContiguousComponents;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.LinkedComponents;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.link.Links;
@@ -26,6 +27,7 @@ public record PathfinderGraph(
         var contiguousComponents = ContiguousComponents.create(gridWorld.getPlanes());
         var links = Links.create(cacheData, objectLocations, contiguousComponents);
         var linkedComponents = LinkedComponents.create(contiguousComponents, links);
+        var componentGraph = ComponentGraph.create(linkedComponents);
         return new PathfinderGraph(contiguousComponents, linkedComponents, links);
     }
 
@@ -69,8 +71,8 @@ public record PathfinderGraph(
 //     *
 //     * @return remaining doors that actually link between two different components
 //     */
-//    private static Map<Position, DoorLink> purgeInterComponentDoors(GridWorld world, Map<Position, DoorLink> doorLinks, ContiguousComponents components) {
-//        log.info("removing inter-component doors, {} links", doorLinks.size());
+//    private static Map<Position, DoorLink> purgeIntraComponentDoors(GridWorld world, Map<Position, DoorLink> doorLinks, ContiguousComponents components) {
+//        log.info("removing intra-component doors, {} links", doorLinks.size());
 //
 //        var remainingDoors = new HashMap<Position, DoorLink>();
 //        for (var entry : doorLinks.entrySet()) {
@@ -93,7 +95,7 @@ public record PathfinderGraph(
 //            }
 //
 //            if (component == destComponent) {
-//                log.debug("intercomponent door {},{} dest:{},{} component:{} dest:{}, in plane:{}", x, y, destX, destY, component, destComponent, position.getZ());
+//                log.debug("itracomponent door {},{} dest:{},{} component:{} dest:{}, in plane:{}", x, y, destX, destY, component, destComponent, position.getZ());
 //                var wall = Wall.fromDXY(destX - x, destY - y);
 //                world.getPlane(position.getZ()).unmarkWall(x, y, wall);
 //            } else {

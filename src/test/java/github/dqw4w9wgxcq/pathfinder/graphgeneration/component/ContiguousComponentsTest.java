@@ -8,8 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-
 @Slf4j
 public class ContiguousComponentsTest {
     @Test
@@ -32,10 +30,10 @@ public class ContiguousComponentsTest {
 
         log.debug("components: {}", components);
 
-        var sum = Arrays.stream(components.sizes()).sum();
+        var sum = components.sizes().stream().mapToInt(i -> i).sum();
         Assertions.assertEquals(planes[0].getSizeX() * planes[0].getSizeY(), sum);
 
-        Assertions.assertEquals(2, components.sizes().length);
+        Assertions.assertEquals(2, components.count());
     }
 
     @Test
@@ -60,10 +58,10 @@ public class ContiguousComponentsTest {
 
         log.debug("components: {}", components);
 
-        var sum = Arrays.stream(components.sizes()).sum();
+        var sum = components.sizes().stream().mapToInt(i -> i).sum();
         Assertions.assertEquals(grid.getSizeX() * grid.getSizeY() - 3, sum);
 
-        Assertions.assertEquals(2, components.sizes().length);
+        Assertions.assertEquals(2, components.count());
     }
 
     @Test
@@ -76,7 +74,7 @@ public class ContiguousComponentsTest {
         var s = GridTestUtil.stringify(components.planes()[0]);
         log.debug("\n{}", s);
 
-        Assertions.assertEquals(2, components.sizes().length);
+        Assertions.assertEquals(2, components.count());
     }
 
     @Test
@@ -89,9 +87,9 @@ public class ContiguousComponentsTest {
         var s = GridTestUtil.stringify(components.planes()[0]);
         log.debug("\n{}", s);
 
-        Assertions.assertEquals(0, Arrays.stream(components.sizes()).sum());
+        Assertions.assertEquals(0, components.sizes().stream().mapToInt(i -> i).sum());
 
-        Assertions.assertEquals(0, components.sizes().length);
+        Assertions.assertEquals(0, components.count());
     }
 
     private TileGrid createGrid() {

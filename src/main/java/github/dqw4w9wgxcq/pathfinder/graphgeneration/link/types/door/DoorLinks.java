@@ -56,6 +56,8 @@ public class DoorLinks {
             var link = new DoorLink(position, destination, location.getId());
             log.debug("new door link {}", link);
             links.add(link);
+            //bidirectionality
+            links.add(new DoorLink(destination, position, location.getId()));
         }
 
         return links;

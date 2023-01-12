@@ -1,20 +1,16 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.component;
 
-import com.google.common.base.Preconditions;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.algo.Algo;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Point;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.link.Link;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.link.Links;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.cache.region.Position;
 
 import java.util.ArrayList;
 
 @Slf4j
-public record LinkedComponents(LinkedComponent[][][] planes, LinkedComponent[] components) {
+public record LinkedComponents(Component[][][] planes, Component[] components) {
     public static LinkedComponents create(ContiguousComponents contiguousComponents, Links links) {
-        var components = new LinkedComponent[contiguousComponents.count()];
-        var planes = new LinkedComponent[contiguousComponents.planes().length][contiguousComponents.planes()[0].length][contiguousComponents.planes()[0][0].length];
+        var components = new Component[contiguousComponents.count()];
+        var planes = new Component[contiguousComponents.planes().length][contiguousComponents.planes()[0].length][contiguousComponents.planes()[0][0].length];
         for (var z = 0; z < contiguousComponents.planes().length; z++) {
             for (var x = 0; x < contiguousComponents.planes()[0].length; x++) {
                 for (var y = 0; y < contiguousComponents.planes()[0][0].length; y++) {
@@ -25,14 +21,20 @@ public record LinkedComponents(LinkedComponent[][][] planes, LinkedComponent[] c
 
                     var component = components[id];
                     if (component == null) {
-                        var componentLinks = new ArrayList<Link>();
+                        var sourceLinks = new ArrayList<Link>();
+                        var destinationLinks = new ArrayList<Link>();
                         for (var link : links.all()) {
-                            var sourceId = contiguousComponents.planes()[link.source().getZ()][link.source().getX()][link.source().getY()];
+                            var sourceId = contiguousComponents.planes()[link.origin().getZ()][link.origin().getX()][link.origin().getY()];
                             if (sourceId == id) {
-                                componentLinks.add(link);
+                                sourceLinks.add(link);
+                            }
+
+                            var destinationId = contiguousComponents.planes()[link.destination().getZ()][link.destination().getX()][link.destination().getY()];
+                            if (destinationId == id) {
+                                destinationLinks.add(link);
                             }
                         }
-                        component = new LinkedComponent(id, componentLinks);
+                        component = new Component(id, sourceLinks, destinationLinks);
                         components[id] = component;
                     }
 
@@ -42,15 +44,5 @@ public record LinkedComponents(LinkedComponent[][][] planes, LinkedComponent[] c
         }
 
         return new LinkedComponents(planes, components);
-    }
-
-    private static int chebychevDistance(Position p1, Position p2) {
-        Preconditions.checkArgument(p1.getZ() == p2.getZ(), "p1({}) and p2({}) must be on the same plane", p1, p2);
-
-        return Algo.chebyshevDistance(toPoint(p1), toPoint(p2));
-    }
-
-    private static Point toPoint(Position position) {
-        return new Point(position.getX(), position.getY());
     }
 }

@@ -3,7 +3,7 @@ package github.dqw4w9wgxcq.pathfinder.graphgeneration;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.output.leafletimages.LeafletImages;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.leafletimages.LeafletImages;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.*;
 

@@ -1,4 +1,4 @@
-package github.dqw4w9wgxcq.pathfinder.graphgeneration.output.leafletimages;
+package github.dqw4w9wgxcq.pathfinder.graphgeneration.leafletimages;
 
 import com.google.common.base.Preconditions;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.RegionUtil;

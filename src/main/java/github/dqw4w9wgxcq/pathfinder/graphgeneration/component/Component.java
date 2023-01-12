@@ -4,5 +4,5 @@ import github.dqw4w9wgxcq.pathfinder.graphgeneration.link.Link;
 
 import java.util.List;
 
-public record LinkedComponent(int id, List<Link> links) {
+public record Component(int id, List<Link> outboundLinks, List<Link> inboundLinks) {
 }

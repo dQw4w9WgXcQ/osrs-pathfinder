@@ -11,24 +11,24 @@ import java.util.Arrays;
 
 //index of sizes is the ID of the component (values in the map array)
 @Slf4j
-public record ContiguousComponents(int[][][] planes, int[] sizes) {
+public record ContiguousComponents(int[][][] planes, ArrayList<Integer> sizes) {
     public int count() {
-        return sizes.length;
+        return sizes.size();
     }
 
-    public static ContiguousComponents create(TileGrid[] planes) {
+    public static ContiguousComponents create(TileGrid[] gridPlanes) {
         var sizes = new ArrayList<Integer>();
 
-        var componentsPlanes = new int[planes.length][planes[0].getSizeX()][planes[0].getSizeY()];
-        for (var plane : componentsPlanes) {
-            for (var row : plane) {
+        var componentsPlanes = new int[gridPlanes.length][gridPlanes[0].getSizeX()][gridPlanes[0].getSizeY()];
+        for (var componentPlane : componentsPlanes) {
+            for (var row : componentPlane) {
                 Arrays.fill(row, -1);
             }
         }
 
-        var index = 0;
-        for (var z = 0; z < planes.length; z++) {
-            var grid = planes[z];
+        var id = 0;
+        for (var z = 0; z < gridPlanes.length; z++) {
+            var grid = gridPlanes[z];
 
             for (var x = 0; x < grid.getSizeX(); x++) {
                 for (var y = 0; y < grid.getSizeY(); y++) {
@@ -44,13 +44,13 @@ public record ContiguousComponents(int[][][] planes, int[] sizes) {
                         continue;
                     }
 
-                    log.debug("new component id:{} at x:{} y:{}", index, x, y);
-                    var size = flood(componentsPlanes[z], grid, x, y, index);
-                    log.debug("new component id:{} size:{}", index, size);
+                    log.debug("new component id:{} at x:{} y:{}", id, x, y);
+                    var size = floodfill(componentsPlanes[z], grid, x, y, id);
+                    log.debug("new component id:{} size:{}", id, size);
 
                     sizes.add(size);
 
-                    index++;
+                    id++;
                 }
             }
         }
@@ -61,13 +61,13 @@ public record ContiguousComponents(int[][][] planes, int[] sizes) {
                 sizes.stream().mapToInt(Integer::intValue).max().orElse(0),
                 (int) sizes.stream().mapToInt(Integer::intValue).average().orElse(0),
                 sizes.stream().mapToInt(Integer::intValue).sum());
-        return new ContiguousComponents(componentsPlanes, sizes.stream().mapToInt(i -> i).toArray());
+        return new ContiguousComponents(componentsPlanes, sizes);
     }
 
     //in place algo cuts mem usage by ~4gb
-    private static int flood(int[][] map, TileGrid grid, int startX, int startY, int id) {
+    private static int floodfill(int[][] plane, TileGrid grid, int startX, int startY, int id) {
         var frontier = new ArrayDeque<Point>();
-        map[startX][startY] = id;
+        plane[startX][startY] = id;
         frontier.add(new Point(startX, startY));
         var size = 1;
         //dfs
@@ -86,12 +86,12 @@ public record ContiguousComponents(int[][][] planes, int[] sizes) {
                     if (grid.canTravelInDirection(edge.x(), edge.y(), dx, dy)) {
                         var x = edge.x() + dx;
                         var y = edge.y() + dy;
-                        if (map[x][y] == -1) {
-                            map[x][y] = id;
+                        if (plane[x][y] == -1) {
+                            plane[x][y] = id;
                             frontier.push(new Point(x, y));
                             size++;
                         } else {
-                            assert map[x][y] == id : "tile already assigned to another component at x:" + x + "y:" + y + ".  means canTravelInDirection is not bidirectional somewhere";
+                            assert plane[x][y] == id : "tile already assigned to another component at x:" + x + "y:" + y + ".  means canTravelInDirection is not bidirectional somewhere";
                         }
                     }
                 }
