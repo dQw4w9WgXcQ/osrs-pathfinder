@@ -1,7 +1,6 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.RegionUtil;
 import lombok.Getter;
@@ -51,10 +50,12 @@ public class TileWorld {
         return out;
     }
 
-    public TileGrid getPlane(int plane) {
-        Preconditions.checkArgument(plane >= 0 && plane < PLANES_SIZE, "plane must be between 0 and 3");
-
-        return planes[plane];
+    public int[][][] getPlanesAsIntArrays() {
+        var out = new int[PLANES_SIZE][sizeX][sizeY];
+        for (int i = 0; i < PLANES_SIZE; i++) {
+            out[i] = planes[i].getTileArray();
+        }
+        return out;
     }
 
     static void markRegionValid(TileGrid[] planes, Region region) {

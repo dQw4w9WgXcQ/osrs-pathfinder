@@ -1,9 +1,12 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration;
 
+import com.google.gson.Gson;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.ComponentGraph;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.ContiguousComponents;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.LinkEdge;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.LinkedComponents;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.link.Link;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.link.Links;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileWorld;
 import lombok.extern.slf4j.Slf4j;
@@ -11,27 +14,67 @@ import net.runelite.cache.region.Location;
 import net.runelite.cache.region.Position;
 import net.runelite.cache.region.Region;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Slf4j
-public record PathfinderGraph(
+public record PathfindingGraph(
+        TileWorld tileWorld,
         ContiguousComponents contiguousComponents,
         LinkedComponents linkedComponents,
-        Links links
+        Links links,
+        Map<Link, List<LinkEdge>> componentGraph
 ) {
-    public static PathfinderGraph generate(CacheData cacheData) {
+    public static PathfindingGraph generate(CacheData cacheData) {
         var objectLocations = getLocationsAdjustedFor0x2(cacheData.regionData().regions());
-        var gridWorld = TileWorld.create(cacheData, objectLocations);
-        var contiguousComponents = ContiguousComponents.create(gridWorld.getPlanes());
+        var tileWorld = TileWorld.create(cacheData, objectLocations);
+        var contiguousComponents = ContiguousComponents.create(tileWorld.getPlanes());
         var links = Links.create(cacheData, objectLocations, contiguousComponents);
         var linkedComponents = LinkedComponents.create(contiguousComponents, links);
-        var componentGraph = ComponentGraph.create(linkedComponents);
-        return new PathfinderGraph(contiguousComponents, linkedComponents, links);
+        var componentGraph = ComponentGraph.createGraph(linkedComponents);
+        return new PathfindingGraph(tileWorld, contiguousComponents, linkedComponents, links, componentGraph);
+    }
+
+    public void write(File dir) throws IOException {
+        log.info("Writing graph to {}", dir);
+
+        //noinspection ResultOfMethodCallIgnored
+        dir.mkdirs();
+
+        try (
+                var fos = new FileOutputStream(new File(dir, "graph.zip"));
+                var zos = new ZipOutputStream(fos)
+        ) {
+            zos.putNextEntry(new ZipEntry("components.dat"));
+            var componentsOos = new ObjectOutputStream(zos);
+            componentsOos.writeObject(contiguousComponents.planes());
+
+            zos.putNextEntry(new ZipEntry("tiles.dat"));
+            var tileOos = new ObjectOutputStream(zos);
+            tileOos.writeObject(tileWorld.getPlanesAsIntArrays());
+
+            var gson = new Gson();
+
+            zos.putNextEntry(new ZipEntry("links.json"));
+            var linksOos = new ObjectOutputStream(zos);
+//            gson.toJson();
+        }
+    }
+
+    public void load(File file) {
+
     }
 
     //todo move this to a better place
+
     /**
      * The 0x2 render flag signifies that objects from the plane above should affect the collision map of the plane below.  Used for bridges and multi-level buildings.
      */

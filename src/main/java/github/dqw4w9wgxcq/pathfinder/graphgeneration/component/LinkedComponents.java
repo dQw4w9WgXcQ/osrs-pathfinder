@@ -7,10 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.ArrayList;
 
 @Slf4j
-public record LinkedComponents(Component[][][] planes, Component[] components) {
+public record LinkedComponents(LinkedComponent[][][] planes, LinkedComponent[] components) {
     public static LinkedComponents create(ContiguousComponents contiguousComponents, Links links) {
-        var components = new Component[contiguousComponents.count()];
-        var planes = new Component[contiguousComponents.planes().length][contiguousComponents.planes()[0].length][contiguousComponents.planes()[0][0].length];
+        var components = new LinkedComponent[contiguousComponents.count()];
+        var planes = new LinkedComponent[contiguousComponents.planes().length][contiguousComponents.planes()[0].length][contiguousComponents.planes()[0][0].length];
         for (var z = 0; z < contiguousComponents.planes().length; z++) {
             for (var x = 0; x < contiguousComponents.planes()[0].length; x++) {
                 for (var y = 0; y < contiguousComponents.planes()[0][0].length; y++) {
@@ -34,7 +34,7 @@ public record LinkedComponents(Component[][][] planes, Component[] components) {
                                 destinationLinks.add(link);
                             }
                         }
-                        component = new Component(id, sourceLinks, destinationLinks);
+                        component = new LinkedComponent(id, sourceLinks, destinationLinks);
                         components[id] = component;
                     }
 

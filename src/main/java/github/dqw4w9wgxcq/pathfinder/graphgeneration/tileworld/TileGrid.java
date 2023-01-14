@@ -17,7 +17,7 @@ public class TileGrid {
     private final int[][] tiles;
 
     public TileGrid(int sizeX, int sizeY) {
-        log.info("new TileGrid with size x:" + sizeX + " y:" + sizeY);
+        log.debug("new TileGrid with size x:" + sizeX + " y:" + sizeY);
 
         tiles = new int[sizeX][sizeY];
 
@@ -249,26 +249,3 @@ public class TileGrid {
                 '}';
     }
 }
-
-//below are from decompiled game.  for reference
-/*
-public void addGameObject(int x, int y, int xSize, int ySize, boolean blocksLineOfSight) {
-    int flag = 256;
-    if (blocksLineOfSight) {
-        flag += 131072;
-    }
-
-    x -= this.xInset;
-    y -= this.yInset;
-
-    for (int i = x; i < xSize + x; ++i) {
-        if (i >= 0 && i < this.xSize) {
-            for (int j = y; j < y + ySize; ++j) {
-                if (j >= 0 && j < this.ySize) {
-                    this.setFlag(i, j, flag);
-                }
-            }
-        }
-    }
-}
- */

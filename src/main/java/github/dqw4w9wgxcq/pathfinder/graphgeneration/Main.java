@@ -31,6 +31,7 @@ class Main {
         options.addOption(xteasOpt);
         options.addOption(outOpt);
         options.addOption(leafletOpt);
+        options.addOption(skipGraphOpt);
 
         CommandLine cmd;
         try {
@@ -64,8 +65,6 @@ class Main {
         }
 
         var outDir = new File(cmd.getOptionValue("out", System.getProperty("user.dir")));
-        //noinspection ResultOfMethodCallIgnored
-        outDir.mkdir();
 
         //load game data from cacheDir/xteasFile
         CacheData cacheData;
@@ -93,7 +92,7 @@ class Main {
             return;
         }
 
-        var graph = PathfinderGraph.generate(cacheData);
+        var graph = PathfindingGraph.generate(cacheData);
 
         if (cmd.hasOption("leaflet")) {
             try {
@@ -107,14 +106,16 @@ class Main {
         }
 
         if (!cmd.hasOption("skip-graph")) {
-//        try {
-//            graph.save(outDir);
-//        } catch (IOException e) {
-//            log.error("saving graph failed");
-//            log.info(null, e);
-//            System.exit(1);
-//            return;
-//        }
+            try {
+                graph.write(outDir);
+            } catch (IOException e) {
+                log.error(null, e);
+                System.out.println("writing graph failed");
+                System.exit(1);
+                return;
+            }
         }
+
+        log.info("done");
     }
 }

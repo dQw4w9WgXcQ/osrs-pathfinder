@@ -9,7 +9,10 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-//index of sizes is the ID of the component (values in the map array)
+/**
+ * @param planes A 3d array representing the tile grid.  Each value is the ID of the component that the tile belongs to.
+ * @param sizes  The size (in tiles) of each component.  Component ID corresponds to index.  Only used in tests.
+ */
 @Slf4j
 public record ContiguousComponents(int[][][] planes, ArrayList<Integer> sizes) {
     public int count() {
@@ -55,8 +58,8 @@ public record ContiguousComponents(int[][][] planes, ArrayList<Integer> sizes) {
             }
         }
 
-        log.info("Found {} components", sizes.size());
-        log.info("smallest:{} largest:{} average:{} total:{}",
+        log.info("Found {} components smallest:{} largest:{} average:{} total:{}",
+                sizes.size(),
                 sizes.stream().mapToInt(Integer::intValue).min().orElse(0),
                 sizes.stream().mapToInt(Integer::intValue).max().orElse(0),
                 (int) sizes.stream().mapToInt(Integer::intValue).average().orElse(0),

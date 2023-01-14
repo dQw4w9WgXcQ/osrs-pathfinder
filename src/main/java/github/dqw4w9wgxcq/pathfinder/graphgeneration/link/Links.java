@@ -39,6 +39,8 @@ public record Links(List<DoorLink> doorLinks, List<SpecialLink> specialLinks, Li
             });
         }
 
+        log.info("found {} links", doorLinks.size() + specialLinks.size() + stairLinks.size());
+
         return new Links(doorLinks, specialLinks, stairLinks);
     }
 
