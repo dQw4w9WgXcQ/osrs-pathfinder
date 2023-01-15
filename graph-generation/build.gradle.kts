@@ -1,5 +1,5 @@
 plugins {
-    java
+    id("java")
 }
 
 group = "github.dqw4w9wgxcq.pathfinder"
