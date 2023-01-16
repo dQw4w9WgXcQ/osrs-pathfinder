@@ -2,7 +2,7 @@ package github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld;
 
 import com.google.common.annotations.VisibleForTesting;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.RegionUtil;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Util;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.cache.definitions.ObjectDefinition;
@@ -24,10 +24,10 @@ public class TileWorld {
 
     @VisibleForTesting
     TileWorld(int regionSizeX, int regionSizeY) {
-        log.info("Creating GridWorld with regionSizeX:{} Y:{}", regionSizeX, regionSizeY);
+        log.info("Creating TileWorld with regionSizeX:{} Y:{}", regionSizeX, regionSizeY);
 
-        this.sizeX = (regionSizeX + 1) * RegionUtil.SIZE;
-        this.sizeY = (regionSizeY + 1) * RegionUtil.SIZE;
+        this.sizeX = (regionSizeX + 1) * Util.REGION_SIZE;
+        this.sizeY = (regionSizeY + 1) * Util.REGION_SIZE;
 
         planes = new TileGrid[PLANES_SIZE];
         Arrays.setAll(planes, x -> new TileGrid(sizeX, sizeY));
@@ -50,14 +50,6 @@ public class TileWorld {
         return out;
     }
 
-    public int[][][] getPlanesAsIntArrays() {
-        var out = new int[PLANES_SIZE][sizeX][sizeY];
-        for (int i = 0; i < PLANES_SIZE; i++) {
-            out[i] = planes[i].getTileArray();
-        }
-        return out;
-    }
-
     static void markRegionValid(TileGrid[] planes, Region region) {
         for (var plane : planes) {
             plane.markRegionHaveData(region.getRegionX(), region.getRegionY());
@@ -70,8 +62,8 @@ public class TileWorld {
         var baseY = region.getBaseY();
 
         for (var renderPlane = 0; renderPlane < planes.length; renderPlane++) {
-            for (var x = 0; x < RegionUtil.SIZE; x++) {
-                for (var y = 0; y < RegionUtil.SIZE; y++) {
+            for (var x = 0; x < Util.REGION_SIZE; x++) {
+                for (var y = 0; y < Util.REGION_SIZE; y++) {
                     if ((region.getTileSetting(renderPlane, x, y) & 0x1) == 0x1) {
                         var collisionPlane = renderPlane;
                         if ((region.getTileSetting(1, x, y) & 0x2) == 0x2) {

@@ -2,12 +2,12 @@ package github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.RegionUtil;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Util;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Uses bitwise because it's based off the decompiled game client.
+ * Based off code from the decompiled game client.  Uses bitwise.
  */
 @Slf4j
 public class TileGrid {
@@ -41,7 +41,7 @@ public class TileGrid {
         assert Math.abs(dx) <= 1 && Math.abs(dy) <= 1 : "dx and dy must be 1 or -1, found dx: " + dx + " dy: " + dy;
 
         if (Math.abs(dx) == 1 && Math.abs(dy) == 1) {
-            //todo can do diagonal movement in the future. need additional checks for diagonal collisions
+            //diagonals not supported
             log.debug("diagonal movement, x:{} y:{} dx:{} dy:{}", x, y, dx, dy);
             return false;
         }
@@ -127,10 +127,10 @@ public class TileGrid {
     }
 
     public void markRegionHaveData(int regionX, int regionY) {
-        var baseX = regionX * RegionUtil.SIZE;
-        var baseY = regionY * RegionUtil.SIZE;
-        for (var x = baseX; x < baseX + RegionUtil.SIZE; x++) {
-            for (var y = baseY; y < baseY + RegionUtil.SIZE; y++) {
+        var baseX = regionX * Util.REGION_SIZE;
+        var baseY = regionY * Util.REGION_SIZE;
+        for (var x = baseX; x < baseX + Util.REGION_SIZE; x++) {
+            for (var y = baseY; y < baseY + Util.REGION_SIZE; y++) {
                 markTile(x, y, TileFlags.HAVE_DATA);
             }
         }
@@ -148,7 +148,7 @@ public class TileGrid {
 
         for (var i = x; i < x + sizeX; i++) {
             for (var j = y; j < y + sizeY; j++) {
-                //todo, i think can fail if the object size goes off the map (will throw iae) but haven't seen it yet
+                //todo I think this can fail if an object size goes off the map, but haven't seen it yet (markTile will throw illegal args)
                 markTile(i, j, flag);
             }
         }

@@ -1,7 +1,7 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.leafletimages;
 
 import com.google.common.base.Preconditions;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.RegionUtil;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Util;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.ContiguousComponents;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileWorld;
 import lombok.extern.slf4j.Slf4j;
@@ -92,8 +92,8 @@ public class LeafletImages {
         var width = grid.length;
         var height = grid[0].length;
 
-        Preconditions.checkArgument(width % RegionUtil.SIZE == 0, "grid width must be multiple of {} (region size), found {}", RegionUtil.SIZE, width);
-        Preconditions.checkArgument(height % RegionUtil.SIZE == 0, "grid height must be multiple of {} (region size), found {}", RegionUtil.SIZE, height);
+        Preconditions.checkArgument(width % Util.REGION_SIZE == 0, "grid width must be multiple of {} (region size), found {}", Util.REGION_SIZE, width);
+        Preconditions.checkArgument(height % Util.REGION_SIZE == 0, "grid height must be multiple of {} (region size), found {}", Util.REGION_SIZE, height);
 
         var img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 

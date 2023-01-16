@@ -1,12 +1,13 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration;
 
-import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import github.dqw4w9wgxcq.pathfinder.graph.domain.LinkRef;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.ComponentGraph;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.ContiguousComponents;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.LinkEdge;
+import github.dqw4w9wgxcq.pathfinder.graph.domain.LinkEdge;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.LinkedComponents;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.link.Link;
+import github.dqw4w9wgxcq.pathfinder.graph.domain.link.Link;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.link.Links;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileWorld;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,7 @@ public record PathfindingGraph(
         ContiguousComponents contiguousComponents,
         LinkedComponents linkedComponents,
         Links links,
-        Map<Link, List<LinkEdge>> componentGraph
+        Map<LinkRef, List<LinkEdge>> componentGraph
 ) {
     public static PathfindingGraph generate(CacheData cacheData) {
         var objectLocations = getLocationsAdjustedFor0x2(cacheData.regionData().regions());
@@ -39,7 +40,7 @@ public record PathfindingGraph(
         var contiguousComponents = ContiguousComponents.create(tileWorld.getPlanes());
         var links = Links.create(cacheData, objectLocations, contiguousComponents);
         var linkedComponents = LinkedComponents.create(contiguousComponents, links);
-        var componentGraph = ComponentGraph.createGraph(linkedComponents);
+        var componentGraph = ComponentGraph.createGraph(linkedComponents, contiguousComponents);
         return new PathfindingGraph(tileWorld, contiguousComponents, linkedComponents, links, componentGraph);
     }
 
@@ -57,11 +58,7 @@ public record PathfindingGraph(
             var componentsOos = new ObjectOutputStream(zos);
             componentsOos.writeObject(contiguousComponents.planes());
 
-            zos.putNextEntry(new ZipEntry("tiles.dat"));
-            var tileOos = new ObjectOutputStream(zos);
-            tileOos.writeObject(tileWorld.getPlanesAsIntArrays());
-
-            var gson = new Gson();
+            var gson = new GsonBuilder().create();
 
             zos.putNextEntry(new ZipEntry("links.json"));
             var linksOos = new ObjectOutputStream(zos);

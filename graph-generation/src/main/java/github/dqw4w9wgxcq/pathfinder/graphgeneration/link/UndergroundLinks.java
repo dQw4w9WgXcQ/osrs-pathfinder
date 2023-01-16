@@ -1,5 +1,6 @@
-package github.dqw4w9wgxcq.pathfinder.graphgeneration.link.types.underground;
+package github.dqw4w9wgxcq.pathfinder.graphgeneration.link;
 
+import github.dqw4w9wgxcq.pathfinder.graph.domain.link.UndergroundLink;
 import lombok.AllArgsConstructor;
 
 import java.util.List;

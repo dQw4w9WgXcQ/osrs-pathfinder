@@ -1,6 +1,6 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.component;
 
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Point;
+import github.dqw4w9wgxcq.pathfinder.graph.domain.Point;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileFlags;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileGrid;
 import lombok.extern.slf4j.Slf4j;

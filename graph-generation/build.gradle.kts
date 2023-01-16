@@ -1,5 +1,5 @@
 plugins {
-    id("java")
+    java
 }
 
 group = "github.dqw4w9wgxcq.pathfinder"
@@ -15,6 +15,7 @@ repositories {
 dependencies {
     val runelite = "1.8.26"
     val lombok = "1.18.24"
+    implementation(project(":graph"))
     implementation("net.runelite:cache:$runelite")//provides gson 2.8.5, slf4j api 1.7.25, guava 23.2-jre
     implementation("net.runelite:runelite-api:$runelite")
     implementation("org.slf4j:slf4j-simple:1.7.25")

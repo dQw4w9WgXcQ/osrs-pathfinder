@@ -12,7 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 @Slf4j
-class Main {
+public class GraphGeneration {
     public static void main(String[] args) {
         var cacheOpt = new Option("c", "cache", true, "Path to osrs cache dir that the game populates at C:\\Users\\user\\jagexcache\\oldschool\\LIVE\\");
         cacheOpt.setRequired(true);
@@ -66,7 +66,6 @@ class Main {
 
         var outDir = new File(cmd.getOptionValue("out", System.getProperty("user.dir")));
 
-        //load game data from cacheDir/xteasFile
         CacheData cacheData;
         try {
             cacheData = CacheData.load(cacheDir, xteasFile);
