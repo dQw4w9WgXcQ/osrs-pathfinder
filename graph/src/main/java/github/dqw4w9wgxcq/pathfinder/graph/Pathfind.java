@@ -31,6 +31,10 @@ public class Pathfind {
             return null;
         }
 
+        return toSteps(linkPath, start, end);
+    }
+
+    List<PathStep> toSteps(List<Link> linkPath, Position start, Position end) {
         var curr = start;
         var steps = new ArrayList<PathStep>();
         for (var link : linkPath) {
