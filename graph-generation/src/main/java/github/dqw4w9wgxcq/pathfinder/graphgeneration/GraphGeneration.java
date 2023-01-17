@@ -91,7 +91,7 @@ public class GraphGeneration {
             return;
         }
 
-        var graph = PathfindingGraph.generate(cacheData);
+        var graph = Graph.generate(cacheData);
 
         if (cmd.hasOption("leaflet")) {
             try {

@@ -1,6 +1,6 @@
-package github.dqw4w9wgxcq.pathfinder.graph.domain;
+package github.dqw4w9wgxcq.pathfinder.graph;
 
-import github.dqw4w9wgxcq.pathfinder.graph.domain.link.*;
+import github.dqw4w9wgxcq.pathfinder.domain.link.*;
 
 public enum LinkType {
     DOOR,

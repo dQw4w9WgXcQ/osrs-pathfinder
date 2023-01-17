@@ -1,6 +1,6 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.link;
 
-import github.dqw4w9wgxcq.pathfinder.graph.domain.link.SpecialLink;
+import github.dqw4w9wgxcq.pathfinder.domain.link.SpecialLink;
 
 import java.util.ArrayList;
 import java.util.List;

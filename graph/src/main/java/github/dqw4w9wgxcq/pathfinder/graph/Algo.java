@@ -1,8 +1,8 @@
 package github.dqw4w9wgxcq.pathfinder.graph;
 
-import github.dqw4w9wgxcq.pathfinder.graph.domain.Point;
+import github.dqw4w9wgxcq.pathfinder.domain.Point;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.*;
 
 public class Algo {
@@ -126,5 +126,49 @@ public class Algo {
         }
 
         throw new IllegalStateException("from and to are from the same component, but no path was found");
+    }
+
+    //todo currently returns a map with all distances (can be very large)
+    public static Map<Point, Integer> distances(int[][] grid, Point from) {
+        var seenDistance = new HashMap<Point, Integer>();
+        var frontier = new ArrayDeque<Point>();
+
+        var distance = 0;
+        seenDistance.put(from, distance);
+        frontier.add(from);
+        while (!frontier.isEmpty()) {
+            distance++;
+
+            var curr = frontier.poll();
+
+            for (var dx = -1; dx <= 1; dx++) {
+                for (var dy = -1; dy <= 1; dy++) {
+                    if (dx == 0 && dy == 0) {
+                        continue;
+                    }
+
+                    var adjacentX = curr.x() + dx;
+                    var adjacentY = curr.y() + dy;
+
+                    if (adjacentX < 0 || adjacentX >= grid.length || adjacentY < 0 || adjacentY >= grid[0].length) {
+                        continue;
+                    }
+
+                    if (grid[adjacentX][adjacentY] != grid[from.x()][from.y()]) {
+                        continue;
+                    }
+
+                    var adjacent = new Point(adjacentX, adjacentY);
+                    if (seenDistance.containsKey(adjacent)) {
+                        continue;
+                    }
+
+                    seenDistance.put(adjacent, distance);
+                    frontier.add(adjacent);
+                }
+            }
+        }
+
+        return seenDistance;
     }
 }

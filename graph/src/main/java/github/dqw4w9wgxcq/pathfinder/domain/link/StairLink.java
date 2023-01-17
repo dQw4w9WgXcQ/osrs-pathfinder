@@ -1,16 +1,16 @@
-package github.dqw4w9wgxcq.pathfinder.graph.domain.link;
+package github.dqw4w9wgxcq.pathfinder.domain.link;
 
-import github.dqw4w9wgxcq.pathfinder.graph.domain.Position;
-import github.dqw4w9wgxcq.pathfinder.graph.domain.Requirement;
+import github.dqw4w9wgxcq.pathfinder.domain.Requirement;
+import github.dqw4w9wgxcq.pathfinder.domain.Position;
 
 import java.util.List;
 
-public record UndergroundLink(
+public record StairLink(
         int id,
         Position origin,
         Position destination,
         int objectId,
-        String action
+        boolean up
 ) implements Link {
     @Override
     public int cost() {

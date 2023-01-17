@@ -20,7 +20,7 @@ dependencies {
     implementation("net.runelite:runelite-api:$runelite")
     implementation("org.slf4j:slf4j-simple:1.7.25")
     implementation("commons-cli:commons-cli:1.5.0")
-
+    implementation("org.jetbrains:annotations:23.0.0")
     compileOnly("org.projectlombok:lombok:$lombok")
     annotationProcessor("org.projectlombok:lombok:$lombok")
 

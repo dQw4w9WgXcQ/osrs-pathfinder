@@ -1,6 +1,6 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.commons;
 
-import github.dqw4w9wgxcq.pathfinder.graph.domain.Position;
+import github.dqw4w9wgxcq.pathfinder.domain.Position;
 
 public class Util {
     public static final int REGION_SIZE = 64;

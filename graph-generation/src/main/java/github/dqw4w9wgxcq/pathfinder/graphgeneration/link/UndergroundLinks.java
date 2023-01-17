@@ -1,7 +1,9 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.link;
 
-import github.dqw4w9wgxcq.pathfinder.graph.domain.link.UndergroundLink;
+import github.dqw4w9wgxcq.pathfinder.domain.link.UndergroundLink;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
 import lombok.AllArgsConstructor;
+import net.runelite.cache.region.Location;
 
 import java.util.List;
 
@@ -10,7 +12,7 @@ import java.util.List;
  */
 @AllArgsConstructor
 public class UndergroundLinks {
-    public List<UndergroundLink> findLinks() {
-        throw new UnsupportedOperationException("Not implemented");//todo
+    public static List<UndergroundLink> find(CacheData cacheData, List<Location> objectLocations) {
+        throw new UnsupportedOperationException("todo");//todo
     }
 }

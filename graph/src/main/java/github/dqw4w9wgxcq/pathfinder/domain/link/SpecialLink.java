@@ -1,7 +1,7 @@
-package github.dqw4w9wgxcq.pathfinder.graph.domain.link;
+package github.dqw4w9wgxcq.pathfinder.domain.link;
 
-import github.dqw4w9wgxcq.pathfinder.graph.domain.Position;
-import github.dqw4w9wgxcq.pathfinder.graph.domain.Requirement;
+import github.dqw4w9wgxcq.pathfinder.domain.Requirement;
+import github.dqw4w9wgxcq.pathfinder.domain.Position;
 
 import java.util.List;
 

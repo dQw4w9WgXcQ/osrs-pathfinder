@@ -1,14 +1,14 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration;
 
 import com.google.gson.GsonBuilder;
-import github.dqw4w9wgxcq.pathfinder.graph.domain.LinkRef;
+import github.dqw4w9wgxcq.pathfinder.domain.link.Link;
+import github.dqw4w9wgxcq.pathfinder.graph.edge.LinkEdge;
+import github.dqw4w9wgxcq.pathfinder.graph.Links;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.ComponentGraph;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.ContiguousComponents;
-import github.dqw4w9wgxcq.pathfinder.graph.domain.LinkEdge;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.LinkedComponents;
-import github.dqw4w9wgxcq.pathfinder.graph.domain.link.Link;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.link.Links;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.link.FindLinks;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileWorld;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.cache.region.Location;
@@ -27,21 +27,20 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 @Slf4j
-public record PathfindingGraph(
-        TileWorld tileWorld,
+public record Graph(
         ContiguousComponents contiguousComponents,
         LinkedComponents linkedComponents,
         Links links,
-        Map<LinkRef, List<LinkEdge>> componentGraph
+        Map<Link, List<LinkEdge>> componentGraph
 ) {
-    public static PathfindingGraph generate(CacheData cacheData) {
+    public static Graph generate(CacheData cacheData) {
         var objectLocations = getLocationsAdjustedFor0x2(cacheData.regionData().regions());
         var tileWorld = TileWorld.create(cacheData, objectLocations);
         var contiguousComponents = ContiguousComponents.create(tileWorld.getPlanes());
-        var links = Links.create(cacheData, objectLocations, contiguousComponents);
+        var links = FindLinks.find(cacheData, objectLocations, contiguousComponents);
         var linkedComponents = LinkedComponents.create(contiguousComponents, links);
         var componentGraph = ComponentGraph.createGraph(linkedComponents, contiguousComponents);
-        return new PathfindingGraph(tileWorld, contiguousComponents, linkedComponents, links, componentGraph);
+        return new Graph(contiguousComponents, linkedComponents, links, componentGraph);
     }
 
     public void write(File dir) throws IOException {
@@ -64,10 +63,6 @@ public record PathfindingGraph(
             var linksOos = new ObjectOutputStream(zos);
 //            gson.toJson();
         }
-    }
-
-    public void load(File file) {
-
     }
 
     //todo move this to a better place
