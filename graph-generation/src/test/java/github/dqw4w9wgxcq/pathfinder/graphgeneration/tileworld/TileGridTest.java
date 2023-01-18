@@ -2,8 +2,10 @@ package github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld;
 
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.GridTestUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 public class TileGridTest {
@@ -16,7 +18,7 @@ public class TileGridTest {
 
         log.debug("\n" + GridTestUtil.stringify(grid));
 
-        Assertions.assertTrue(grid.canTravelInDirection(X, Y, 1, 0));
+        assertTrue(grid.canTravelInDirection(X, Y, 1, 0));
     }
 
     @Test
@@ -27,7 +29,7 @@ public class TileGridTest {
 
         log.debug("\n" + GridTestUtil.stringify(grid));
 
-        Assertions.assertFalse(grid.canTravelInDirection(X, Y, 1, 0));
+        assertFalse(grid.canTravelInDirection(X, Y, 1, 0));
     }
 
     @Test
@@ -40,8 +42,8 @@ public class TileGridTest {
         //diagonal movement disabled temporarily
         //Assertions.assertFalse(grid.canTravelInDirection(X, Y, 1, 1));
         //Assertions.assertTrue(grid.canTravelInDirection(X + 1, Y + 1, -1, -1));
-        Assertions.assertTrue(grid.canTravelInDirection(X, Y, 1, 0));
-        Assertions.assertTrue(grid.canTravelInDirection(X, Y, 0, 1));
+        assertTrue(grid.canTravelInDirection(X, Y, 1, 0));
+        assertTrue(grid.canTravelInDirection(X, Y, 0, 1));
     }
 
     @Test
@@ -52,7 +54,7 @@ public class TileGridTest {
 
         log.debug("\n" + GridTestUtil.stringify(grid));
 
-        Assertions.assertFalse(grid.canTravelInDirection(X, Y, 1, 0));
+        assertFalse(grid.canTravelInDirection(X, Y, 1, 0));
     }
 
     TileGrid newGrid() {

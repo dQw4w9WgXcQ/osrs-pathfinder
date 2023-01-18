@@ -35,12 +35,11 @@ class AlgoTest {
         tos.add(new Point(1, 3));
         var distances = Algo.distances(grid, new Point(0, 0), tos);
 
-        assertEquals(0, distances.get(new Point(0, 0)));
+        assertEquals(0, distances.get(new Point(0, 0)));//test origin in tos
         assertEquals(1, distances.get(new Point(0, 1)));
         assertEquals(2, distances.get(new Point(0, 2)));
         assertEquals(3, distances.get(new Point(0, 3)));
         assertEquals(3, distances.get(new Point(1, 3)));
-        assertEquals(1, Algo.distances(grid, new Point(0, 0), new HashSet<>(Set.of(new Point(0, 0)))).size());
         assertThrows(
                 IllegalArgumentException.class,
                 () -> Algo.distances(grid, new Point(0, 0), new HashSet<>(Set.of(new Point(1, 2))))
