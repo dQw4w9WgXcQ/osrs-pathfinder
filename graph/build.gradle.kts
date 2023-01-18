@@ -16,7 +16,7 @@ apply<MavenPublishPlugin>()
 
 dependencies {
     implementation("com.google.guava:guava:23.2-jre")
-    implementation("com.google.code.gson:gson:2.8.5")
+    implementation("com.google.code.gson:gson:2.10.1")
     implementation("net.runelite:runelite-api:1.8.26")
     implementation("org.slf4j:slf4j-api:1.7.25")
     implementation("org.jetbrains:annotations:23.0.0")

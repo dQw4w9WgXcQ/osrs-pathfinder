@@ -21,9 +21,10 @@ public record GraphStore(
         Links links
 ) {
     private static final Gson GSON = new Gson();
-    private static final Gson GRAPH_GSON = new GsonBuilder()
-            .registerTypeHierarchyAdapter(Link.class, new LinkTypeAdapter(null))
-            .create();
+
+    public static void main(String[] args) throws IOException {
+        GraphStore.load(new File("/Users/user/projects/osrs-pathfinder-graph-generation"));
+    }
 
     public void save(File dir) throws IOException {
         log.info("saving graph to {}", dir);
@@ -31,15 +32,19 @@ public record GraphStore(
         //noinspection ResultOfMethodCallIgnored
         dir.mkdirs();
 
-        try (var fos = new FileOutputStream(new File(dir, "graph.zip"))) {
-            try (var zos = new ZipOutputStream(fos)) {
-                zos.putNextEntry(new ZipEntry("planes.dat"));
-                try (var oos = new ObjectOutputStream(zos)) {
-                    oos.writeObject(planes);
-                }
+        var graphGson = new GsonBuilder()
+                .enableComplexMapKeySerialization()
+                .registerTypeHierarchyAdapter(Link.class, new LinkTypeAdapter(null))
+                .create();
+        try (var fos = new FileOutputStream(new File(dir, "graph.zip"));
+             var zos = new ZipOutputStream(fos)) {
+            zos.putNextEntry(new ZipEntry("planes.dat"));
+            try (var oos = new ObjectOutputStream(zos)) {
+                oos.writeObject(planes);
 
+                //need to write next entry before closing oos
                 zos.putNextEntry(new ZipEntry("componentgraph.json"));
-                zos.write(GRAPH_GSON.toJson(componentGraph()).getBytes());
+                zos.write(graphGson.toJson(componentGraph).getBytes());
             }
         }
 
@@ -59,21 +64,24 @@ public record GraphStore(
         ComponentGraph componentGraph;
         Links links;
 
+        try (var fis = new FileInputStream(new File(dir, "links.zip"));
+             var zis = new ZipInputStream(fis)) {
+            zis.getNextEntry();
+            links = GSON.fromJson(new InputStreamReader(zis), Links.class);
+        }
+
+        var graphGson = new GsonBuilder()
+                .registerTypeHierarchyAdapter(Link.class, new LinkTypeAdapter(links))
+                .create();
+
         try (var fis = new FileInputStream(new File(dir, "graph.zip"));
              var zis = new ZipInputStream(fis)) {
             zis.getNextEntry();
             try (var ois = new ObjectInputStream(zis)) {
                 grid = (int[][][]) ois.readObject();
+                zis.getNextEntry();
+                componentGraph = graphGson.fromJson(new InputStreamReader(zis), ComponentGraph.class);
             }
-
-            zis.getNextEntry();
-            componentGraph = GRAPH_GSON.fromJson(new InputStreamReader(zis), ComponentGraph.class);
-        }
-
-        try (var fis = new FileInputStream(new File(dir, "links.zip"));
-             var zis = new ZipInputStream(fis)) {
-            zis.getNextEntry();
-            links = GSON.fromJson(new InputStreamReader(zis), Links.class);
         }
 
         return new GraphStore(grid, componentGraph, links);

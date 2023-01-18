@@ -1,6 +1,5 @@
 package github.dqw4w9wgxcq.pathfinder.graph.domain;
 
-import github.dqw4w9wgxcq.pathfinder.domain.Position;
 import github.dqw4w9wgxcq.pathfinder.domain.link.Link;
 import github.dqw4w9wgxcq.pathfinder.graph.edge.LinkEdge;
 

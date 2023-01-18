@@ -1,8 +1,8 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.link;
 
 import com.google.common.base.Preconditions;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
 import github.dqw4w9wgxcq.pathfinder.domain.link.StairLink;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.cache.definitions.ObjectDefinition;
