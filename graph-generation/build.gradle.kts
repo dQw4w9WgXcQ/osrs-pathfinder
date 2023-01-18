@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "github.dqw4w9wgxcq.pathfinder"
-version = "1.0-SNAPSHOT"
+version = "1.0"
 
 repositories {
     mavenCentral()

@@ -2,8 +2,14 @@ package github.dqw4w9wgxcq.pathfinder.graphgeneration;
 
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
+import github.dqw4w9wgxcq.pathfinder.graph.store.GraphStore;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.ContiguousComponents;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.CreateGraph;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.LinkedComponents;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.leafletimages.LeafletImages;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.link.FindLinks;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileWorld;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.*;
 
@@ -15,22 +21,21 @@ import java.io.IOException;
 public class GraphGeneration {
     public static void main(String[] args) {
         var cacheOpt = new Option("c", "cache", true, "Path to osrs cache dir that the game populates at C:\\Users\\user\\jagexcache\\oldschool\\LIVE\\");
-        cacheOpt.setRequired(true);
-
         var xteasOpt = new Option("x", "xteas", true, "Path to xteas JSON file");
-        xteasOpt.setRequired(true);
-
         var outOpt = new Option("o", "out", true, "Output directory");
-
         var leafletOpt = new Option("l", "leaflet", false, "Generate leaflet images");
-
+        var otherDataOpt = new Option("d", "data", false, "Generate other data (objects, items, etc.)");
         var skipGraphOpt = new Option("s", "skip-graph", false, "Skip graph output (-l is now required)");
+
+        cacheOpt.setRequired(true);
+        xteasOpt.setRequired(true);
 
         var options = new Options();
         options.addOption(cacheOpt);
         options.addOption(xteasOpt);
         options.addOption(outOpt);
         options.addOption(leafletOpt);
+        options.addOption(otherDataOpt);
         options.addOption(skipGraphOpt);
 
         CommandLine cmd;
@@ -65,6 +70,8 @@ public class GraphGeneration {
         }
 
         var outDir = new File(cmd.getOptionValue("out", System.getProperty("user.dir")));
+        //noinspection ResultOfMethodCallIgnored
+        outDir.mkdirs();
 
         CacheData cacheData;
         try {
@@ -91,11 +98,13 @@ public class GraphGeneration {
             return;
         }
 
-        var graph = Graph.generate(cacheData);
+        var objectLocations = cacheData.regionData().getLocationsAdjustedFor0x2();
+        var tileWorld = TileWorld.create(cacheData, objectLocations);
+        var contiguousComponents = ContiguousComponents.create(tileWorld.getPlanes());
 
         if (cmd.hasOption("leaflet")) {
             try {
-                LeafletImages.write(new File(outDir, "leaflet"), cacheDir, xteasFile, graph.contiguousComponents());
+                LeafletImages.write(new File(outDir, "leaflet"), cacheDir, xteasFile, contiguousComponents);
             } catch (IOException e) {
                 log.error(null, e);
                 System.out.println("writing leaflet images failed");
@@ -104,15 +113,22 @@ public class GraphGeneration {
             }
         }
 
-        if (!cmd.hasOption("skip-graph")) {
-            try {
-                graph.write(outDir);
-            } catch (IOException e) {
-                log.error(null, e);
-                System.out.println("writing graph failed");
-                System.exit(1);
-                return;
-            }
+        if (cmd.hasOption("skip-graph")) {
+            log.info("Skipping graph");
+            return;
+        }
+
+        var links = FindLinks.find(cacheData, objectLocations, contiguousComponents);
+        var linkedComponents = LinkedComponents.create(contiguousComponents, links);
+        var componentGraph = CreateGraph.createGraph(linkedComponents, contiguousComponents);
+
+        try {
+            new GraphStore(contiguousComponents.planes(), componentGraph, links).save(outDir);
+        } catch (IOException e) {
+            log.error(null, e);
+            System.out.println("writing graph failed");
+            System.exit(1);
+            return;
         }
 
         log.info("done");

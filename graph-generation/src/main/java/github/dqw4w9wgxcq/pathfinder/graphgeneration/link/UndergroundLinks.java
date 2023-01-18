@@ -5,6 +5,7 @@ import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
 import lombok.AllArgsConstructor;
 import net.runelite.cache.region.Location;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,6 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 public class UndergroundLinks {
     public static List<UndergroundLink> find(CacheData cacheData, List<Location> objectLocations) {
-        throw new UnsupportedOperationException("todo");//todo
+        return new ArrayList<>();
     }
 }

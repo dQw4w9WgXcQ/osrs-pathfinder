@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "github.dqw4w9wgxcq.pathfinder"
-version = "1.0-SNAPSHOT"
+version = "1.0"
 
 repositories {
     mavenCentral()
@@ -11,6 +11,8 @@ repositories {
         url = uri("https://repo.runelite.net")
     }
 }
+
+apply<MavenPublishPlugin>()
 
 dependencies {
     implementation("com.google.guava:guava:23.2-jre")
@@ -21,10 +23,18 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.24")
     annotationProcessor("org.projectlombok:lombok:1.18.24")
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
 }
 
 tasks.getByName<Test>("test") {
     useJUnitPlatform()
+}
+
+configure<PublishingExtension> {
+    publications {
+        register("mavenJava", MavenPublication::class) {
+            from(components["java"])
+        }
+    }
 }

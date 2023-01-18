@@ -4,9 +4,7 @@ import github.dqw4w9wgxcq.pathfinder.domain.Agent;
 import github.dqw4w9wgxcq.pathfinder.domain.Point;
 import github.dqw4w9wgxcq.pathfinder.domain.Position;
 import github.dqw4w9wgxcq.pathfinder.domain.link.Link;
-import github.dqw4w9wgxcq.pathfinder.graph.edge.LinkEdge;
-import github.dqw4w9wgxcq.pathfinder.graph.linkdistances.LinkDistanceCache;
-import github.dqw4w9wgxcq.pathfinder.graph.localpath.LocalPathCache;
+import github.dqw4w9wgxcq.pathfinder.graph.domain.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
@@ -15,9 +13,9 @@ import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
-public class Pathfind {
-    private final Map<Link, List<LinkEdge>> linkGraph;
-    private final Components components;
+public class Pathfinding {
+    private final ComponentGrid componentGrid;
+    private final ComponentGraph componentGraph;
     private final LinkDistanceCache linkDistances;
     private final LocalPathCache localPaths;
 
@@ -34,11 +32,11 @@ public class Pathfind {
         return toSteps(linkPath, start, end);
     }
 
-    List<PathStep> toSteps(List<Link> linkPath, Position start, Position end) {
+    private List<PathStep> toSteps(List<Link> linkPath, Position start, Position end) {
         var curr = start;
         var steps = new ArrayList<PathStep>();
         for (var link : linkPath) {
-            var walkPath = localPaths.get(curr.plane(), curr.toPoint(), link.origin().toPoint());
+            var walkPath = localPaths.get(curr.plane(), curr.point(), link.origin().point());
 
             steps.add(new WalkStep(curr.plane(), walkPath));
             steps.add(new LinkStep(link));
@@ -46,30 +44,27 @@ public class Pathfind {
             curr = link.destination();
         }
 
-        var walkPath = localPaths.get(curr.plane(), curr.toPoint(), end.toPoint());
+        var walkPath = localPaths.get(curr.plane(), curr.point(), end.point());
         steps.add(new WalkStep(curr.plane(), walkPath));
 
         return steps;
     }
 
-    //modified dijkstra.  messy because we can't modify the graph so we simulate edges from the end position to all links in the end component
-    //todo pathfind in reverse @see ComponentGraph
-    @Nullable List<Link> findLinkPath(Position start, Position end, Agent agent) {
-        record Node(Link link, int distance, boolean isEnd) {
-        }
-
-        int startComponent = components.component(start);
-        int endComponent = components.component(end);
+    private @Nullable List<Link> findLinkPath(Position start, Position end, Agent agent) {
+        int startComponent = componentGrid.componentOf(start);
+        int endComponent = componentGrid.componentOf(end);
 
         var startDistances = linkDistances.get(start);
         var endDistances = linkDistances.get(end);
 
+        record Node(Link link, int distance, boolean isEnd) {
+        }
         var seenFrom = new HashMap<Link, Link>();
         var queue = new PriorityQueue<>(Comparator.comparingInt(Node::distance));
 
-        for (var startLink : components.links().get(startComponent)) {
+        for (var startLink : componentGraph.linksOf(startComponent)) {
             if (agent.hasRequirements(startLink.requirements())) {
-                var distance = startDistances.get(startLink.origin().toPoint());
+                var distance = startDistances.get(startLink.origin());
                 queue.add(new Node(startLink, distance, false));
             }
         }
@@ -77,16 +72,21 @@ public class Pathfind {
         while (!queue.isEmpty()) {
             var curr = queue.poll();
             if (curr.isEnd()) {
-                log.debug("found path");
-                throw new Error("todo");//todo
+                var path = new ArrayList<Link>();
+                var link = curr.link();
+                while (link != null) {
+                    path.add(0, link);
+                    link = seenFrom.get(link);
+                }
+                return path;
             }
 
             //simulate end component edges
-            if (components.component(curr.link().destination()) == endComponent) {
-                queue.add(new Node(curr.link(), curr.distance() + endDistances.get(curr.link().destination().toPoint()), true));
+            if (componentGrid.componentOf(curr.link().destination()) == endComponent) {
+                queue.add(new Node(curr.link(), curr.distance() + endDistances.get(curr.link().destination()), true));
             }
 
-            for (var edge : linkGraph.get(curr.link())) {
+            for (var edge : componentGraph.graph().get(curr.link())) {
                 var nextLink = edge.link();
                 if (seenFrom.containsKey(nextLink)) {
                     continue;
@@ -100,8 +100,8 @@ public class Pathfind {
         return null;
     }
 
-    Position findClosestNotBlocked(Position position) {
-        int[][] plane = components.grid()[position.plane()];
+    private Position findClosestNotBlocked(Position position) {
+        int[][] plane = componentGrid.grid()[position.plane()];
         if (plane[position.x()][position.y()] != -1) {
             return position;
         }
@@ -110,7 +110,7 @@ public class Pathfind {
 
         var seen = new HashSet<Point>();
         var frontier = new ArrayList<Point>();
-        frontier.add(position.toPoint());
+        frontier.add(position.point());
         while (!frontier.isEmpty()) {
             var curr = frontier.remove(0);
             if (plane[curr.x()][curr.y()] != -1) {

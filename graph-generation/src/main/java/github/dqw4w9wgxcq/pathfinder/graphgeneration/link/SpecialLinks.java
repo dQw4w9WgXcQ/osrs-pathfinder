@@ -7,8 +7,6 @@ import java.util.List;
 
 public class SpecialLinks {
     public static List<SpecialLink> find() {
-        var out = new ArrayList<SpecialLink>();
-
-        return out;
+        return new ArrayList<>();
     }
 }

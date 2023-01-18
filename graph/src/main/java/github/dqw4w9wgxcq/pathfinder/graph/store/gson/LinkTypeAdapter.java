@@ -5,8 +5,8 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import github.dqw4w9wgxcq.pathfinder.domain.link.Link;
-import github.dqw4w9wgxcq.pathfinder.graph.LinkType;
-import github.dqw4w9wgxcq.pathfinder.graph.Links;
+import github.dqw4w9wgxcq.pathfinder.domain.link.LinkType;
+import github.dqw4w9wgxcq.pathfinder.graph.domain.Links;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.Nullable;
 

@@ -4,5 +4,5 @@ import github.dqw4w9wgxcq.pathfinder.domain.link.Link;
 
 import java.util.List;
 
-public record LinkedComponent(int id, List<Link> outboundLinks, List<Link> inboundLinks) {
+public record LinkedComponent(List<Link> outboundLinks, List<Link> inboundLinks) {
 }

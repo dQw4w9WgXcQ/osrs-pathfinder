@@ -1,4 +1,4 @@
-package github.dqw4w9wgxcq.pathfinder.graph;
+package github.dqw4w9wgxcq.pathfinder.graph.domain;
 
 import github.dqw4w9wgxcq.pathfinder.domain.link.*;
 

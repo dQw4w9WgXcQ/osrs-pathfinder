@@ -1,6 +1,6 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.link;
 
-import github.dqw4w9wgxcq.pathfinder.graph.Links;
+import github.dqw4w9wgxcq.pathfinder.graph.domain.Links;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.ContiguousComponents;
 import lombok.extern.slf4j.Slf4j;

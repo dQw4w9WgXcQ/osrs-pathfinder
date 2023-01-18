@@ -1,7 +1,7 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.component;
 
 import github.dqw4w9wgxcq.pathfinder.domain.link.Link;
-import github.dqw4w9wgxcq.pathfinder.graph.Links;
+import github.dqw4w9wgxcq.pathfinder.graph.domain.Links;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ public record LinkedComponents(LinkedComponent[] linkedComponents) {
                                 destinationLinks.add(link);
                             }
                         }
-                        component = new LinkedComponent(id, sourceLinks, destinationLinks);
+                        component = new LinkedComponent(sourceLinks, destinationLinks);
                         components[id] = component;
                     }
                 }

@@ -1,4 +1,4 @@
-package github.dqw4w9wgxcq.pathfinder.graph.localpath;
+package github.dqw4w9wgxcq.pathfinder.graph;
 
 import github.dqw4w9wgxcq.pathfinder.domain.Point;
 import github.dqw4w9wgxcq.pathfinder.graph.Algo;

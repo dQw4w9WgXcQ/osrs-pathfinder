@@ -8,13 +8,14 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @param planes A 3d array representing the tile grid.  Each value is the ID of the component that the tile belongs to.
- * @param sizes  The size (in tiles) of each component.  Component ID corresponds to index.  Only used in tests.
+ * @param sizes  Only used in tests.  The size (in tiles) of each component.  Component ID corresponds to index.
  */
 @Slf4j
-public record ContiguousComponents(int[][][] planes, ArrayList<Integer> sizes) {
+public record ContiguousComponents(int[][][] planes, List<Integer> sizes) {
     public int count() {
         return sizes.size();
     }
