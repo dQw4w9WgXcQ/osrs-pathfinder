@@ -2,6 +2,7 @@ package github.dqw4w9wgxcq.pathfinder.graphgeneration.link;
 
 import github.dqw4w9wgxcq.pathfinder.domain.Position;
 import github.dqw4w9wgxcq.pathfinder.domain.link.DoorLink;
+import github.dqw4w9wgxcq.pathfinder.graph.domain.ComponentGrid;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Util;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.Wall;
@@ -25,7 +26,7 @@ public class DoorLinks {
 
     );
 
-    public static List<DoorLink> find(CacheData cacheData, List<Location> objectLocations) {
+    public static List<DoorLink> find(CacheData cacheData, List<Location> objectLocations, ComponentGrid componentGrid) {
         log.info("door links");
 
         var doorIds = findDoorIds(cacheData.objectData().definitions().values());
@@ -49,18 +50,22 @@ public class DoorLinks {
             }
 
             var direction = determineDoorDirection(location.getType(), location.getOrientation());
-            var position = Util.fromRlPosition(location.getPosition());
+            var origin = Util.fromRlPosition(location.getPosition());
             var destination = new Position(
-                    position.x() + direction.getDx(),
-                    position.y() + direction.getDy(),
-                    position.plane()
+                    origin.x() + direction.getDx(),
+                    origin.y() + direction.getDy(),
+                    origin.plane()
             );
 
-            var link = new DoorLink(id++, position, destination, location.getId());
+            if (componentGrid.componentOf(origin) == -1 || componentGrid.componentOf(destination) == -1) {
+                continue;
+            }
+
+            var link = new DoorLink(id++, origin, destination, location.getId());
             log.debug("new door link {}", link);
             links.add(link);
             //bidirectionality
-            links.add(new DoorLink(id++, destination, position, location.getId()));
+            links.add(new DoorLink(id++, destination, origin, location.getId()));
         }
 
         return links;

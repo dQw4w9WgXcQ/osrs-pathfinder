@@ -4,8 +4,8 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import github.dqw4w9wgxcq.pathfinder.graph.store.GraphStore;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.Components;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.ContiguousComponents;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.CreateGraph;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.LinkedComponents;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.leafletimages.LeafletImages;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.link.FindLinks;
@@ -101,10 +101,11 @@ public class GraphGeneration {
         var objectLocations = cacheData.regionData().getLocationsAdjustedFor0x2();
         var tileWorld = TileWorld.create(cacheData, objectLocations);
         var contiguousComponents = ContiguousComponents.create(tileWorld.getPlanes());
+        var componentGrid = Components.createGrid(contiguousComponents);
 
         if (cmd.hasOption("leaflet")) {
             try {
-                LeafletImages.write(new File(outDir, "leaflet"), cacheDir, xteasFile, contiguousComponents);
+                LeafletImages.write(new File(outDir, "leaflet"), cacheDir, xteasFile, componentGrid);
             } catch (IOException e) {
                 log.error(null, e);
                 System.out.println("writing leaflet images failed");
@@ -118,9 +119,9 @@ public class GraphGeneration {
             return;
         }
 
-        var links = FindLinks.find(cacheData, objectLocations, contiguousComponents);
+        var links = FindLinks.find(cacheData, objectLocations, componentGrid);
         var linkedComponents = LinkedComponents.create(contiguousComponents, links);
-        var componentGraph = CreateGraph.createGraph(linkedComponents, contiguousComponents);
+        var componentGraph = Components.createGraph(linkedComponents, contiguousComponents);
 
         try {
             new GraphStore(contiguousComponents.planes(), componentGraph, links).save(outDir);

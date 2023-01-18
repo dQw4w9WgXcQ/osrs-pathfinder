@@ -34,6 +34,6 @@ public class LinkDistanceCache {
                 .map(Link::origin)
                 .map(Position::point)
                 .collect(Collectors.toSet());
-        return Algo.distances(componentGrid.grid()[position.plane()], position.point(), tos);
+        return Algo.distances(componentGrid.planes()[position.plane()], position.point(), tos);
     }
 }

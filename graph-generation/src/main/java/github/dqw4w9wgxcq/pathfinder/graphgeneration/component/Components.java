@@ -4,6 +4,7 @@ import github.dqw4w9wgxcq.pathfinder.domain.Position;
 import github.dqw4w9wgxcq.pathfinder.domain.link.Link;
 import github.dqw4w9wgxcq.pathfinder.graph.Algo;
 import github.dqw4w9wgxcq.pathfinder.graph.domain.ComponentGraph;
+import github.dqw4w9wgxcq.pathfinder.graph.domain.ComponentGrid;
 import github.dqw4w9wgxcq.pathfinder.graph.edge.LinkEdge;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class CreateGraph {
+public class Components {
     public static ComponentGraph createGraph(LinkedComponents linkedComponents, ContiguousComponents contiguousComponents) {
         log.info("Creating component graph");
 
@@ -54,5 +55,9 @@ public class CreateGraph {
 
         log.info(count + " edges " + skipCount + " links skipped");
         return new ComponentGraph(graph, componentLinks);
+    }
+
+    public static ComponentGrid createGrid(ContiguousComponents contiguousComponents) {
+        return new ComponentGrid(contiguousComponents.planes());
     }
 }

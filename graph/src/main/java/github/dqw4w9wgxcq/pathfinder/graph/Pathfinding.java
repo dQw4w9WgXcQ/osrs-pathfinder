@@ -101,7 +101,7 @@ public class Pathfinding {
     }
 
     private Position findClosestNotBlocked(Position position) {
-        int[][] plane = componentGrid.grid()[position.plane()];
+        int[][] plane = componentGrid.planes()[position.plane()];
         if (plane[position.x()][position.y()] != -1) {
             return position;
         }

@@ -1,6 +1,7 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.leafletimages;
 
 import com.google.common.base.Preconditions;
+import github.dqw4w9wgxcq.pathfinder.graph.domain.ComponentGrid;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Util;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.ContiguousComponents;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileWorld;
@@ -39,7 +40,7 @@ public class LeafletImages {
             Color.DARK_GRAY.getRGB(),
     };
 
-    public static void write(File outDir, File cacheDir, File xteasJson, ContiguousComponents components) throws IOException {
+    public static void write(File outDir, File cacheDir, File xteasJson, ComponentGrid components) throws IOException {
         log.info("Writing leaflet images to {}", outDir);
 
         for (int plane = 0; plane < TileWorld.PLANES_SIZE; plane++) {
@@ -87,7 +88,7 @@ public class LeafletImages {
         }
     }
 
-    public static BufferedImage generateFullComponentsImage(int plane, boolean forBlocked, ContiguousComponents components) {
+    public static BufferedImage generateFullComponentsImage(int plane, boolean forBlocked, ComponentGrid components) {
         var grid = components.planes()[plane];
         var width = grid.length;
         var height = grid[0].length;

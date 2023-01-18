@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface Link {
     /**
-     * sequential id of the link
+     * index of the link
      */
     int id();
 
