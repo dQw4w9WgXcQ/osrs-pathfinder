@@ -19,7 +19,6 @@ public class Components {
         log.info("Creating component graph");
 
         var graph = new HashMap<Link, List<LinkEdge>>();
-        var componentLinks = new ArrayList<List<Link>>();
 
         int count = 0;
         int skipCount = 0;
@@ -51,6 +50,11 @@ public class Components {
                     count++;
                 }
             }
+        }
+
+        var componentLinks = new ArrayList<List<Link>>();
+        for (var component : linkedComponents.linkedComponents()) {
+            componentLinks.add(component.outboundLinks());
         }
 
         log.info(count + " edges " + skipCount + " links skipped");

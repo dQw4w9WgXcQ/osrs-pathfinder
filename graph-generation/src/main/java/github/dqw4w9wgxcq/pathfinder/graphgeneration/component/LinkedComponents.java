@@ -5,7 +5,6 @@ import github.dqw4w9wgxcq.pathfinder.graph.domain.Links;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 public record LinkedComponents(LinkedComponent[] linkedComponents) {

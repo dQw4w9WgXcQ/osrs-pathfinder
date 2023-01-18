@@ -9,8 +9,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 public class TileGridTest {
-    int X = 2;
-    int Y = 5;
+    private static final int X = 2;
+    private static final int Y = 5;
 
     @Test
     void testValid() {

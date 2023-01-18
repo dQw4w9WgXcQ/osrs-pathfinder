@@ -50,28 +50,51 @@ public class Pathfinding {
         return steps;
     }
 
+    /**
+     * Dijkstra
+     */
     private @Nullable List<Link> findLinkPath(Position start, Position end, Agent agent) {
+        record Node(Link link, int distance, boolean isEnd) {
+        }
+
+        log.debug("find link path from {} to {} for agent {}", start, end, agent);
+
         int startComponent = componentGrid.componentOf(start);
         int endComponent = componentGrid.componentOf(end);
 
         var startDistances = linkDistances.get(start);
         var endDistances = linkDistances.get(end);
 
-        record Node(Link link, int distance, boolean isEnd) {
-        }
         var seenFrom = new HashMap<Link, Link>();
+        var linkDistances = new HashMap<Link, Integer>();
         var queue = new PriorityQueue<>(Comparator.comparingInt(Node::distance));
 
-        for (var startLink : componentGraph.linksOf(startComponent)) {
+        var startLinks = componentGraph.linksOf(startComponent);
+        if (startLinks.isEmpty()) {
+            log.debug("no links in start component {}", startComponent);
+
+            if (startComponent == endComponent) {
+                return List.of();
+            }
+
+            return null;
+        }
+
+        log.debug("{} start links", startLinks.size());
+        for (var startLink : startLinks) {
             if (agent.hasRequirements(startLink.requirements())) {
-                var distance = startDistances.get(startLink.origin());
+                var distance = startDistances.get(startLink.origin().point());
                 queue.add(new Node(startLink, distance, false));
+                linkDistances.put(startLink, distance);
             }
         }
 
         while (!queue.isEmpty()) {
             var curr = queue.poll();
+            log.debug("curr: {}", curr);
+
             if (curr.isEnd()) {
+                log.debug("found end {}", curr);
                 var path = new ArrayList<Link>();
                 var link = curr.link();
                 while (link != null) {
@@ -83,17 +106,21 @@ public class Pathfinding {
 
             //simulate end component edges
             if (componentGrid.componentOf(curr.link().destination()) == endComponent) {
-                queue.add(new Node(curr.link(), curr.distance() + endDistances.get(curr.link().destination()), true));
+                log.debug("adding end link {}", curr);
+                queue.add(new Node(curr.link(), curr.distance() + endDistances.get(curr.link().destination().point()), true));
+                //don't need linkDistances because finding an end node terminates the search
             }
 
-            for (var edge : componentGraph.graph().get(curr.link())) {
-                var nextLink = edge.link();
-                if (seenFrom.containsKey(nextLink)) {
-                    continue;
+            for (var linkEdge : componentGraph.graph().get(curr.link())) {
+                var nextLink = linkEdge.link();
+                var nextDistance = curr.distance() + linkEdge.cost();
+                var linkDistance = linkDistances.getOrDefault(nextLink, Integer.MAX_VALUE);
+                if (nextDistance < linkDistance) {
+                    log.debug("adding link {}", nextLink);
+                    queue.add(new Node(nextLink, nextDistance, false));
+                    linkDistances.put(nextLink, nextDistance);
+                    seenFrom.put(nextLink, curr.link());
                 }
-
-                seenFrom.putIfAbsent(nextLink, curr.link());
-                queue.add(new Node(nextLink, curr.distance() + edge.cost(), false));
             }
         }
 

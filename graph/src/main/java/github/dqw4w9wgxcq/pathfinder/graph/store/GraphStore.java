@@ -22,10 +22,6 @@ public record GraphStore(
 ) {
     private static final Gson GSON = new Gson();
 
-    public static void main(String[] args) throws IOException {
-        GraphStore.load(new File("/Users/user/projects/osrs-pathfinder-graph-generation"));
-    }
-
     public void save(File dir) throws IOException {
         log.info("saving graph to {}", dir);
 
@@ -79,6 +75,8 @@ public record GraphStore(
             zis.getNextEntry();
             try (var ois = new ObjectInputStream(zis)) {
                 grid = (int[][][]) ois.readObject();
+
+                //need to read next entry before closing ois
                 zis.getNextEntry();
                 componentGraph = graphGson.fromJson(new InputStreamReader(zis), ComponentGraph.class);
             }

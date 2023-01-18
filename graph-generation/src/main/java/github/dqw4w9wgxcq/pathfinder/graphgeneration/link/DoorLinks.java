@@ -40,9 +40,7 @@ public class DoorLinks {
             }
 
             switch (location.getType()) {
-                case 0, 1, 2, 3 -> {
-                    log.debug("found door at {}", location.getPosition());
-                }
+                case 0, 1, 2, 3 -> log.debug("found door at {}", location.getPosition());
                 default -> {
                     log.debug("found non-wall door type:{} id:{} at {}", location.getType(), location.getId(), location.getPosition());
                     continue;
