@@ -21,12 +21,22 @@ class Main {
         var localPathCache = new LocalPathCache(componentGrid);
         var pathfinding = new Pathfinding(componentGrid, graphStore.componentGraph(), linkDistanceCach, localPathCache);
 
+        var startTime = System.currentTimeMillis();
         var path = pathfinding.findPath(
                 new Position(3200, 3200, 0),
-                new Position(3257, 3264, 0),
+                new Position(3206, 3210, 1),
                 new Agent(99, Map.of(), List.of())
         );
+        var endTime = System.currentTimeMillis();
+        var path2 = pathfinding.findPath(
+                new Position(3200, 3200, 0),
+                new Position(2442, 3087, 0),
+                new Agent(99, Map.of(), List.of())
+        );
+        var endTime2 = System.currentTimeMillis();
 
-        log.info("{}", path);
+        log.info("path: {}", path);
+        log.info("time: {}ms", endTime - startTime);
+        log.info("time2: {}ms", endTime2 - endTime);
     }
 }

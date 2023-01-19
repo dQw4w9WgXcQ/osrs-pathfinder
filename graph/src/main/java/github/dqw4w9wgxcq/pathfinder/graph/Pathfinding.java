@@ -23,7 +23,10 @@ public class Pathfinding {
         start = findClosestNotBlocked(start);
         end = findClosestNotBlocked(end);
 
+        var startTime = System.currentTimeMillis();
         var linkPath = findLinkPath(start, end, agent);
+        var endTime = System.currentTimeMillis();
+        log.info("findLinkPath: {}ms", endTime - startTime);
         if (linkPath == null) {
             log.debug("no path from {} to {} for agent {}", start, end, agent);
             return null;
@@ -51,8 +54,9 @@ public class Pathfinding {
     }
 
     /**
-     * Dijkstra
+     * Dijkstra-like algorithm.  need to simulate edges to the end point because can't modify the graph.
      */
+    //todo pathfinding in reverse (better for teleports, multiple destinations instead of multiple origins)
     private @Nullable List<Link> findLinkPath(Position start, Position end, Agent agent) {
         record Node(Link link, int distance, boolean isEnd) {
         }
@@ -98,9 +102,10 @@ public class Pathfinding {
                 var path = new ArrayList<Link>();
                 var link = curr.link();
                 while (link != null) {
-                    path.add(0, link);
+                    path.add(link);
                     link = seenFrom.get(link);
                 }
+                Collections.reverse(path);
                 return path;
             }
 

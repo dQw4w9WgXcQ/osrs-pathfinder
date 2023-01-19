@@ -33,7 +33,7 @@ public class Components {
                                 .collect(Collectors.toSet())
                 );
 
-                log.info("outboundDistances: {}", outboundDistances);
+                log.debug("outboundDistances: {}", outboundDistances);
 
                 for (var outboundLink : component.outboundLinks()) {
                     if (inboundLink == outboundLink) {
@@ -42,7 +42,7 @@ public class Components {
                         continue;
                     }
 
-                    log.info("Adding edge from {} to {}", inboundLink, outboundLink);
+                    log.debug("Adding edge from {} to {}", inboundLink, outboundLink);
                     var cost = outboundLink.cost() + outboundDistances.get(outboundLink.origin().point());
                     var edge = new LinkEdge(outboundLink, cost);
                     log.debug("Adding edge {} to graph {}", edge, count);

@@ -1,15 +1,19 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.link;
 
-import com.google.common.base.Preconditions;
 import github.dqw4w9wgxcq.pathfinder.domain.link.StairLink;
+import github.dqw4w9wgxcq.pathfinder.graph.domain.ComponentGrid;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Util;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileWorld;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.cache.definitions.ObjectDefinition;
 import net.runelite.cache.region.Location;
+import net.runelite.cache.region.Position;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -27,35 +31,87 @@ public class StairLinks {
 
     );
 
-    public static List<StairLink> find(CacheData cacheData, List<Location> objectLocations) {
+    public static List<StairLink> find(CacheData cacheData, List<Location> objectLocations, ComponentGrid grid, TileWorld tileWorld) {
+        log.info("finding stair links");
+
         var definitions = cacheData.objectData().definitions();
 
         var out = new ArrayList<StairLink>();
+        var id = 0;
         for (var location : objectLocations) {
-            var id = location.getId();
-            var definition = definitions.get(id);
+            var objId = location.getId();
+            var definition = Objects.requireNonNull(definitions.get(objId));
 
-            Preconditions.checkState(definition != null, "definition for id {} shouldn't be null at this point", id);
-
+            boolean up;
             if (isUpObject(definition)) {
                 log.debug("Found up object: {} at {}", definition.getName(), location.getPosition());
+                up = true;
+            } else if (isDownObject(definition)) {
+                log.debug("Found down object: {} at {}", definition.getName(), location.getPosition());
+                up = false;
+            } else {
+                continue;
             }
 
-            if (isDownObject(definition)) {
-                log.debug("Found down object: {} at {}", definition.getName(), location.getPosition());
+            var plane = location.getPosition().getZ();
+            if (up) {
+                plane++;
+            } else {
+                plane--;
             }
+
+            if (plane < 0 || plane >= TileWorld.PLANES_SIZE) {
+                log.debug("plane out of bounds: {} at location {}", plane, location);
+                continue;
+            }
+
+            var origin = Util.findNotBlockedAdjacent(tileWorld, location.getPosition(), definition.getSizeX(), definition.getSizeY());
+            if (origin == null) {
+                log.debug("no adjacent not blocked for origin: {}", location);
+                continue;
+            }
+
+            var destination = Util.findNotBlockedAdjacent(
+                    tileWorld,
+                    new Position(location.getPosition().getX(), location.getPosition().getY(), plane),
+                    definition.getSizeX(),
+                    definition.getSizeY()
+            );
+            if (destination == null) {
+                log.debug("no adjacent not blocked for destination: {}", location);
+                continue;
+            }
+
+            if (origin.getZ() != 0) {//todo remove
+                continue;
+            }
+
+            if (location.getPosition().getX() != 3204) {
+                continue;
+            }
+
+            out.add(new StairLink(id++, Util.fromRlPosition(origin), Util.fromRlPosition(destination), location.getId(), up));
         }
 
+        log.info("found {} stair links", out.size());
         return out;
     }
 
-    public static boolean isUpObject(ObjectDefinition definition) {
-        var action = definition.getActions()[0];
-        return action != null && action.equals(UP_ACTION);
+    private static boolean isUpObject(ObjectDefinition definition) {
+        for (var action : definition.getActions()) {
+            if (action != null && action.equals(UP_ACTION)) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public static boolean isDownObject(ObjectDefinition definition) {
-        var action = definition.getActions()[0];
-        return action != null && action.equals(DOWN_ACTION);
+    private static boolean isDownObject(ObjectDefinition definition) {
+        for (var action : definition.getActions()) {
+            if (action != null && action.equals(DOWN_ACTION)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

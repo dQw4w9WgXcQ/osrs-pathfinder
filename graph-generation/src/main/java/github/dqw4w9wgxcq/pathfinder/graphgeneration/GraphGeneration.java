@@ -119,7 +119,7 @@ public class GraphGeneration {
             return;
         }
 
-        var links = FindLinks.find(cacheData, objectLocations, componentGrid);
+        var links = FindLinks.find(cacheData, objectLocations, componentGrid, tileWorld);
         var linkedComponents = LinkedComponents.create(contiguousComponents, links);
         var componentGraph = Components.createGraph(linkedComponents, contiguousComponents);
 
