@@ -1,11 +1,12 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.commons;
 
 import github.dqw4w9wgxcq.pathfinder.domain.Position;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileGrid;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileWorld;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.coords.Direction;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 public class Util {
@@ -27,38 +28,39 @@ public class Util {
         return new Position(rl.getX(), rl.getY(), rl.getZ());
     }
 
-    public static @Nullable net.runelite.cache.region.Position findNotBlockedAdjacent(TileWorld tileWorld, net.runelite.cache.region.Position position, int sizeX, int sizeY) {
-        TileGrid grid = tileWorld.getPlanes()[position.getZ()];
+    public static List<Position> findNotBlockedAdjacent(TileWorld tileWorld, Position position, int sizeX, int sizeY) {
+        var grid = tileWorld.getPlanes()[position.plane()];
 
+        var adjacent = new ArrayList<Position>();
         for (int i = 0; i < sizeX; i++) {
-            var x = position.getX() + i;
+            int x = position.x() + i;
             int y;
-            if (grid.canTravelInDirection(x, position.getY() + sizeY, 0, 1)) {
-                y = position.getY() + 1;
-            } else if (grid.canTravelInDirection(x, position.getY(), 0, -1)) {
-                y = position.getY() - 1;
+            if (grid.canTravelInDirection(x, position.y() + sizeY - 1, 0, 1)) {
+                y = position.y() + sizeY;
+            } else if (grid.canTravelInDirection(x, position.y(), 0, -1)) {
+                y = position.y() - 1;
             } else {
                 continue;
             }
 
-            return new net.runelite.cache.region.Position(x, y, position.getZ());
+            adjacent.add(new Position(x, y, position.plane()));
         }
 
         for (int i = 0; i < sizeY; i++) {
-            var y = position.getY() + i;
             int x;
-            if (grid.canTravelInDirection(position.getX() + sizeX, y, 1, 0)) {
-                x = position.getX() + 1;
-            } else if (grid.canTravelInDirection(position.getX(), y, -1, 0)) {
-                x = position.getX() - 1;
+            int y = position.y() + i;
+            if (grid.canTravelInDirection(position.x() + sizeX - 1, y, 1, 0)) {
+                x = position.x() + sizeX;
+            } else if (grid.canTravelInDirection(position.x(), y, -1, 0)) {
+                x = position.x() - 1;
             } else {
                 continue;
             }
 
-            return new net.runelite.cache.region.Position(x, y, position.getZ());
+            adjacent.add(new Position(x, y, position.plane()));
         }
 
-        return null;
+        return adjacent;
     }
 
     //https://discord.com/channels/167513997694861313/167513997694861313/1051576900188909619

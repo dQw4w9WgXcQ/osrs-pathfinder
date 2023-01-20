@@ -5,6 +5,7 @@ import github.dqw4w9wgxcq.pathfinder.domain.Point;
 import github.dqw4w9wgxcq.pathfinder.domain.Position;
 import github.dqw4w9wgxcq.pathfinder.domain.link.Link;
 import github.dqw4w9wgxcq.pathfinder.graph.domain.*;
+import github.dqw4w9wgxcq.pathfinder.graph.edge.LinkEdge;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
@@ -26,7 +27,7 @@ public class Pathfinding {
         var startTime = System.currentTimeMillis();
         var linkPath = findLinkPath(start, end, agent);
         var endTime = System.currentTimeMillis();
-        log.info("findLinkPath: {}ms", endTime - startTime);
+        log.info("found link path in {}ms", endTime - startTime);
         if (linkPath == null) {
             log.debug("no path from {} to {} for agent {}", start, end, agent);
             return null;
@@ -116,7 +117,13 @@ public class Pathfinding {
                 //don't need linkDistances because finding an end node terminates the search
             }
 
-            for (var linkEdge : componentGraph.graph().get(curr.link())) {
+            List<LinkEdge> linkEdges = componentGraph.graph().get(curr.link());
+            if (linkEdges == null) {
+                log.debug("no edges for link {}", curr.link());
+                continue;
+            }
+
+            for (var linkEdge : linkEdges) {
                 var nextLink = linkEdge.link();
                 var nextDistance = curr.distance() + linkEdge.cost();
                 var linkDistance = linkDistances.getOrDefault(nextLink, Integer.MAX_VALUE);

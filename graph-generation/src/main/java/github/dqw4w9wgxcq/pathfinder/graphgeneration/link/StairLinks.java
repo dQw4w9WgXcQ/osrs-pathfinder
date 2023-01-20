@@ -1,5 +1,6 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.link;
 
+import github.dqw4w9wgxcq.pathfinder.domain.Position;
 import github.dqw4w9wgxcq.pathfinder.domain.link.StairLink;
 import github.dqw4w9wgxcq.pathfinder.graph.domain.ComponentGrid;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
@@ -9,7 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.cache.definitions.ObjectDefinition;
 import net.runelite.cache.region.Location;
-import net.runelite.cache.region.Position;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,67 +33,78 @@ public class StairLinks {
 
     public static List<StairLink> find(CacheData cacheData, List<Location> objectLocations, ComponentGrid grid, TileWorld tileWorld) {
         log.info("finding stair links");
+        var startTime = System.currentTimeMillis();
 
         var definitions = cacheData.objectData().definitions();
 
         var out = new ArrayList<StairLink>();
         var id = 0;
         for (var location : objectLocations) {
+//            if (location.getPosition().getZ() != 0 || location.getPosition().getX() != 3204 || location.getPosition().getY() != 3207) {//todo temp
+//                continue;
+//            }
+
             var objId = location.getId();
             var definition = Objects.requireNonNull(definitions.get(objId));
 
             boolean up;
             if (isUpObject(definition)) {
-                log.debug("Found up object: {} at {}", definition.getName(), location.getPosition());
                 up = true;
             } else if (isDownObject(definition)) {
-                log.debug("Found down object: {} at {}", definition.getName(), location.getPosition());
                 up = false;
             } else {
                 continue;
             }
 
-            var plane = location.getPosition().getZ();
+            log.debug("found stair at {} up:{}", location.getPosition(), up);
+
+            var destinationPlane = location.getPosition().getZ();
             if (up) {
-                plane++;
+                destinationPlane++;
             } else {
-                plane--;
+                destinationPlane--;
             }
 
-            if (plane < 0 || plane >= TileWorld.PLANES_SIZE) {
-                log.debug("plane out of bounds: {} at location {}", plane, location);
+            if (destinationPlane < 0 || destinationPlane >= TileWorld.PLANES_SIZE) {
+                log.debug("stair at {} is out of bounds up:{}", location.getPosition(), up);
                 continue;
             }
 
-            var origin = Util.findNotBlockedAdjacent(tileWorld, location.getPosition(), definition.getSizeX(), definition.getSizeY());
+            int orientation = location.getOrientation();
+
+            int sizeX;
+            int sizeY;
+            if (orientation == 1 || orientation == 3) {
+                sizeX = definition.getSizeY();
+                sizeY = definition.getSizeX();
+            } else {
+                sizeX = definition.getSizeX();
+                sizeY = definition.getSizeY();
+            }
+
+            Position origin = null;
+            Position destination = null;
+            for (var adjacent : Util.findNotBlockedAdjacent(tileWorld, Util.fromRlPosition(location.getPosition()), sizeX, sizeY)) {
+                var testDestination = new Position(adjacent.x(), adjacent.y(), destinationPlane);
+                if (grid.componentOf(testDestination) != -1) {
+                    origin = adjacent;
+                    destination = testDestination;
+                    break;
+                }
+            }
+
             if (origin == null) {
-                log.debug("no adjacent not blocked for origin: {}", location);
+                log.debug("no adjacent for location:{}", location);
                 continue;
             }
 
-            var destination = Util.findNotBlockedAdjacent(
-                    tileWorld,
-                    new Position(location.getPosition().getX(), location.getPosition().getY(), plane),
-                    definition.getSizeX(),
-                    definition.getSizeY()
-            );
-            if (destination == null) {
-                log.debug("no adjacent not blocked for destination: {}", location);
-                continue;
-            }
-
-            if (origin.getZ() != 0) {//todo remove
-                continue;
-            }
-
-            if (location.getPosition().getX() != 3204) {
-                continue;
-            }
-
-            out.add(new StairLink(id++, Util.fromRlPosition(origin), Util.fromRlPosition(destination), location.getId(), up));
+            var stairLink = new StairLink(id++, origin, destination, location.getId(), up);
+            log.debug("found stair link: {}", stairLink);
+            out.add(stairLink);
         }
 
-        log.info("found {} stair links", out.size());
+        var endTime = System.currentTimeMillis();
+        log.info("found {} stair links in {}ms", out.size(), endTime - startTime);
         return out;
     }
 

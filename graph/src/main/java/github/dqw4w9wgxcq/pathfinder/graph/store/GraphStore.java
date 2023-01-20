@@ -1,6 +1,5 @@
 package github.dqw4w9wgxcq.pathfinder.graph.store;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import github.dqw4w9wgxcq.pathfinder.domain.link.Link;
 import github.dqw4w9wgxcq.pathfinder.graph.domain.ComponentGraph;
@@ -17,11 +16,8 @@ import java.util.zip.ZipOutputStream;
 @Slf4j
 public record GraphStore(
         int[][][] planes,
-        ComponentGraph componentGraph,
-        Links links
+        ComponentGraph componentGraph
 ) {
-    private static final Gson GSON = new Gson();
-
     public void save(File dir) throws IOException {
         log.info("saving graph to {}", dir);
 
@@ -43,28 +39,14 @@ public record GraphStore(
                 zos.write(graphGson.toJson(componentGraph).getBytes());
             }
         }
-
-        var linksGson = new Gson();
-        try (var fos = new FileOutputStream(new File(dir, "links.zip"));
-             var zos = new ZipOutputStream(fos)) {
-            zos.putNextEntry(new ZipEntry("links.json"));
-            zos.write(linksGson.toJson(links).getBytes());
-        }
     }
 
     @SneakyThrows(ClassNotFoundException.class)
-    public static GraphStore load(File dir) throws IOException {
+    public static GraphStore load(File dir, Links links) throws IOException {
         log.info("loading graph from {}", dir);
 
         int[][][] grid;
         ComponentGraph componentGraph;
-        Links links;
-
-        try (var fis = new FileInputStream(new File(dir, "links.zip"));
-             var zis = new ZipInputStream(fis)) {
-            zis.getNextEntry();
-            links = GSON.fromJson(new InputStreamReader(zis), Links.class);
-        }
 
         var graphGson = new GsonBuilder()
                 .registerTypeHierarchyAdapter(Link.class, new LinkTypeAdapter(links))
@@ -82,6 +64,6 @@ public record GraphStore(
             }
         }
 
-        return new GraphStore(grid, componentGraph, links);
+        return new GraphStore(grid, componentGraph);
     }
 }

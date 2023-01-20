@@ -1,6 +1,5 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld;
 
-import com.google.common.annotations.VisibleForTesting;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Util;
 import lombok.Getter;
@@ -22,7 +21,6 @@ public class TileWorld {
     @Getter
     private final TileGrid[] planes;
 
-    @VisibleForTesting
     TileWorld(int regionSizeX, int regionSizeY) {
         log.info("Creating TileWorld with regionSizeX:{} Y:{}", regionSizeX, regionSizeY);
 

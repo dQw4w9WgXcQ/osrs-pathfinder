@@ -18,7 +18,7 @@ public class LocalPathCache {
         var startTime = System.currentTimeMillis();
         var path = Algo.bfs(componentGrid.planes()[plane], start, end);
         var endTime = System.currentTimeMillis();
-        log.debug("found path in {}ms", endTime - startTime);
+        log.debug("found local path from {} to {} in {} ms", start, end, endTime - startTime);
         return minify(path);
     }
 

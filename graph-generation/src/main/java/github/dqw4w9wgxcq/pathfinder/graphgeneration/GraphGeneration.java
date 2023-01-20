@@ -3,6 +3,7 @@ package github.dqw4w9wgxcq.pathfinder.graphgeneration;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import github.dqw4w9wgxcq.pathfinder.graph.store.GraphStore;
+import github.dqw4w9wgxcq.pathfinder.graph.store.LinkStore;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.Components;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.ContiguousComponents;
@@ -25,7 +26,7 @@ public class GraphGeneration {
         var outOpt = new Option("o", "out", true, "Output directory");
         var leafletOpt = new Option("l", "leaflet", false, "Generate leaflet images");
         var otherDataOpt = new Option("d", "data", false, "Generate other data (objects, items, etc.)");
-        var skipGraphOpt = new Option("s", "skip-graph", false, "Skip graph output (-l is now required)");
+        var skipGraphOpt = new Option("s", "skip-graph", false, "Skip graph output (only links will be written)");
 
         cacheOpt.setRequired(true);
         xteasOpt.setRequired(true);
@@ -43,13 +44,6 @@ public class GraphGeneration {
             cmd = new DefaultParser().parse(options, args);
         } catch (ParseException e) {
             System.out.println(e.getMessage());
-            new HelpFormatter().printHelp("pathfinder", options);
-            System.exit(1);
-            return;
-        }
-
-        if (cmd.hasOption("skip-graph") && !cmd.hasOption("leaflet")) {
-            System.out.println("Cannot skip graph output if not generating leaflet images");
             new HelpFormatter().printHelp("pathfinder", options);
             System.exit(1);
             return;
@@ -98,6 +92,27 @@ public class GraphGeneration {
             return;
         }
 
+//        if (true) {//todo temp
+//            ArrayList<Integer> ids = new ArrayList<>();
+//            for (ObjectDefinition def : cacheData.objectData().definitions().values()) {
+//                for (String action : def.getActions()) {
+//                    if (action == null) continue;
+//
+//                    action = action.toLowerCase();
+//
+//                    if (action.contains("climb") && (action.contains("down") || action.contains("up"))) {
+//                        System.out.println(def.getName() + " " + action);
+//                        System.out.println(def.getSizeX() + " " + def.getSizeY());
+//                        if (def.getSizeX() != def.getSizeY()) {
+//                            System.out.println("WEEEEEEEEEED " + def.getId());
+//                            ids.add(def.getId());
+//                        }
+//                    }
+//                }
+//            }
+//            return;
+//        }
+
         var objectLocations = cacheData.regionData().getLocationsAdjustedFor0x2();
         var tileWorld = TileWorld.create(cacheData, objectLocations);
         var contiguousComponents = ContiguousComponents.create(tileWorld.getPlanes());
@@ -114,17 +129,26 @@ public class GraphGeneration {
             }
         }
 
+        var links = FindLinks.find(cacheData, objectLocations, componentGrid, tileWorld);
+        try {
+            new LinkStore(links).save(outDir);
+        } catch (IOException e) {
+            log.error(null, e);
+            System.out.println("writing links failed");
+            System.exit(1);
+            return;
+        }
+
         if (cmd.hasOption("skip-graph")) {
             log.info("Skipping graph");
             return;
         }
 
-        var links = FindLinks.find(cacheData, objectLocations, componentGrid, tileWorld);
         var linkedComponents = LinkedComponents.create(contiguousComponents, links);
         var componentGraph = Components.createGraph(linkedComponents, contiguousComponents);
 
         try {
-            new GraphStore(contiguousComponents.planes(), componentGraph, links).save(outDir);
+            new GraphStore(contiguousComponents.planes(), componentGraph).save(outDir);
         } catch (IOException e) {
             log.error(null, e);
             System.out.println("writing graph failed");

@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class Algo {
-    public static int chebyshevDistance(Point from, Point to) {
+    public static int chebyshev(Point from, Point to) {
         return Math.max(Math.abs(from.x() - to.x()), Math.abs(from.y() - to.y()));
     }
 

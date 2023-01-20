@@ -27,7 +27,8 @@ public class DoorLinks {
     );
 
     public static List<DoorLink> find(CacheData cacheData, List<Location> objectLocations, ComponentGrid componentGrid) {
-        log.info("door links");
+        log.info("finding door links");
+        long startTime = System.currentTimeMillis();
 
         var doorIds = findDoorIds(cacheData.objectData().definitions().values());
         log.info("found {} doorIds", doorIds.size());
@@ -66,6 +67,8 @@ public class DoorLinks {
             links.add(new DoorLink(id++, destination, origin, location.getId()));
         }
 
+        var endTime = System.currentTimeMillis();
+        log.info("found {} door links in {}ms", links.size(), endTime - startTime);
         return links;
     }
 
