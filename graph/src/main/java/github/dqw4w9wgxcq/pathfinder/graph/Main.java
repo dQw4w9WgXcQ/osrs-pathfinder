@@ -24,6 +24,8 @@ class Main {
         var localPathCache = new LocalPathCache(componentGrid);
         var pathfinding = new Pathfinding(componentGrid, graphStore.componentGraph(), linkDistanceCach, localPathCache);
 
+        log.info("ree");
+
         var startTime = System.currentTimeMillis();
         var path1 = pathfinding.findPath(
                 new Position(3200, 3200, 0),

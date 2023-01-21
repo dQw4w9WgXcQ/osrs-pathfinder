@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * @param planes A 3d array representing the tile grid.  Each value is the ID of the component that the tile belongs to.
+ * @param planes A 3d array representing the tile grid.  Each value is the ID of the component that the tile belongs to.  Negative values are invalid (see comments).
  * @param sizes  Only used in tests.  The size (in tiles) of each component.  Component ID corresponds to index.
  */
 @Slf4j
@@ -21,22 +21,32 @@ public record ContiguousComponents(int[][][] planes, List<Integer> sizes) {
     }
 
     public static ContiguousComponents create(TileGrid[] gridPlanes) {
+        log.info("Finding contiguous components");
+        var startTime = System.currentTimeMillis();
+
         var sizes = new ArrayList<Integer>();
 
-        var componentsPlanes = new int[gridPlanes.length][gridPlanes[0].getSizeX()][gridPlanes[0].getSizeY()];
-        for (var componentPlane : componentsPlanes) {
+        var planes = new int[gridPlanes.length][gridPlanes[0].getSizeX()][gridPlanes[0].getSizeY()];
+        for (var componentPlane : planes) {
             for (var row : componentPlane) {
                 Arrays.fill(row, -1);
             }
         }
 
         var id = 0;
+        var invalidId = -2;
         for (var z = 0; z < gridPlanes.length; z++) {
             var grid = gridPlanes[z];
 
+            //purge unreachable area in planes >0
+//            if (z != 0) {
+//                var unreachableSize = floodfill(planes[z], grid, 3200, 3200, invalidId--);
+//                log.info("unreachable area plane:{} size:{}", z, unreachableSize);
+//            }
+
             for (var x = 0; x < grid.getSizeX(); x++) {
                 for (var y = 0; y < grid.getSizeY(); y++) {
-                    if (componentsPlanes[z][x][y] != -1) {
+                    if (planes[z][x][y] != -1) {
                         continue;
                     }
 
@@ -49,7 +59,7 @@ public record ContiguousComponents(int[][][] planes, List<Integer> sizes) {
                     }
 
                     log.debug("new component id:{} at x:{} y:{}", id, x, y);
-                    var size = floodfill(componentsPlanes[z], grid, x, y, id);
+                    var size = floodfill(planes[z], grid, x, y, id);
                     log.debug("new component id:{} size:{}", id, size);
 
                     sizes.add(size);
@@ -59,13 +69,15 @@ public record ContiguousComponents(int[][][] planes, List<Integer> sizes) {
             }
         }
 
-        log.info("Found {} components smallest:{} largest:{} average:{} total:{}",
+        var finishTime = System.currentTimeMillis();
+        log.info("Found {} components smallest:{} largest:{} average:{} total:{} in {}ms",
                 sizes.size(),
                 sizes.stream().mapToInt(Integer::intValue).min().orElse(0),
                 sizes.stream().mapToInt(Integer::intValue).max().orElse(0),
                 (int) sizes.stream().mapToInt(Integer::intValue).average().orElse(0),
-                sizes.stream().mapToInt(Integer::intValue).sum());
-        return new ContiguousComponents(componentsPlanes, sizes);
+                sizes.stream().mapToInt(Integer::intValue).sum(),
+                finishTime - startTime);
+        return new ContiguousComponents(planes, sizes);
     }
 
     //in place algo cuts mem usage by ~4gb

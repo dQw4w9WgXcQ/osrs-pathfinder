@@ -1,5 +1,6 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.component;
 
+import github.dqw4w9wgxcq.pathfinder.domain.Point;
 import github.dqw4w9wgxcq.pathfinder.domain.Position;
 import github.dqw4w9wgxcq.pathfinder.domain.link.Link;
 import github.dqw4w9wgxcq.pathfinder.graph.Algo;
@@ -11,10 +12,13 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
 public class Components {
+    private static final boolean ESTIMATE_DISTANCES = true;//to speed up graph generation during development
+
     public static ComponentGraph createGraph(LinkedComponents linkedComponents, ContiguousComponents contiguousComponents) {
         log.info("Creating component graph");
 
@@ -24,16 +28,17 @@ public class Components {
         int skipCount = 0;
         for (var component : linkedComponents.linkedComponents()) {
             for (var inboundLink : component.inboundLinks()) {
-                var outboundDistances = Algo.distances(
-                        contiguousComponents.planes()[inboundLink.destination().plane()],
-                        inboundLink.destination().point(),
-                        component.outboundLinks().stream()
-                                .map(Link::origin)
-                                .map(Position::point)
-                                .collect(Collectors.toSet())
-                );
-
-                log.debug("outboundDistances: {}", outboundDistances);
+                Map<Point, Integer> distances;
+                if (!ESTIMATE_DISTANCES) {
+                    distances = Algo.distances(
+                            contiguousComponents.planes()[inboundLink.destination().plane()],
+                            inboundLink.destination().point(),
+                            component.outboundLinks().stream()
+                                    .map(Link::origin)
+                                    .map(Position::point)
+                                    .collect(Collectors.toSet())
+                    );
+                }
 
                 for (var outboundLink : component.outboundLinks()) {
                     if (inboundLink == outboundLink) {
@@ -43,7 +48,11 @@ public class Components {
                     }
 
                     log.debug("Adding edge from {} to {}", inboundLink, outboundLink);
-                    var cost = outboundLink.cost() + outboundDistances.get(outboundLink.origin().point());
+                    var distance = ESTIMATE_DISTANCES
+                            ? Algo.chebyshev(inboundLink.destination().point(), outboundLink.origin().point())
+                            : distances.get(outboundLink.origin().point());
+                    var cost = outboundLink.cost() + distance;
+
                     var edge = new LinkEdge(outboundLink, cost);
                     log.debug("Adding edge {} to graph {}", edge, count);
                     graph.computeIfAbsent(inboundLink, k -> new ArrayList<>()).add(edge);

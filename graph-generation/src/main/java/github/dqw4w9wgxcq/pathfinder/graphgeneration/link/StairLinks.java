@@ -8,6 +8,7 @@ import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Util;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileWorld;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.api.ObjectID;
 import net.runelite.cache.definitions.ObjectDefinition;
 import net.runelite.cache.region.Location;
 
@@ -25,10 +26,9 @@ public class StairLinks {
     public static final String UP_ACTION = "Climb-up";
     public static final String DOWN_ACTION = "Climb-down";
     public static final Set<Integer> IGNORE_IDS = Set.of(
-
-    );
-    public static final Set<String> IGNORE_NAMES = Set.of(
-
+            ObjectID.LADDER_16450, ObjectID.LADDER_16556,//goblin village ladder goes from plane 0 to 2
+            ObjectID.WOODEN_BEAMS,//ardy rooftop
+            ObjectID.CRATE_11632//draynor rooftop
     );
 
     public static List<StairLink> find(CacheData cacheData, List<Location> objectLocations, ComponentGrid grid, TileWorld tileWorld) {
@@ -44,8 +44,7 @@ public class StairLinks {
 //                continue;
 //            }
 
-            var objId = location.getId();
-            var definition = Objects.requireNonNull(definitions.get(objId));
+            var definition = Objects.requireNonNull(definitions.get(location.getId()));
 
             boolean up;
             if (isUpObject(definition)) {
@@ -53,6 +52,10 @@ public class StairLinks {
             } else if (isDownObject(definition)) {
                 up = false;
             } else {
+                continue;
+            }
+
+            if (!isStair(location, definition)) {
                 continue;
             }
 
@@ -106,6 +109,39 @@ public class StairLinks {
         var endTime = System.currentTimeMillis();
         log.info("found {} stair links in {}ms", out.size(), endTime - startTime);
         return out;
+    }
+
+    private static boolean isStair(Location location, ObjectDefinition definition) {
+        int id = location.getId();
+        int locationType = location.getType();
+        switch (locationType) {
+            //wall objects
+            case 0, 1, 2, 3 -> {
+                log.debug("ignoring wall object {} {} at {}", definition.getName(), id, location);
+                return false;
+            }
+            //wall decoration
+            case 4, 5, 6, 7, 8 -> {
+                log.debug("ignoring wall decoration {} {} at {}", definition.getName(), id, location);
+                return false;
+            }
+            //game object
+            case 9, 10, 11,
+                    //floor decoration
+                    22 -> {
+            }
+            default -> {
+                if (locationType >= 12 && locationType <= 21) {
+                    //never happens for now
+                    log.info("ignoring unknown location type({}) {} {} at {}", locationType, definition.getName(), id, location);
+                    return false;
+                } else {
+                    throw new IllegalArgumentException("expect:  0 =< locationType <= 22, found:" + locationType);
+                }
+            }
+        }
+
+        return !IGNORE_IDS.contains(id);
     }
 
     private static boolean isUpObject(ObjectDefinition definition) {

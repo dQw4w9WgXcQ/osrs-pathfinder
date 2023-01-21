@@ -92,27 +92,6 @@ public class GraphGeneration {
             return;
         }
 
-//        if (true) {//todo temp
-//            ArrayList<Integer> ids = new ArrayList<>();
-//            for (ObjectDefinition def : cacheData.objectData().definitions().values()) {
-//                for (String action : def.getActions()) {
-//                    if (action == null) continue;
-//
-//                    action = action.toLowerCase();
-//
-//                    if (action.contains("climb") && (action.contains("down") || action.contains("up"))) {
-//                        System.out.println(def.getName() + " " + action);
-//                        System.out.println(def.getSizeX() + " " + def.getSizeY());
-//                        if (def.getSizeX() != def.getSizeY()) {
-//                            System.out.println("WEEEEEEEEEED " + def.getId());
-//                            ids.add(def.getId());
-//                        }
-//                    }
-//                }
-//            }
-//            return;
-//        }
-
         var objectLocations = cacheData.regionData().getLocationsAdjustedFor0x2();
         var tileWorld = TileWorld.create(cacheData, objectLocations);
         var contiguousComponents = ContiguousComponents.create(tileWorld.getPlanes());
