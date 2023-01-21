@@ -16,11 +16,11 @@ public class FindLinks {
 
         var doorLinks = DoorLinks.find(cacheData, objectLocations, componentGrid);
         var stairLinks = StairLinks.find(cacheData, objectLocations, componentGrid, tileWorld);
-        var undergroundLinks = UndergroundLinks.find(cacheData, objectLocations);
+        var dungeonLinks = DungeonLinks.find(cacheData, objectLocations);
         var specialLinks = SpecialLinks.find();
 
         log.info("found {} links", doorLinks.size() + specialLinks.size() + stairLinks.size());
 
-        return new Links(doorLinks, stairLinks, undergroundLinks, specialLinks);
+        return new Links(doorLinks, stairLinks, dungeonLinks, specialLinks);
     }
 }

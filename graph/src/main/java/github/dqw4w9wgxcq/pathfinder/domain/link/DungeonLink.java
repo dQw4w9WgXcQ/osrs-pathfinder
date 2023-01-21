@@ -5,7 +5,7 @@ import github.dqw4w9wgxcq.pathfinder.domain.Requirement;
 
 import java.util.List;
 
-public record UndergroundLink(
+public record DungeonLink(
         int id,
         Position origin,
         Position destination,

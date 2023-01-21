@@ -8,14 +8,14 @@ import java.util.List;
 public record Links(
         List<DoorLink> doorLinks,
         List<StairLink> stairLinks,
-        List<UndergroundLink> undergroundLinks,
+        List<DungeonLink> dungeonLinks,
         List<SpecialLink> specialLinks
 ) {
     public List<Link> all() {
         var out = new ArrayList<Link>();
         out.addAll(doorLinks);
         out.addAll(stairLinks);
-        out.addAll(undergroundLinks);
+        out.addAll(dungeonLinks);
         out.addAll(specialLinks);
         return out;
     }

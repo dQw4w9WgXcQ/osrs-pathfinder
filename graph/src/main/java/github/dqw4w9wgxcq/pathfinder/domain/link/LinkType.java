@@ -3,7 +3,7 @@ package github.dqw4w9wgxcq.pathfinder.domain.link;
 public enum LinkType {
     DOOR,
     STAIR,
-    UNDERGROUND,
+    DUNGEON,
     SPECIAL,
     ;
 
@@ -13,8 +13,8 @@ public enum LinkType {
             return DOOR;
         } else if (clazz.equals(StairLink.class)) {
             return STAIR;
-        } else if (clazz.equals(UndergroundLink.class)) {
-            return UNDERGROUND;
+        } else if (clazz.equals(DungeonLink.class)) {
+            return DUNGEON;
         } else if (clazz.equals(SpecialLink.class)) {
             return SPECIAL;
         }
