@@ -27,6 +27,8 @@ public class Components {
         int count = 0;
         int skipCount = 0;
         for (var component : linkedComponents.linkedComponents()) {
+            log.info("component count: {} of {}", count, linkedComponents.linkedComponents().length);
+            long startTime = System.currentTimeMillis();
             for (var inboundLink : component.inboundLinks()) {
                 Map<Point, Integer> distances;
                 if (!ESTIMATE_DISTANCES) {
@@ -59,15 +61,19 @@ public class Components {
                     count++;
                 }
             }
+
+            log.info("component took {} ms", System.currentTimeMillis() - startTime);
         }
 
-        var componentLinks = new ArrayList<List<Link>>();
+        var outboundLinks = new ArrayList<List<Link>>();
+        var inboundLinks = new ArrayList<List<Link>>();
         for (var component : linkedComponents.linkedComponents()) {
-            componentLinks.add(component.outboundLinks());
+            outboundLinks.add(component.outboundLinks());
+            inboundLinks.add(component.inboundLinks());
         }
 
         log.info(count + " edges " + skipCount + " links skipped");
-        return new ComponentGraph(graph, componentLinks);
+        return new ComponentGraph(graph, outboundLinks, inboundLinks);
     }
 
     public static ComponentGrid createGrid(ContiguousComponents contiguousComponents) {

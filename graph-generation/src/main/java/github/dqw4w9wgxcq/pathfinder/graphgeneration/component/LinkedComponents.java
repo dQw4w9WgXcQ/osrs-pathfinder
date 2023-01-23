@@ -22,21 +22,21 @@ public record LinkedComponents(LinkedComponent[] linkedComponents) {
 
                     var component = components[id];
                     if (component == null) {
-                        var sourceLinks = new ArrayList<Link>();
+                        var originLinks = new ArrayList<Link>();
                         var destinationLinks = new ArrayList<Link>();
                         for (var link : links.all()) {
-                            var sourceId = contiguousComponents.planes()[link.origin().plane()][link.origin().x()][link.origin().y()];
+                            var originId = contiguousComponents.planes()[link.origin().plane()][link.origin().x()][link.origin().y()];
                             var destinationId = contiguousComponents.planes()[link.destination().plane()][link.destination().x()][link.destination().y()];
 
-                            if (sourceId == id) {
-                                sourceLinks.add(link);
+                            if (originId == id) {
+                                originLinks.add(link);
                             }
 
                             if (destinationId == id) {
                                 destinationLinks.add(link);
                             }
                         }
-                        component = new LinkedComponent(sourceLinks, destinationLinks);
+                        component = new LinkedComponent(originLinks, destinationLinks);
                         components[id] = component;
                     }
                 }

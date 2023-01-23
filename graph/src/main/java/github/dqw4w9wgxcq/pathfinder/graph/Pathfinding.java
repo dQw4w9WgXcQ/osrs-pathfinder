@@ -84,7 +84,7 @@ public class Pathfinding {
         var linkDistances = new HashMap<Link, Integer>();
         var queue = new PriorityQueue<>(Comparator.comparingInt(Node::distance));
 
-        var startLinks = componentGraph.linksOfComponent(startComponent);
+        var startLinks = componentGraph.linksOfComponent(startComponent, true);
         if (startLinks.isEmpty()) {
             log.debug("no links in start component {}", startComponent);
 

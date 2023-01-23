@@ -2,9 +2,6 @@ plugins {
     java
 }
 
-group = "github.dqw4w9wgxcq.pathfinder"
-version = "1.0-SNAPSHOT"
-
 repositories {
     mavenCentral()
     maven {
