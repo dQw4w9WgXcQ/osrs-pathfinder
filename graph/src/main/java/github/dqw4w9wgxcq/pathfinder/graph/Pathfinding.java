@@ -6,6 +6,9 @@ import github.dqw4w9wgxcq.pathfinder.domain.Position;
 import github.dqw4w9wgxcq.pathfinder.domain.link.Link;
 import github.dqw4w9wgxcq.pathfinder.graph.domain.*;
 import github.dqw4w9wgxcq.pathfinder.graph.edge.LinkEdge;
+import github.dqw4w9wgxcq.pathfinder.graph.linkdistances.LinkDistanceCache;
+import github.dqw4w9wgxcq.pathfinder.graph.localpaths.LocalPathCache;
+import github.dqw4w9wgxcq.pathfinder.graph.store.GraphStore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
@@ -20,9 +23,16 @@ public class Pathfinding {
     private final LinkDistanceCache linkDistances;
     private final LocalPathCache localPaths;
 
+    public static Pathfinding create(GraphStore graphStore) {
+        var componentGrid = new ComponentGrid(graphStore.planes());
+        var linkDistances = new LinkDistanceCache(componentGrid, graphStore.componentGraph());
+        var localPaths = new LocalPathCache(componentGrid);
+        return new Pathfinding(componentGrid, graphStore.componentGraph(), linkDistances, localPaths);
+    }
+
     public @Nullable List<PathStep> findPath(Position start, Position end, Agent agent) {
-        start = findClosestNotBlocked(start);
-        end = findClosestNotBlocked(end);
+        start = findClosestNotBlocked(componentGrid.planes(), start);
+        end = findClosestNotBlocked(componentGrid.planes(), end);
 
         var startTime = System.currentTimeMillis();
         var linkPath = findLinkPath(start, end, agent);
@@ -67,14 +77,14 @@ public class Pathfinding {
         int startComponent = componentGrid.componentOf(start);
         int endComponent = componentGrid.componentOf(end);
 
-        var startDistances = linkDistances.get(start);
-        var endDistances = linkDistances.get(end);
+        var startDistances = linkDistances.get(start, true);
+        var endDistances = linkDistances.get(end, false);
 
         var seenFrom = new HashMap<Link, Link>();
         var linkDistances = new HashMap<Link, Integer>();
         var queue = new PriorityQueue<>(Comparator.comparingInt(Node::distance));
 
-        var startLinks = componentGraph.linksOf(startComponent);
+        var startLinks = componentGraph.linksOfComponent(startComponent);
         if (startLinks.isEmpty()) {
             log.debug("no links in start component {}", startComponent);
 
@@ -139,8 +149,8 @@ public class Pathfinding {
         return null;
     }
 
-    private Position findClosestNotBlocked(Position position) {
-        int[][] plane = componentGrid.planes()[position.plane()];
+    public static Position findClosestNotBlocked(int[][][] grid, Position position) {
+        int[][] plane = grid[position.plane()];
         if (plane[position.x()][position.y()] != -1) {
             return position;
         }
@@ -154,7 +164,7 @@ public class Pathfinding {
             var curr = frontier.remove(0);
             if (plane[curr.x()][curr.y()] != -1) {
                 log.debug("found closest position {}", curr);
-                return new Position(position.plane(), curr.x(), curr.y());
+                return new Position(curr.x(), curr.y(), position.plane());
             }
 
             for (var dx = -1; dx <= 1; dx++) {

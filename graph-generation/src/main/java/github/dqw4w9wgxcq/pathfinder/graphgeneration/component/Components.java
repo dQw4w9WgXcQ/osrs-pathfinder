@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class Components {
-    private static final boolean ESTIMATE_DISTANCES = true;//to speed up graph generation during development
+    private static final boolean ESTIMATE_DISTANCES = false;//to speed up graph generation during development
 
     public static ComponentGraph createGraph(LinkedComponents linkedComponents, ContiguousComponents contiguousComponents) {
         log.info("Creating component graph");

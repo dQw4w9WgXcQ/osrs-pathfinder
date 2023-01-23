@@ -2,12 +2,14 @@ package github.dqw4w9wgxcq.pathfinder.graph.store;
 
 import com.google.gson.Gson;
 import github.dqw4w9wgxcq.pathfinder.graph.domain.Links;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+@Slf4j
 public record LinkStore(Links links) {
     private static final Gson GSON = new Gson();
 
@@ -22,11 +24,12 @@ public record LinkStore(Links links) {
         }
     }
 
-    public static LinkStore load(File dir) throws IOException {
-        Links links;
+    public static LinkStore load(InputStream is) throws IOException {
+        log.info("loading links from {}", is);
 
-        try (var fis = new FileInputStream(new File(dir, "links.zip"));
-             var zis = new ZipInputStream(fis)) {
+        Links links;
+        try (is;
+             var zis = new ZipInputStream(is)) {
             zis.getNextEntry();
             links = GSON.fromJson(new InputStreamReader(zis), Links.class);
         }

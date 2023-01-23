@@ -42,8 +42,8 @@ public record GraphStore(
     }
 
     @SneakyThrows(ClassNotFoundException.class)
-    public static GraphStore load(File dir, Links links) throws IOException {
-        log.info("loading graph from {}", dir);
+    public static GraphStore load(InputStream is, Links links) throws IOException {
+        log.info("loading graph from {}", is);
 
         int[][][] grid;
         ComponentGraph componentGraph;
@@ -52,8 +52,8 @@ public record GraphStore(
                 .registerTypeHierarchyAdapter(Link.class, new LinkTypeAdapter(links))
                 .create();
 
-        try (var fis = new FileInputStream(new File(dir, "graph.zip"));
-             var zis = new ZipInputStream(fis)) {
+        try (is;
+             var zis = new ZipInputStream(is)) {
             zis.getNextEntry();
             try (var ois = new ObjectInputStream(zis)) {
                 grid = (int[][][]) ois.readObject();

@@ -7,6 +7,7 @@ import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Util;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.Wall;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.api.ObjectID;
 import net.runelite.cache.definitions.ObjectDefinition;
 import net.runelite.cache.region.Location;
 
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 public class DoorLinks {
     public static final Set<String> NAMES = Set.of("Door", "Large door", "Gate");
     public static final Set<Integer> IGNORE_IDS = Set.of(
-
+            ObjectID.DOOR_1804//hill giant
     );
     public static final Set<Integer> ALLOW_IDS = Set.of(
 
