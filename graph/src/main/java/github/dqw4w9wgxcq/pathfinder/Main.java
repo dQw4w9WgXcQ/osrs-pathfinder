@@ -9,6 +9,8 @@ import github.dqw4w9wgxcq.pathfinder.graph.store.LinkStore;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Collections;
 
 public class Main {
@@ -19,14 +21,20 @@ public class Main {
 
         var pathfinding = Pathfinding.create(graphStore);
 
-        var path = pathfinding.findPath(
-                new Position(3232, 3232, 0),
-                new Position(2441, 3088, 0),
-                new Agent(0, Collections.emptyMap(), Collections.emptyList())
-        );
-
-        for (var step : path) {
-            System.out.println(step);
+        int count = 0;
+        Instant start = Instant.now();
+        while (count != 1000) {
+            var path = pathfinding.findPath(
+                    new Position(3232, 3232, 0),
+                    new Position(2441, 3088, 0),
+                    new Agent(0, Collections.emptyMap(), Collections.emptyList())
+            );
+            count++;
+//            System.out.println(count++);
+//            for (var step : path) {
+//                System.out.println(step);
+//            }
         }
+        System.out.println(Duration.between(start, Instant.now()));
     }
 }
