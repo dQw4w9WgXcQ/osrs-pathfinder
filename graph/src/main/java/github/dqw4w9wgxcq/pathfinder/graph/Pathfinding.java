@@ -47,6 +47,7 @@ public class Pathfinding {
     }
 
     private List<PathStep> toSteps(List<Link> linkPath, Position start, Position end) {
+        long startTime = System.currentTimeMillis();
         var curr = start;
         var steps = new ArrayList<PathStep>();
         for (var link : linkPath) {
@@ -61,6 +62,8 @@ public class Pathfinding {
         var walkPath = localPaths.get(curr.plane(), curr.point(), end.point());
         steps.add(new WalkStep(curr.plane(), walkPath));
 
+        long endTime = System.currentTimeMillis();
+        log.info("converted link path to steps in {}ms", endTime - startTime);
         return steps;
     }
 
