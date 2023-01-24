@@ -160,14 +160,17 @@ public class Pathfinding {
 
         log.debug("position {} is blocked, finding closest", position);
 
-        var seen = new HashSet<Point>();
-        var frontier = new ArrayList<Point>();
-        frontier.add(position.point());
+        // Random starting size, doesnt really matter but having it be bigger helps resizing of the underlying array
+        var seen = new BitSet(100000);
+        var frontier = new ArrayDeque<Integer>();
+        frontier.add(position.point().packed());
         while (!frontier.isEmpty()) {
-            var curr = frontier.remove(0);
-            if (plane[curr.x()][curr.y()] != -1) {
+            var curr = frontier.poll();
+            var currX = Point.xFromInt(curr);
+            var currY = Point.yFromInt(curr);
+            if (plane[currX][currY] != -1) {
                 log.debug("found closest position {}", curr);
-                return new Position(curr.x(), curr.y(), position.plane());
+                return new Position(currX, currY, position.plane());
             }
 
             for (var dx = -1; dx <= 1; dx++) {
@@ -176,19 +179,20 @@ public class Pathfinding {
                         continue;
                     }
 
-                    var adjacentX = curr.x() + dx;
-                    var adjacentY = curr.y() + dy;
+                    var adjacentX = currX + dx;
+                    var adjacentY = currY + dy;
 
                     if (adjacentX < 0 || adjacentX >= plane.length || adjacentY < 0 || adjacentY >= plane[0].length) {
                         continue;
                     }
 
-                    var adjacent = new Point(adjacentX, adjacentY);
-                    if (seen.contains(adjacent)) {
+//                    var adjacent = new Point(adjacentX, adjacentY);
+                    var adjacent = (adjacentX & 32767) | (adjacentY & 32767) << 16;
+                    if (seen.get(adjacent)) {
                         continue;
                     }
 
-                    seen.add(adjacent);
+                    seen.set(adjacent);
                     frontier.add(adjacent);
                 }
             }

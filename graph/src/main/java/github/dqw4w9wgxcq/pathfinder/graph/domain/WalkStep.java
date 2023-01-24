@@ -9,8 +9,8 @@ public record WalkStep(String type, int plane, List<Point> path) implements Path
         this("WALK", plane, path);
     }
 
-    @Override
-    public String toString() {
-        return "WalkStep[plane=" + plane() + " from " + path.get(0) + " to " + path.get(path.size() - 1) + "]";
-    }
+//    @Override
+//    public String toString() {
+//        return "WalkStep[plane=" + plane() + " from " + path.get(0) + " to " + path.get(path.size() - 1) + "]";
+//    }
 }
