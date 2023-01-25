@@ -1,7 +1,7 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.link;
 
-import github.dqw4w9wgxcq.pathfinder.graph.domain.ComponentGrid;
-import github.dqw4w9wgxcq.pathfinder.graph.domain.Links;
+import github.dqw4w9wgxcq.pathfinder.pathfinding.domain.ComponentGrid;
+import github.dqw4w9wgxcq.pathfinder.pathfinding.domain.Links;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileWorld;
 import lombok.extern.slf4j.Slf4j;

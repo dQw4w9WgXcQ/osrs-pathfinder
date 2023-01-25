@@ -1,7 +1,7 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.leafletimages;
 
 import com.google.common.base.Preconditions;
-import github.dqw4w9wgxcq.pathfinder.graph.domain.ComponentGrid;
+import github.dqw4w9wgxcq.pathfinder.pathfinding.domain.ComponentGrid;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Util;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileWorld;
 import lombok.extern.slf4j.Slf4j;

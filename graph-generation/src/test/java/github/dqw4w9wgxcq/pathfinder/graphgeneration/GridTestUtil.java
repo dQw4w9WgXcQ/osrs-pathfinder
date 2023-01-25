@@ -1,6 +1,6 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration;
 
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileFlags;
+import github.dqw4w9wgxcq.pathfinder.pathfinding.domain.TileFlags;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileGrid;
 
 public class GridTestUtil {

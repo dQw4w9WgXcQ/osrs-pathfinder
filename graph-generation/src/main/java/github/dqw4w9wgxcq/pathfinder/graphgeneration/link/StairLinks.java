@@ -2,7 +2,7 @@ package github.dqw4w9wgxcq.pathfinder.graphgeneration.link;
 
 import github.dqw4w9wgxcq.pathfinder.domain.Position;
 import github.dqw4w9wgxcq.pathfinder.domain.link.StairLink;
-import github.dqw4w9wgxcq.pathfinder.graph.domain.ComponentGrid;
+import github.dqw4w9wgxcq.pathfinder.pathfinding.domain.ComponentGrid;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Util;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileWorld;

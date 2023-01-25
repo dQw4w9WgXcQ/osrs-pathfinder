@@ -2,8 +2,8 @@ package github.dqw4w9wgxcq.pathfinder.graphgeneration.component;
 
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.GridTestUtil;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Util;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileFlags;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileGrid;
+import github.dqw4w9wgxcq.pathfinder.pathfinding.domain.TileFlags;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +32,7 @@ public class ContiguousComponentsTest {
         log.debug("components: {}", components);
 
         var sum = components.sizes().stream().mapToInt(i -> i).sum();
-        assertEquals(planes[0].getSizeX() * planes[0].getSizeY(), sum);
+        assertEquals(planes[0].getWidth() * planes[0].getHeight(), sum);
 
         assertEquals(2, components.count());
     }
@@ -60,7 +60,7 @@ public class ContiguousComponentsTest {
         log.debug("components: {}", components);
 
         var sum = components.sizes().stream().mapToInt(i -> i).sum();
-        assertEquals(grid.getSizeX() * grid.getSizeY() - 3, sum);
+        assertEquals(grid.getWidth() * grid.getHeight() - 3, sum);
 
         assertEquals(2, components.count());
     }
@@ -68,9 +68,9 @@ public class ContiguousComponentsTest {
     @Test
     void object() {
         var grid = createGrid();
-        grid.markAreaObject(0, 1, 1, 1, true);
-        grid.markAreaObject(1, 0, 1, 1, false);
-        grid.markAreaObject(1, 1, 1, 1, true);
+        grid.markObject(0, 1, 1, 1, true);
+        grid.markObject(1, 0, 1, 1, false);
+        grid.markObject(1, 1, 1, 1, true);
         var components = ContiguousComponents.create(new TileGrid[]{grid});
         var s = GridTestUtil.stringify(components.planes()[0]);
         log.debug("\n{}", s);
@@ -81,9 +81,9 @@ public class ContiguousComponentsTest {
     @Test
     void noData() {
         var grid = new TileGrid(Util.REGION_SIZE, Util.REGION_SIZE);
-        grid.markAreaObject(0, 1, 1, 1, true);
-        grid.markAreaObject(1, 0, 1, 1, false);
-        grid.markAreaObject(1, 1, 1, 1, true);
+        grid.markObject(0, 1, 1, 1, true);
+        grid.markObject(1, 0, 1, 1, false);
+        grid.markObject(1, 1, 1, 1, true);
         var components = ContiguousComponents.create(new TileGrid[]{grid});
         var s = GridTestUtil.stringify(components.planes()[0]);
         log.debug("\n{}", s);

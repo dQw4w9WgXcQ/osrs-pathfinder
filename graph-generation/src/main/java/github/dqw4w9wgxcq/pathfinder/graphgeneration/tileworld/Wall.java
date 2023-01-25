@@ -1,5 +1,6 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld;
 
+import github.dqw4w9wgxcq.pathfinder.pathfinding.domain.TileFlags;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

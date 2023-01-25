@@ -2,15 +2,16 @@ package github.dqw4w9wgxcq.pathfinder.graphgeneration;
 
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
-import github.dqw4w9wgxcq.pathfinder.graph.store.GraphStore;
-import github.dqw4w9wgxcq.pathfinder.graph.store.LinkStore;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.Components;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.ContiguousComponents;
+import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.CreateComponentGraph;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.component.LinkedComponents;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.leafletimages.LeafletImages;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.link.FindLinks;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileWorld;
+import github.dqw4w9wgxcq.pathfinder.pathfinding.domain.ComponentGrid;
+import github.dqw4w9wgxcq.pathfinder.pathfinding.store.GraphStore;
+import github.dqw4w9wgxcq.pathfinder.pathfinding.store.LinkStore;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.*;
 
@@ -94,8 +95,9 @@ public class GraphGeneration {
 
         var objectLocations = cacheData.regionData().getLocationsAdjustedFor0x2();
         var tileWorld = TileWorld.create(cacheData, objectLocations);
+        var pathfindingWorld = tileWorld.toPathfindingWorld();
         var contiguousComponents = ContiguousComponents.create(tileWorld.getPlanes());
-        var componentGrid = Components.createGrid(contiguousComponents);
+        var componentGrid = new ComponentGrid(contiguousComponents.planes());
 
         if (cmd.hasOption("leaflet")) {
             try {
@@ -124,10 +126,10 @@ public class GraphGeneration {
         }
 
         var linkedComponents = LinkedComponents.create(contiguousComponents, links);
-        var componentGraph = Components.createGraph(linkedComponents, contiguousComponents);
+        var componentGraph = CreateComponentGraph.create(linkedComponents, pathfindingWorld);
 
         try {
-            new GraphStore(contiguousComponents.planes(), componentGraph).save(outDir);
+            new GraphStore(contiguousComponents.planes(), pathfindingWorld.grid(), componentGraph).save(outDir);
         } catch (IOException e) {
             log.error(null, e);
             System.out.println("writing graph failed");

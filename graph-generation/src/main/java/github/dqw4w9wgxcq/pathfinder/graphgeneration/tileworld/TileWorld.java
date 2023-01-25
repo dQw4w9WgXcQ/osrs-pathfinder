@@ -2,6 +2,9 @@ package github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld;
 
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Util;
+import github.dqw4w9wgxcq.pathfinder.pathfinding.PathfindingGrid;
+import github.dqw4w9wgxcq.pathfinder.pathfinding.PathfindingWorld;
+import github.dqw4w9wgxcq.pathfinder.pathfinding.domain.TileFlags;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.cache.definitions.ObjectDefinition;
@@ -22,8 +25,6 @@ public class TileWorld {
     private final TileGrid[] planes;
 
     TileWorld(int regionSizeX, int regionSizeY) {
-        log.info("Creating TileWorld with regionSizeX:{} Y:{}", regionSizeX, regionSizeY);
-
         this.sizeX = (regionSizeX + 1) * Util.REGION_SIZE;
         this.sizeY = (regionSizeY + 1) * Util.REGION_SIZE;
 
@@ -33,19 +34,42 @@ public class TileWorld {
 
     public static TileWorld create(CacheData cacheData, List<Location> objectLocations) {
         var regionData = cacheData.regionData();
-        var out = new TileWorld(regionData.highestRegionX(), regionData.highestRegionY());
+
+        var regionSizeX = regionData.highestRegionX();
+        var regionSizeY = regionData.highestRegionY();
+
+        log.info("Creating TileWorld with regionSizeX:{} Y:{}", regionSizeX, regionSizeY);
+
+        var start = System.currentTimeMillis();
+
+        var tileWorld = new TileWorld(regionSizeX, regionSizeY);
 
         for (var region : regionData.regions()) {
-            markRegionValid(out.planes, region);
+            markRegionValid(tileWorld.planes, region);
         }
 
         for (var region : regionData.regions()) {
-            markFloorForRegion(out.planes, region);
+            markFloorForRegion(tileWorld.planes, region);
         }
 
-        markObjectLocations(out.planes, objectLocations, cacheData.objectData().definitions());
+        markObjectLocations(tileWorld.planes, objectLocations, cacheData.objectData().definitions());
 
-        return out;
+        var time = (System.currentTimeMillis() - start) / 1000;
+        log.info("TileWorld created in {}s", time);
+
+        return tileWorld;
+    }
+
+    public PathfindingWorld toPathfindingWorld() {
+        log.info("Converting to PathfindingWorld");
+        var start = System.currentTimeMillis();
+        var planes = Arrays.stream(this.planes)
+                .parallel()
+                .map(TileGrid::toPathfindingGrid)
+                .toArray(PathfindingGrid[]::new);
+        var time = (System.currentTimeMillis() - start) / 1000;
+        log.info("Converted to PathfindingWorld in {}s", time);
+        return new PathfindingWorld(planes);
     }
 
     static void markRegionValid(TileGrid[] planes, Region region) {
@@ -125,19 +149,19 @@ public class TileWorld {
             //game object
             case 9, 10, 11 -> {
                 if (interactType != 0) {
-                    grid.markAreaObject(x, y, sizeX, sizeY, false);
+                    grid.markObject(x, y, sizeX, sizeY, false);
                 }
             }
             //floor decoration
             case 22 -> {
                 if (interactType == 1) {
-                    grid.markAreaObject(x, y, sizeX, sizeY, true);
+                    grid.markObject(x, y, sizeX, sizeY, true);
                 }
             }
             default -> {
                 if (locationType >= 12 && locationType <= 21) {
                     if (interactType != 0) {
-                        grid.markAreaObject(x, y, sizeX, sizeY, false);
+                        grid.markObject(x, y, sizeX, sizeY, false);
                     }
                 } else {
                     throw new IllegalArgumentException("expect:  0 =< locationType <= 22, found:" + locationType);

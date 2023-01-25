@@ -1,10 +1,12 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Util;
+import github.dqw4w9wgxcq.pathfinder.pathfinding.PathfindingGrid;
+import github.dqw4w9wgxcq.pathfinder.pathfinding.domain.TileFlags;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.VisibleForTesting;
 
 /**
  * Based off code from the decompiled game client.  Uses bitwise.
@@ -12,17 +14,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TileGrid {
     @Getter
-    private final int sizeX, sizeY;
+    private final int width, height;
 
     private final int[][] tiles;
 
-    public TileGrid(int sizeX, int sizeY) {
-        log.debug("new TileGrid with size x:" + sizeX + " y:" + sizeY);
+    @VisibleForTesting
+    public TileGrid(int width, int height) {
+        log.debug("new TileGrid " + width + " x " + height);
+        this.width = width;
+        this.height = height;
 
-        tiles = new int[sizeX][sizeY];
-
-        this.sizeX = sizeX;
-        this.sizeY = sizeY;
+        tiles = new int[width][height];
     }
 
     public int getConfig(int x, int y) {
@@ -33,99 +35,33 @@ public class TileGrid {
         return (tiles[x][y] & mask) != 0;
     }
 
-    public boolean canTravelInDirection(int x, int y, int dx, int dy) {
-        log.debug("canTravelInDirection x:{} y:{} dx:{} dy:{}", x, y, dx, dy);
-
-        //assert over iae to disable for performance
-        assert dx != 0 || dy != 0 : "dx and dy cant both be 0, found dx: " + dx + " dy: " + dy;
-        assert Math.abs(dx) <= 1 && Math.abs(dy) <= 1 : "dx and dy must be 1 or -1, found dx: " + dx + " dy: " + dy;
-
-        if (Math.abs(dx) == 1 && Math.abs(dy) == 1) {
-            //diagonals not supported
-            log.debug("diagonal movement, x:{} y:{} dx:{} dy:{}", x, y, dx, dy);
-            return false;
-        }
-
-        var destinationX = x + dx;
-        var destinationY = y + dy;
-
-        if (destinationX < 0 || destinationX >= sizeX || destinationY < 0 || destinationY >= sizeY) {
-            log.debug("destination out of bounds, x: " + x + " y: " + y + " dx: " + dx + " dy: " + dy);
-            return false;
-        }
-
-        var config = tiles[x][y];
-        var destinationConfig = tiles[x + dx][y + dy];
-
-        var mask = 0;
-        if (dx == 1) {
-            mask |= TileFlags.E_WALL;
-
-            if (dy == 1) {
-                mask |= TileFlags.NE_WALL;
-            } else if (dy == -1) {
-                mask |= TileFlags.SE_WALL;
-            }
-        } else if (dx == -1) {
-            mask |= TileFlags.W_WALL;
-
-            if (dy == 1) {
-                mask |= TileFlags.NW_WALL;
-            } else if (dy == -1) {
-                mask |= TileFlags.SW_WALL;
-            }
-        }
-
-        if (dy == 1) {
-            mask |= TileFlags.N_WALL;
-        } else if (dy == -1) {
-            mask |= TileFlags.S_WALL;
-        }
-
-        log.debug("check mask: {} stringed: {}config: {}", mask, TileFlags.describe(mask), TileFlags.describe(config));
-
-        if ((config & mask) != 0) {
-            log.debug("wall collision detected");
-            return false;
-        }
-
-        if ((destinationConfig & TileFlags.ANY_FULL) != 0) {
-            log.debug("full collision detected");
-            return false;
-        }
-
-        if ((destinationConfig & TileFlags.HAVE_DATA) == 0) {
-            log.debug("dont have data for destination");
-            return false;
-        }
-
-        return true;
-    }
-
-    public void unmarkWall(int x, int y, Wall wall) {
-        log.debug("unmarking wall at " + x + "," + y + " wall:" + wall);
-
-        Preconditions.checkArgument(
-                x >= 0 && y >= 0 && x < sizeX && y < sizeY,
-                "out of bounds: size:" + sizeX + "," + sizeY + ", point: " + x + "," + y
-        );
-
-        tiles[x][y] &= ~wall.getFlag();
-        tiles[x + wall.getDx()][y + wall.getDy()] &= ~wall.oppositeFlag();
-    }
-
+    @VisibleForTesting
     public void markTile(int x, int y, int flag) {
         log.debug("marking flag " + flag + " " + x + "x " + y + "y");
 
         Preconditions.checkArgument(
-                x >= 0 && y >= 0 && x < sizeX && y < sizeY,
-                "expected: x <" + sizeX + ", y <" + sizeY + ", found: " + x + "," + y + " flags: " + flag
+                x >= 0 && y >= 0 && x < width && y < height,
+                "expected: x <" + width + ", y <" + height + ", found: " + x + "," + y + " flags: " + flag
         );
 
         var updatedConfig = tiles[x][y] |= flag;
         log.debug("updated config: {}", TileFlags.describe(updatedConfig));
     }
 
+    @VisibleForTesting
+    public void unmarkTile(int x, int y, int flag) {
+        log.debug("unmarking flag " + flag + " " + x + "x " + y + "y");
+
+        Preconditions.checkArgument(
+                x >= 0 && y >= 0 && x < width && y < height,
+                "expected: x <" + width + ", y <" + height + ", found: " + x + "," + y + " flags: " + flag
+        );
+
+        var updatedConfig = tiles[x][y] &= ~flag;
+        log.debug("updated config: {}", TileFlags.describe(updatedConfig));
+    }
+
+    @VisibleForTesting
     public void markRegionHaveData(int regionX, int regionY) {
         var baseX = regionX * Util.REGION_SIZE;
         var baseY = regionY * Util.REGION_SIZE;
@@ -136,7 +72,9 @@ public class TileGrid {
         }
     }
 
-    public void markAreaObject(int x, int y, int sizeX, int sizeY, boolean isFloorDecoration) {
+    //floor decoration/object distinction is never really used
+    @VisibleForTesting
+    public void markObject(int x, int y, int sizeX, int sizeY, boolean isFloorDecoration) {
         log.debug("marking game object at " + x + "," + y + " sizeX:" + sizeX + " sizeY:" + sizeY);
 
         Preconditions.checkArgument(
@@ -158,7 +96,7 @@ public class TileGrid {
      * adds flags for a wall object and opposing flags.
      * i.e. if a wall blocks movement west, then it will set flags on the west tile to block east
      */
-    public void markWallObject(int x, int y, int locationType, int orientation) {
+    void markWallObject(int x, int y, int locationType, int orientation) {
         log.debug("marking wall object at " + x + "," + y + " locationType:" + locationType + " orientation:" + orientation);
 
         Preconditions.checkArgument(
@@ -236,16 +174,158 @@ public class TileGrid {
         }
     }
 
+    public boolean canTravelInDirection(int x, int y, int dx, int dy) {
+        log.debug("canTravelInDirection x:{} y:{} dx:{} dy:{}", x, y, dx, dy);
+
+        Preconditions.checkArgument(dx != 0 || dy != 0, "both 0 dx: " + dx + " dy: " + dy);
+        Preconditions.checkArgument(Math.abs(dx) <= 1 && Math.abs(dy) <= 1, "dx and dy must be 1 to -1, found dx: " + dx + " dy: " + dy);
+
+        var config = tiles[x][y];
+
+        var mask = 0;
+        var opposingXMask = TileFlags.ANY_FULL;
+        var opposingYMask = TileFlags.ANY_FULL;
+        var opposingXYMask = TileFlags.ANY_FULL;
+        if (dx == 1) {
+            mask |= TileFlags.E_WALL;
+            opposingXMask |= TileFlags.W_WALL;
+
+            if (dy == 1) {
+                mask |= TileFlags.NE_WALL;
+                opposingXYMask |= TileFlags.SW_WALL;
+            } else if (dy == -1) {
+                mask |= TileFlags.SE_WALL;
+                opposingXYMask |= TileFlags.NW_WALL;
+            }
+        } else if (dx == -1) {
+            mask |= TileFlags.W_WALL;
+            opposingXMask |= TileFlags.E_WALL;
+
+            if (dy == 1) {
+                mask |= TileFlags.NW_WALL;
+                opposingXYMask |= TileFlags.SE_WALL;
+            } else if (dy == -1) {
+                mask |= TileFlags.SW_WALL;
+                opposingXYMask |= TileFlags.NE_WALL;
+            }
+        }
+
+        if (dy == 1) {
+            mask |= TileFlags.N_WALL;
+            opposingYMask |= TileFlags.S_WALL;
+        } else if (dy == -1) {
+            mask |= TileFlags.S_WALL;
+            opposingYMask |= TileFlags.N_WALL;
+        }
+
+        log.debug("check mask: {} desc: {} config desc: {}", mask, TileFlags.describe(mask), TileFlags.describe(config));
+
+        if ((config & mask) != 0) {
+            log.debug("wall collision detected");
+            return false;
+        }
+
+        var destX = x + dx;
+        var destY = y + dy;
+        if (destX < 0 || destX >= width || destY < 0 || destY >= height) {
+            log.debug("destination out of bounds");
+            return false;
+        }
+
+        if (dx != 0) {
+            var adjacentXConfig = tiles[destX][y];
+            if ((adjacentXConfig & TileFlags.HAVE_DATA) == 0) {
+                log.debug("dont have data for adjacent x");
+                return false;
+            }
+
+            if ((adjacentXConfig & opposingXMask) != 0) {
+                log.debug("opposing x wall collision detected");
+                return false;
+            }
+        }
+
+        if (dy != 0) {
+            var adjacentYConfig = tiles[x][destY];
+            if ((adjacentYConfig & TileFlags.HAVE_DATA) == 0) {
+                log.debug("dont have data for adjacent y");
+                return false;
+            }
+
+            if ((adjacentYConfig & opposingYMask) != 0) {
+                log.debug("opposing y wall collision detected");
+                return false;
+            }
+        }
+
+        if (dx != 0 && dy != 0) {
+            var diagonalConfig = tiles[destX][destY];
+            if ((diagonalConfig & TileFlags.HAVE_DATA) == 0) {
+                log.debug("dont have data for diagonal");
+                return false;
+            }
+
+            if ((diagonalConfig & opposingXYMask) != 0) {
+                log.debug("opposing xy wall collision detected");
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public PathfindingGrid toPathfindingGrid() {
+        var grid = new int[width][height];
+
+        for (int x = 0; x < grid.length; x++) {
+            for (int y = 0; y < grid[0].length; y++) {
+                if (!checkFlag(x, y, TileFlags.HAVE_DATA)) {
+                    continue;
+                }
+
+                if (checkFlag(x, y, TileFlags.ANY_FULL)) {
+                    continue;
+                }
+
+                if (canTravelInDirection(x, y, 0, 1)) {
+                    grid[x][y] |= PathfindingGrid.NORTH;
+                }
+
+                if (canTravelInDirection(x, y, 0, -1)) {
+                    grid[x][y] |= PathfindingGrid.SOUTH;
+                }
+
+                if (canTravelInDirection(x, y, 1, 0)) {
+                    grid[x][y] |= PathfindingGrid.EAST;
+                }
+
+                if (canTravelInDirection(x, y, -1, 0)) {
+                    grid[x][y] |= PathfindingGrid.WEST;
+                }
+
+                if (canTravelInDirection(x, y, 1, 1)) {
+                    grid[x][y] |= PathfindingGrid.NORTH_EAST;
+                }
+
+                if (canTravelInDirection(x, y, -1, 1)) {
+                    grid[x][y] |= PathfindingGrid.NORTH_WEST;
+                }
+
+                if (canTravelInDirection(x, y, 1, -1)) {
+                    grid[x][y] |= PathfindingGrid.SOUTH_EAST;
+                }
+
+                if (canTravelInDirection(x, y, -1, -1)) {
+                    grid[x][y] |= PathfindingGrid.SOUTH_WEST;
+                }
+            }
+        }
+
+        return new PathfindingGrid(grid);
+    }
+
     @VisibleForTesting
     public int[][] getTileArray() {
         return tiles;
-    }
-
-    @Override
-    public String toString() {
-        return "TileMap{" +
-                "width=" + sizeX +
-                ", height=" + sizeY +
-                '}';
     }
 }

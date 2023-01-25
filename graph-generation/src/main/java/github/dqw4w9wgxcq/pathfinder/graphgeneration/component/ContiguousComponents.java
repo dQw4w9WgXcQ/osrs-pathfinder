@@ -1,8 +1,8 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.component;
 
 import github.dqw4w9wgxcq.pathfinder.domain.Point;
-import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileFlags;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileGrid;
+import github.dqw4w9wgxcq.pathfinder.pathfinding.domain.TileFlags;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayDeque;
@@ -14,6 +14,7 @@ import java.util.List;
  * @param planes A 3d array representing the tile grid.  Each value is the ID of the component that the tile belongs to.  Negative values are invalid (see comments).
  * @param sizes  Only used in tests.  The size (in tiles) of each component.  Component ID corresponds to index.
  */
+//todo purge known invalid components
 @Slf4j
 public record ContiguousComponents(int[][][] planes, List<Integer> sizes) {
     public int count() {
@@ -26,7 +27,7 @@ public record ContiguousComponents(int[][][] planes, List<Integer> sizes) {
 
         var sizes = new ArrayList<Integer>();
 
-        var planes = new int[gridPlanes.length][gridPlanes[0].getSizeX()][gridPlanes[0].getSizeY()];
+        var planes = new int[gridPlanes.length][gridPlanes[0].getWidth()][gridPlanes[0].getHeight()];
         for (var componentPlane : planes) {
             for (var row : componentPlane) {
                 Arrays.fill(row, -1);
@@ -44,8 +45,8 @@ public record ContiguousComponents(int[][][] planes, List<Integer> sizes) {
 //                log.info("unreachable area plane:{} size:{}", z, unreachableSize);
 //            }
 
-            for (var x = 0; x < grid.getSizeX(); x++) {
-                for (var y = 0; y < grid.getSizeY(); y++) {
+            for (var x = 0; x < grid.getWidth(); x++) {
+                for (var y = 0; y < grid.getHeight(); y++) {
                     if (planes[z][x][y] != -1) {
                         continue;
                     }

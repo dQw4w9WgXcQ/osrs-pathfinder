@@ -1,6 +1,7 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld;
 
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.GridTestUtil;
+import github.dqw4w9wgxcq.pathfinder.pathfinding.domain.TileFlags;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
@@ -13,8 +14,8 @@ public class TileGridTest {
     private static final int Y = 5;
 
     @Test
-    void testValid() {
-        var grid = newGrid();
+    void haveDataFlag() {
+        var grid = createGrid();
 
         log.debug("\n" + GridTestUtil.stringify(grid));
 
@@ -22,8 +23,8 @@ public class TileGridTest {
     }
 
     @Test
-    void testWallFlag() {
-        var grid = newGrid();
+    void wallFlag() {
+        var grid = createGrid();
 
         grid.markTile(X, Y, TileFlags.E_WALL);
 
@@ -33,34 +34,34 @@ public class TileGridTest {
     }
 
     @Test
-    void testDiagonalWallFlag() {
-        var grid = newGrid();
+    void diagonalWallFlag() {
+        var grid = createGrid();
         grid.markTile(X, Y, TileFlags.NE_WALL);
 
         log.debug("\n" + GridTestUtil.stringify(grid));
 
         //diagonal movement disabled temporarily
-        //Assertions.assertFalse(grid.canTravelInDirection(X, Y, 1, 1));
-        //Assertions.assertTrue(grid.canTravelInDirection(X + 1, Y + 1, -1, -1));
+        assertFalse(grid.canTravelInDirection(X, Y, 1, 1));
+        assertFalse(grid.canTravelInDirection(X + 1, Y + 1, -1, -1));
         assertTrue(grid.canTravelInDirection(X, Y, 1, 0));
         assertTrue(grid.canTravelInDirection(X, Y, 0, 1));
     }
 
     @Test
-    void testObjectFlag() {
-        var grid = newGrid();
+    void objectFlag() {
+        var grid = createGrid();
 
-        grid.markAreaObject(X, Y, 2, 3, false);
+        grid.markObject(X, Y, 2, 3, false);
 
         log.debug("\n" + GridTestUtil.stringify(grid));
 
-        assertFalse(grid.canTravelInDirection(X, Y, 1, 0));
+        assertFalse(grid.canTravelInDirection(X - 1, Y, 1, 0));
     }
 
-    TileGrid newGrid() {
+    TileGrid createGrid() {
         var grid = new TileGrid(10, 10);
-        for (var x = 0; x < grid.getSizeX(); x++) {
-            for (var y = 0; y < grid.getSizeY(); y++) {
+        for (var x = 0; x < grid.getWidth(); x++) {
+            for (var y = 0; y < grid.getHeight(); y++) {
                 grid.markTile(x, y, TileFlags.HAVE_DATA);
             }
         }

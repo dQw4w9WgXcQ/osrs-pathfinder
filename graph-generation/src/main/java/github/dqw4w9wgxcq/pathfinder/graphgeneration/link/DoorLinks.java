@@ -2,10 +2,10 @@ package github.dqw4w9wgxcq.pathfinder.graphgeneration.link;
 
 import github.dqw4w9wgxcq.pathfinder.domain.Position;
 import github.dqw4w9wgxcq.pathfinder.domain.link.DoorLink;
-import github.dqw4w9wgxcq.pathfinder.graph.domain.ComponentGrid;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Util;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.Wall;
+import github.dqw4w9wgxcq.pathfinder.pathfinding.domain.ComponentGrid;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ObjectID;
 import net.runelite.cache.definitions.ObjectDefinition;
@@ -32,7 +32,7 @@ public class DoorLinks {
         long startTime = System.currentTimeMillis();
 
         var doorIds = findDoorIds(cacheData.objectData().definitions().values());
-        log.info("found {} doorIds", doorIds.size());
+        log.debug("found {} doorIds", doorIds.size());
 
         List<DoorLink> links = new ArrayList<>();
         int id = 0;
