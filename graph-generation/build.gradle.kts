@@ -25,10 +25,10 @@ dependencies {
     implementation("org.jetbrains:annotations:23.0.0")
     compileOnly("org.projectlombok:lombok:$lombok")
     annotationProcessor("org.projectlombok:lombok:$lombok")
-    runtimeOnly("org.slf4j:slf4j-simple:1.7.25")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
+    testRuntimeOnly("org.slf4j:slf4j-simple:1.7.25")
 
     testAnnotationProcessor("org.projectlombok:lombok:$lombok")
     testCompileOnly("org.projectlombok:lombok:$lombok")

@@ -3,6 +3,8 @@ package github.dqw4w9wgxcq.pathfinder.domain;
 public record Point(int x, int y) {
     @Override
     public boolean equals(Object obj) {
+        assert obj instanceof Point;
+
         return obj.hashCode() == hashCode();
     }
 
