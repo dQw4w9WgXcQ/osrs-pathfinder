@@ -9,6 +9,7 @@ public record Links(
         List<DoorLink> doorLinks,
         List<StairLink> stairLinks,
         List<DungeonLink> dungeonLinks,
+        List<ShipLink> shipLinks,
         List<WildernessDitchLink> wildernessDitchLinks,
         List<SpecialLink> specialLinks
 ) {
@@ -17,6 +18,7 @@ public record Links(
         out.addAll(doorLinks);
         out.addAll(stairLinks);
         out.addAll(dungeonLinks);
+        out.addAll(shipLinks);
         out.addAll(wildernessDitchLinks);
         out.addAll(specialLinks);
         return out;
@@ -27,6 +29,7 @@ public record Links(
             case DOOR -> doorLinks.get(id);
             case STAIR -> stairLinks.get(id);
             case DUNGEON -> dungeonLinks.get(id);
+            case SHIP -> shipLinks.get(id);
             case WILDERNESS_DITCH -> wildernessDitchLinks.get(id);
             case SPECIAL -> specialLinks.get(id);
         };

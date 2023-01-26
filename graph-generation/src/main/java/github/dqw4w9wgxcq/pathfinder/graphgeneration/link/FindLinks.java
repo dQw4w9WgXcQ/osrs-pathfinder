@@ -18,12 +18,13 @@ public class FindLinks {
         var doorLinks = DoorLinks.find(cacheData, objectLocations, componentGrid);
         var stairLinks = StairLinks.find(cacheData, objectLocations, componentGrid, tileWorld);
         var dungeonLinks = DungeonLinks.find(cacheData, objectLocations);
+        var shipLinks = ShipLinks.find();
         var wildernessDitchLinks = WildernessDitchLinks.find(objectLocations, componentGrid);
         var specialLinks = SpecialLinks.find();
 
         var endTime = System.currentTimeMillis();
         log.info("found links in {}ms", endTime - startTime);
 
-        return new Links(doorLinks, stairLinks, dungeonLinks, wildernessDitchLinks, specialLinks);
+        return new Links(doorLinks, stairLinks, dungeonLinks, shipLinks, wildernessDitchLinks, specialLinks);
     }
 }

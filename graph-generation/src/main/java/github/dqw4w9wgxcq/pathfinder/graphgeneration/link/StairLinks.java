@@ -33,7 +33,6 @@ public class StairLinks {
 
     public static List<StairLink> find(CacheData cacheData, List<Location> objectLocations, ComponentGrid grid, TileWorld tileWorld) {
         log.info("finding stair links");
-        var startTime = System.currentTimeMillis();
 
         var definitions = cacheData.objectData().definitions();
 
@@ -106,8 +105,6 @@ public class StairLinks {
             out.add(stairLink);
         }
 
-        var endTime = System.currentTimeMillis();
-        log.info("found {} stair links in {}ms", out.size(), endTime - startTime);
         return out;
     }
 
