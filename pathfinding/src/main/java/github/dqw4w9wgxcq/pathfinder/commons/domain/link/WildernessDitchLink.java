@@ -8,9 +8,15 @@ import java.util.List;
 public record WildernessDitchLink(
         int id,
         Position origin,
-        Position destination,
-        int cost,
-        List<Requirement> requirements
+        Position destination
 ) implements Link {
+    @Override
+    public int cost() {
+        return 10;
+    }
 
+    @Override
+    public List<Requirement> requirements() {
+        return List.of();
+    }
 }

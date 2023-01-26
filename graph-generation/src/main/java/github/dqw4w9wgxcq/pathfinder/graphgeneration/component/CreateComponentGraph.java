@@ -20,14 +20,14 @@ public class CreateComponentGraph {
     private static final boolean ESTIMATE_DISTANCES = false;//to speed up graph generation during development
 
     public static ComponentGraph create(LinkedComponents linkedComponents, PathfindingWorld pathfindingWorld) {
-        log.info("Creating component graph");
+        log.info("Creating component graph, count:{}", linkedComponents.linkedComponents().size());
 
         var graph = new HashMap<Link, List<LinkEdge>>();
 
-        int count = 0;
-        int skipCount = 0;
+        var count = 0;
+        var skipCount = 0;
         for (var component : linkedComponents.linkedComponents()) {
-            long startTime = System.currentTimeMillis();
+            var startTime = System.currentTimeMillis();
             for (var inboundLink : component.inboundLinks()) {
                 Map<Point, Integer> distances;
                 if (!ESTIMATE_DISTANCES) {
@@ -59,9 +59,9 @@ public class CreateComponentGraph {
                 }
             }
 
-            long time = System.currentTimeMillis() - startTime;
+            var time = System.currentTimeMillis() - startTime;
             if (time > 10 * 1000) {
-                log.info("component {} of {} took {} s", count, linkedComponents.linkedComponents().size(), (time) / 1000);
+                log.info("component {} took {} s", count, (time) / 1000);
             }
             count++;
         }

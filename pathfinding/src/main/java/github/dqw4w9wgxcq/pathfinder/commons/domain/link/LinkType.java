@@ -4,6 +4,7 @@ public enum LinkType {
     DOOR,
     STAIR,
     DUNGEON,
+    WILDERNESS_DITCH,
     SPECIAL,
     ;
 
@@ -15,9 +16,12 @@ public enum LinkType {
             return STAIR;
         } else if (clazz.equals(DungeonLink.class)) {
             return DUNGEON;
+        } else if (clazz.equals(WildernessDitchLink.class)) {
+            return WILDERNESS_DITCH;
         } else if (clazz.equals(SpecialLink.class)) {
             return SPECIAL;
         }
+
         throw new IllegalArgumentException("Unknown link type: " + link);
     }
 }

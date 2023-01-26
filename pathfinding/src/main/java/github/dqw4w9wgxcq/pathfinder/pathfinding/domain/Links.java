@@ -9,6 +9,7 @@ public record Links(
         List<DoorLink> doorLinks,
         List<StairLink> stairLinks,
         List<DungeonLink> dungeonLinks,
+        List<WildernessDitchLink> wildernessDitchLinks,
         List<SpecialLink> specialLinks
 ) {
     public List<Link> all() {
@@ -16,6 +17,7 @@ public record Links(
         out.addAll(doorLinks);
         out.addAll(stairLinks);
         out.addAll(dungeonLinks);
+        out.addAll(wildernessDitchLinks);
         out.addAll(specialLinks);
         return out;
     }
@@ -23,9 +25,10 @@ public record Links(
     public Link getLink(LinkType type, int id) {
         var link = switch (type) {
             case DOOR -> doorLinks.get(id);
-            case SPECIAL -> specialLinks.get(id);
             case STAIR -> stairLinks.get(id);
-            default -> throw new IllegalArgumentException("unknown link type: " + type);
+            case DUNGEON -> dungeonLinks.get(id);
+            case WILDERNESS_DITCH -> wildernessDitchLinks.get(id);
+            case SPECIAL -> specialLinks.get(id);
         };
 
         assert link != null;

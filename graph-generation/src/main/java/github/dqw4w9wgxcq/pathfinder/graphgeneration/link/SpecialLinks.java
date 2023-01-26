@@ -2,8 +2,6 @@ package github.dqw4w9wgxcq.pathfinder.graphgeneration.link;
 
 import github.dqw4w9wgxcq.pathfinder.commons.domain.Position;
 import github.dqw4w9wgxcq.pathfinder.commons.domain.link.SpecialLink;
-import github.dqw4w9wgxcq.pathfinder.commons.domain.requirement.ItemRequirement;
-import net.runelite.api.ItemID;
 import net.runelite.api.ObjectID;
 
 import java.util.ArrayList;
@@ -38,7 +36,8 @@ public class SpecialLinks {
                 new Position(3267, 3227, 0),
                 new Position(3268, 3227, 0),
                 10,
-                List.of(new ItemRequirement(ItemID.COINS_995, 10)),
+//                List.of(new ItemRequirement(ItemID.COINS_995, 10)),
+                List.of(),//todo fix requirement serialization
                 Map.of(
                         OBJECT_ID, ObjectID.GATE_44052,
                         ACTION, "Pay-toll(10gp)"
