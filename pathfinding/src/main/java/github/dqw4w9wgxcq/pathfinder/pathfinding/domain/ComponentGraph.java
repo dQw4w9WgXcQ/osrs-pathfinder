@@ -1,6 +1,6 @@
 package github.dqw4w9wgxcq.pathfinder.pathfinding.domain;
 
-import github.dqw4w9wgxcq.pathfinder.domain.link.Link;
+import github.dqw4w9wgxcq.pathfinder.commons.domain.link.Link;
 import github.dqw4w9wgxcq.pathfinder.pathfinding.edge.LinkEdge;
 
 import java.util.List;

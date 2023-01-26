@@ -1,6 +1,6 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.link;
 
-import github.dqw4w9wgxcq.pathfinder.domain.link.DungeonLink;
+import github.dqw4w9wgxcq.pathfinder.commons.domain.link.DungeonLink;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
 import lombok.AllArgsConstructor;
 import net.runelite.cache.region.Location;

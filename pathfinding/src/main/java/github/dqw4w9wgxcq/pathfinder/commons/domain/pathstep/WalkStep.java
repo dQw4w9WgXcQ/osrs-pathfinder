@@ -1,7 +1,6 @@
-package github.dqw4w9wgxcq.pathfinder.domain.pathstep;
+package github.dqw4w9wgxcq.pathfinder.commons.domain.pathstep;
 
-import github.dqw4w9wgxcq.pathfinder.domain.Point;
-import github.dqw4w9wgxcq.pathfinder.domain.pathstep.PathStep;
+import github.dqw4w9wgxcq.pathfinder.commons.domain.Point;
 
 import java.util.List;
 

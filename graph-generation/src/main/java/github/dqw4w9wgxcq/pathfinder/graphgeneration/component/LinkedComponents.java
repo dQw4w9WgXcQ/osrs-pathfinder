@@ -1,13 +1,15 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.component;
 
-import github.dqw4w9wgxcq.pathfinder.domain.link.Link;
+import github.dqw4w9wgxcq.pathfinder.commons.domain.link.Link;
 import github.dqw4w9wgxcq.pathfinder.pathfinding.domain.Links;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
-public record LinkedComponents(LinkedComponent[] linkedComponents) {
+public record LinkedComponents(List<LinkedComponent> linkedComponents) {
     public static LinkedComponents create(ContiguousComponents contiguousComponents, Links links) {
         log.info("Creating linked components");
 
@@ -44,6 +46,6 @@ public record LinkedComponents(LinkedComponent[] linkedComponents) {
         }
 
         log.info("found {} linked components", components.length);
-        return new LinkedComponents(components);
+        return new LinkedComponents(Arrays.asList(components));
     }
 }

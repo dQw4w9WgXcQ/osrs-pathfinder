@@ -1,4 +1,4 @@
-package github.dqw4w9wgxcq.pathfinder.domain;
+package github.dqw4w9wgxcq.pathfinder.commons.domain;
 
 public record Position(int x, int y, int plane) {
     public Point point() {

@@ -1,6 +1,6 @@
 package github.dqw4w9wgxcq.pathfinder.pathfinding.domain;
 
-import github.dqw4w9wgxcq.pathfinder.domain.Position;
+import github.dqw4w9wgxcq.pathfinder.commons.domain.Position;
 
 public record ComponentGrid(int[][][] planes) {
     public int componentOf(Position position) {

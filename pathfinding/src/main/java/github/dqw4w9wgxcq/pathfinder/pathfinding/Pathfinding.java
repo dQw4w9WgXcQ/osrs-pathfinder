@@ -1,12 +1,12 @@
 package github.dqw4w9wgxcq.pathfinder.pathfinding;
 
-import github.dqw4w9wgxcq.pathfinder.domain.Agent;
-import github.dqw4w9wgxcq.pathfinder.domain.Point;
-import github.dqw4w9wgxcq.pathfinder.domain.Position;
-import github.dqw4w9wgxcq.pathfinder.domain.link.Link;
-import github.dqw4w9wgxcq.pathfinder.domain.pathstep.LinkStep;
-import github.dqw4w9wgxcq.pathfinder.domain.pathstep.PathStep;
-import github.dqw4w9wgxcq.pathfinder.domain.pathstep.WalkStep;
+import github.dqw4w9wgxcq.pathfinder.commons.domain.Agent;
+import github.dqw4w9wgxcq.pathfinder.commons.domain.Point;
+import github.dqw4w9wgxcq.pathfinder.commons.domain.Position;
+import github.dqw4w9wgxcq.pathfinder.commons.domain.link.Link;
+import github.dqw4w9wgxcq.pathfinder.commons.domain.pathstep.LinkStep;
+import github.dqw4w9wgxcq.pathfinder.commons.domain.pathstep.PathStep;
+import github.dqw4w9wgxcq.pathfinder.commons.domain.pathstep.WalkStep;
 import github.dqw4w9wgxcq.pathfinder.pathfinding.domain.ComponentGraph;
 import github.dqw4w9wgxcq.pathfinder.pathfinding.domain.ComponentGrid;
 import github.dqw4w9wgxcq.pathfinder.pathfinding.linkdistances.LinkDistances;
@@ -223,6 +223,11 @@ public class Pathfinding {
             for (var dx = -1; dx <= 1; dx++) {
                 for (var dy = -1; dy <= 1; dy++) {
                     if (dx == 0 && dy == 0) {
+                        continue;
+                    }
+
+                    if (dy != 0 && dx != 0) {
+                        //no diagonals
                         continue;
                     }
 

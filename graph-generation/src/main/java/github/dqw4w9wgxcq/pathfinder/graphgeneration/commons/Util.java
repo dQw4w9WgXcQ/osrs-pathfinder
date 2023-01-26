@@ -1,6 +1,6 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.commons;
 
-import github.dqw4w9wgxcq.pathfinder.domain.Position;
+import github.dqw4w9wgxcq.pathfinder.commons.domain.Position;
 import github.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileWorld;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.coords.Direction;

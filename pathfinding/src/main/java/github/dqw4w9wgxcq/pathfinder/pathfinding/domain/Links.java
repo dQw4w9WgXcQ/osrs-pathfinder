@@ -1,6 +1,6 @@
 package github.dqw4w9wgxcq.pathfinder.pathfinding.domain;
 
-import github.dqw4w9wgxcq.pathfinder.domain.link.*;
+import github.dqw4w9wgxcq.pathfinder.commons.domain.link.*;
 
 import java.util.ArrayList;
 import java.util.List;

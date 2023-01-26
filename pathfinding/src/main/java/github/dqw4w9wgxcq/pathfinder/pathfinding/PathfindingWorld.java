@@ -1,7 +1,7 @@
 package github.dqw4w9wgxcq.pathfinder.pathfinding;
 
-import github.dqw4w9wgxcq.pathfinder.domain.Point;
-import github.dqw4w9wgxcq.pathfinder.domain.Position;
+import github.dqw4w9wgxcq.pathfinder.commons.domain.Point;
+import github.dqw4w9wgxcq.pathfinder.commons.domain.Position;
 
 import java.util.Arrays;
 import java.util.Map;

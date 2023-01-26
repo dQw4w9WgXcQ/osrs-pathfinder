@@ -1,5 +1,6 @@
-package github.dqw4w9wgxcq.pathfinder.domain;
+package github.dqw4w9wgxcq.pathfinder.commons.domain;
 
+import github.dqw4w9wgxcq.pathfinder.commons.domain.requirement.Requirement;
 import net.runelite.api.Quest;
 
 import java.util.List;

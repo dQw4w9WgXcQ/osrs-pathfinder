@@ -1,8 +1,8 @@
 package github.dqw4w9wgxcq.pathfinder.graphgeneration.component;
 
-import github.dqw4w9wgxcq.pathfinder.domain.Point;
-import github.dqw4w9wgxcq.pathfinder.domain.Position;
-import github.dqw4w9wgxcq.pathfinder.domain.link.Link;
+import github.dqw4w9wgxcq.pathfinder.commons.domain.Point;
+import github.dqw4w9wgxcq.pathfinder.commons.domain.Position;
+import github.dqw4w9wgxcq.pathfinder.commons.domain.link.Link;
 import github.dqw4w9wgxcq.pathfinder.pathfinding.Algo;
 import github.dqw4w9wgxcq.pathfinder.pathfinding.PathfindingWorld;
 import github.dqw4w9wgxcq.pathfinder.pathfinding.domain.ComponentGraph;
@@ -61,7 +61,7 @@ public class CreateComponentGraph {
 
             long time = System.currentTimeMillis() - startTime;
             if (time > 10 * 1000) {
-                log.info("component {} of {} took {} s", count, linkedComponents.linkedComponents().length, (time) / 1000);
+                log.info("component {} of {} took {} s", count, linkedComponents.linkedComponents().size(), (time) / 1000);
             }
             count++;
         }

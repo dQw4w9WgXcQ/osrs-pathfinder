@@ -1,7 +1,7 @@
 package github.dqw4w9wgxcq.pathfinder.pathfinding.store;
 
 import com.google.gson.GsonBuilder;
-import github.dqw4w9wgxcq.pathfinder.domain.link.Link;
+import github.dqw4w9wgxcq.pathfinder.commons.domain.link.Link;
 import github.dqw4w9wgxcq.pathfinder.pathfinding.domain.ComponentGraph;
 import github.dqw4w9wgxcq.pathfinder.pathfinding.domain.Links;
 import github.dqw4w9wgxcq.pathfinder.pathfinding.store.gson.LinkTypeAdapter;
