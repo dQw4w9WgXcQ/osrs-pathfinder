@@ -33,8 +33,8 @@ public class Pathfinding {
         var pathfinding = Pathfinding.create(graphStore);
 
         var path = pathfinding.findPath(
-                new Position(3041, 3237, 0),
-                new Position(2670, 3278, 0),
+                new Position(3433, 3485, 0),
+                new Position(3401, 3486, 0),
                 new Agent(99, Collections.emptyMap(), Collections.emptyList())
         );
 

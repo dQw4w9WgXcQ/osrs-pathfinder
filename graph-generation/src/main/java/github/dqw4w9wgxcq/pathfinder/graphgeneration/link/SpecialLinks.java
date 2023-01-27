@@ -46,10 +46,19 @@ public class SpecialLinks {
         links.add(tollGate);
         links.add(bidirection(id++, tollGate));
 
-        var tempMortania = new SpecialLink(id++, new Position(3404, 3503, 0), new Position(3404, 9904, 0), 10, List.of(), Map.of());
-        var tempMortaniaOut = new SpecialLink(id++, new Position(3440, 9887, 0), new Position(3439, 3485, 0), 10, List.of(), Map.of());
-        links.add(tempMortania);
-        links.add(tempMortaniaOut);
+        var drezelHolyBarrier = new SpecialLink(
+                id++,
+                new Position(3440, 9887, 0),
+                new Position(3439, 3485, 0),
+                10,
+//                List.of(new QuestRequirement(Quest.PRIEST_IN_PERIL));
+                List.of(),//todo fix requirement serialization
+                Map.of(
+                        OBJECT_ID, ObjectID.HOLY_BARRIER,
+                        ACTION, "Pass-through"
+                )
+        );
+        links.add(drezelHolyBarrier);
 
         return links;
     }

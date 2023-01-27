@@ -19,7 +19,6 @@ public class WildernessDitchLinks {
 
     public static List<WildernessDitchLink> find(List<Location> objectLocations, ComponentGrid componentGrid) {
         log.info("finding wilderness ditch links");
-        var startTime = System.currentTimeMillis();
 
         var links = new ArrayList<WildernessDitchLink>();
 
@@ -57,8 +56,11 @@ public class WildernessDitchLinks {
             links.add(new WildernessDitchLink(id++, south, north));
         }
 
-        var time = System.currentTimeMillis() - startTime;
-        log.info("found {} wilderness ditch links in {}ms", links.size(), time);
+        //add the ditch near black knight's fortress https://i.imgur.com/dXqkXtq.png
+        var blackKnightsFortressDitch = new WildernessDitchLink(id++, new Position(2995, 3532, 0), new Position(2998, 3532, 0));
+        links.add(blackKnightsFortressDitch);
+        links.add(new WildernessDitchLink(id++, blackKnightsFortressDitch.destination(), blackKnightsFortressDitch.origin()));
+
         return links;
     }
 }
