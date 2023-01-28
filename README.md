@@ -30,9 +30,9 @@ The pathfinding actually executes in reverse (from destination to start) because
 
 Exact tile distances between links are calculated at the time of graph generation, however the tile paths need to be recalculated at runtime.  
 
-Distances from the start/end tile to all links in the start/end component need to be calculated for each request.  Thankfully, these distances can be cached as they don't take up much space.  Finding distances to all links is O(N), but N can be in the millions.  Still, this isn't a performance issue for valid paths.    
+Distances from the start/end tile to all links in the start/end component need to be calculated for each request.  Thankfully, these distances can be cached as they don't take up much space.  Finding distances to all links in a component is O(N), but N can be in the millions.  Still, this isn't a performance issue for valid paths.  
 
-Tile paths can also be cached, but they take up more space, so a LRU/LFU cache should be used (probably Guava's).  This is TODO.  
+Tile paths can also be cached, but they take up more space, so an LRU/LFU cache should be used (probably Guava's).  This is TODO.  
 
 ## Types of Links
 
