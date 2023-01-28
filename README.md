@@ -18,7 +18,7 @@ A path is first found through "contiguous components" of connected by links usin
 Contiguous components are zones that can be reached without going through links.  In the image below, each color represents a zone.  (note that colors are reused.)
 ![](https://i.imgur.com/MaD51oN.png)
 
-In the two images above, the link path is Start -> Walk -> Dungeon#2 -> (some links at very high coordinates the game uses for the underground area) -> Walk -> Ship#0 -> Door#2876 -> Walk -> Ship(tooltip hidden) -> Walk -> Finish.
+In the two images above, the link path is Start -> Walk -> Dungeon#2 -> (some links at very high coordinates the game uses for the underground area) -> Walk -> Ship#0 -> Walk -> Door#2876 -> Walk -> Ship(tooltip hidden) -> Walk -> Finish.
 
 Once a link path is found, A* can be used at the tile level.  A heuristic for A* is not possible without first finding a path through links.  Chebychev distance is used as the heuristic as it best estimates time to walk in game.  
 
