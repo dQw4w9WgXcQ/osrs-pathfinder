@@ -26,7 +26,7 @@ Links are represented by cyan lines.  The tile path is represented by blue lines
 
 ### Details
 
-The pathfinding actually executes in reverse (from destination to start) because of teleports.  Teleports are simply alternate origins.  Reversing allows teleports to be added as destinations instead.  Pathfinding with multiple destinations is much more efficient than multiple sources.  
+The pathfinding actually executes in reverse (from destination to start) because of teleports.  Teleports are simply alternate origins.  Reversing allows teleports to be added as destinations instead.  Pathfinding with multiple destinations is much more efficient than multiple origins.  
 
 Exact tile distances between links are calculated at the time of graph generation, however the tile paths need to be recalculated at runtime.  This ensures that paths are strictly optimal unlike other heirarchical pathfinding algorithms such as HPA*.
 
