@@ -16,7 +16,7 @@ Demonstrated at [osrspathfinder.github.io](https://osrspathfinder.github.io/). (
 A path is first found through "contiguous components" of connected by links using a Dijkstra-like algorithm.
 
 Contiguous components are zones that can be reached without going through links.  In the image below, each color represents a zone.  (note that colors are reused.)
-![](https://i.imgur.com/g8g9Vbk.jpeg)
+![](https://i.imgur.com/MaD51oN.png)
 
 In the two images above, the link path is Start -> Walk -> Dungeon#2 -> (some links at very high coordinates the game uses for the underground area) -> Walk -> Ship#0 -> Door#2876 -> Walk -> Ship(tooltip hidden) -> Walk -> Finish.
 
