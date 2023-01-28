@@ -13,7 +13,7 @@ Demonstrated at [osrspathfinder.github.io](https://osrspathfinder.github.io/). (
 
 
 ## Hierarchical Dijkstra/A* Algorithm
-A path is first found through "contiguous components" of connected by links using a Dijkstra-like algorithm.
+A path is first found through "contiguous components" connected by links using a Dijkstra-like algorithm.
 
 Contiguous components are zones that can be reached without going through links.  In the image below, each color represents a zone.  (note that colors are reused.)
 ![](https://i.imgur.com/MaD51oN.png)
