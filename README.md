@@ -13,16 +13,16 @@ Demonstrated at [osrspathfinder.github.io](https://osrspathfinder.github.io/). (
 
 
 ## Hierarchical Dijkstra/A* Algorithm
-A path is first found through "contiguous components" connected by links using a Dijkstra-like algorithm.
+Pathfinding is done in two layers.  First, a path is found through links.  Then a path is found through tiles guided by the link path.  
 
-Contiguous components are zones that can be reached without going through links.  In the image below, each color represents a zone.  (note that colors are reused.)
+The link path is found through "contiguous components" connected by links using a Dijkstra-like algorithm.
+
+Contiguous components are zones that are internally reachable without going through a link.  In the image below, each color represents a zone.  (note that colors are reused.)
 ![](https://i.imgur.com/MaD51oN.png)
 
-In the two images above, the link path is Start -> Walk -> Dungeon#2 -> (some links at very high coordinates the game uses for the underground area) -> Walk -> Ship#0 -> Walk -> Door#2876 -> Walk -> Ship(tooltip hidden) -> Walk -> Finish.
+In the images above, the link path is Start -> Walk -> Dungeon#2 -> (some links at very high coordinates the game uses for the underground area) -> Walk -> Ship#0 -> Walk -> Door#2876 -> Walk -> Ship(tooltip hidden) -> Walk -> Finish.  Links are represented by cyan lines.  The tile path is represented by blue lines.
 
-Once a link path is found, A* can be used at the tile level.  A heuristic for A* is not possible without first finding a path through links.  Chebychev distance is used as the heuristic as it best estimates time to walk in game.  
-
-Links are represented by cyan lines.  The tile path is represented by blue lines.  
+Once a link path is found, A* can be used to find the tile path.  A heuristic for A* is not possible without first finding the link path.  Chebychev distance is used as the heuristic as it best estimates time to walk in game.  
 
 ### Details
 
@@ -32,7 +32,7 @@ Exact tile distances between links are calculated at the time of graph generatio
 
 Distances from the start/end tile to all links in the start/end component need to be calculated for each request.  Thankfully, these distances can be cached as they don't take up much space.  Finding distances to all links in a component is O(N), but N can be in the millions.  Still, this isn't a performance issue for valid paths.  
 
-Tile paths can also be cached, but they take up more space, so an LRU/LFU cache should be used (probably Guava's).  This is TODO.  
+Tile paths could also be cached, but they take up more space, so an LRU/LFU cache should be used (probably Guava's).  This is TODO.  
 
 ## Types of Links
 
