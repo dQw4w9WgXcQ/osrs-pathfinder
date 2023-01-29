@@ -1,11 +1,11 @@
 # osrs-pathfinder
 
-A pathfinding library for Old School Runescape used to help bots navigate around the game world.  
-
-Used in a Spring REST service at [github.com/dQw4w9WgXcQ/osrs-pathfinder-service](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-service).  
+A pathfinding library to help bots navigate around Old School Runescape.  
 
 Demonstrated at [osrspathfinder.github.io](https://osrspathfinder.github.io/). (Website repo: [github.com/dQw4w9WgXcQ/osrs-pathfinder-site](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-site))
 [![website](https://i.imgur.com/sk5XPSt.png)](https://osrspathfinder.github.io/)
+
+Used in a Spring REST service at [github.com/dQw4w9WgXcQ/osrs-pathfinder-service](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-service).  
 
 ## Project Layout
 - [graph-generation](graph-generation/src/main/java/github/dqw4w9wgxcq/pathfinder/graphgeneration) - Generates a pathfinding graph from data extracted from the game's cache files.  
@@ -28,9 +28,9 @@ Once a link path is found, A* can be used to find the tile path.  A heuristic fo
 
 The pathfinding actually executes in reverse (from destination to start) because of teleports.  Teleports are simply alternate origins.  Reversing allows teleports to be added as destinations instead.  Pathfinding with multiple destinations is much more efficient than multiple origins.  
 
-Exact tile distances between links are calculated at the time of graph generation, however the tile paths need to be recalculated at runtime.  
+Tile distances between links are calculated at the time of graph generation, however the tile paths need to be recalculated at runtime.  Still, this ensures that all paths are strictly optimal.  
 
-Distances from the start/end tile to all links in the start/end component need to be calculated for each request.  Thankfully, these distances can be cached as they don't take up much space.  Finding distances to all links in a component is O(N), but N can be in the millions.  Still, this isn't a performance issue for valid paths.  
+Distances from the start/end tile to all links in the start/end component need to be calculated for each request.  Finding distances to all links in a component is O(N), but N can be in the millions.  Still, this isn't a performance issue for valid paths.  Additionally, these distances can be cached as they don't take up much space.  
 
 Tile paths could also be cached, but they take up more space, so an LRU/LFU cache should be used (probably Guava's).  This is TODO.  
 
