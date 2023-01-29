@@ -20,7 +20,7 @@ The link path is found through "contiguous components" connected by links using 
 Contiguous components are zones that are internally reachable without going through a link.  In the image below, each color represents a zone.  (note that colors are reused.)
 ![](https://i.imgur.com/MaD51oN.png)
 
-In the images above, the link path is Start -> Walk -> Dungeon#2 -> (some links at very high coordinates the game uses for the underground area) -> Walk -> Ship#0 -> Walk -> Door#2876 -> Walk -> Ship(tooltip hidden) -> Walk -> Finish.  Links are represented by cyan lines.  The tile path is represented by blue lines.
+In the images above, the link path is Start -> Dungeon#2 -> (some links at very high coordinates the game uses for the underground area) -> Ship#0 -> Door#2876  -> Ship(tooltip hidden) -> Finish.  Links are represented by cyan lines.  The tile path is represented by blue lines.
 
 Once a link path is found, A* can be used to find the tile path.  A heuristic for A* is not possible without first finding the link path.  Chebychev distance is used as the heuristic as it best estimates time to walk in game.  
 
