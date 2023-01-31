@@ -2,10 +2,10 @@
 
 A pathfinding library to help bots navigate around Old School Runescape.  
 
+Used in a Spring REST service at [github.com/dQw4w9WgXcQ/osrs-pathfinder-service](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-service).  
+
 Demonstrated at [osrspathfinder.github.io](https://osrspathfinder.github.io/). (Website repo: [github.com/dQw4w9WgXcQ/osrs-pathfinder-site](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-site))
 [![website](https://i.imgur.com/sk5XPSt.png)](https://osrspathfinder.github.io/)
-
-Used in a Spring REST service at [github.com/dQw4w9WgXcQ/osrs-pathfinder-service](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-service).  
 
 ## Project Layout
 - [graph-generation](graph-generation/src/main/java/github/dqw4w9wgxcq/pathfinder/graphgeneration) - Generates a pathfinding graph from data extracted from the game's cache files.  
