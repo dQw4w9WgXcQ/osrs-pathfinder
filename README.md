@@ -2,9 +2,10 @@
 
 A pathfinding library to help bots navigate around Old School Runescape.  
 
+Demonstrated at [osrspathfinder.github.io](https://osrspathfinder.github.io/). (Website repo: [github.com/dQw4w9WgXcQ/osrs-pathfinder-site](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-site))
+
 Used in a REST service at [github.com/dQw4w9WgXcQ/osrs-pathfinder-service](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-service).  
 
-Demonstrated at [osrspathfinder.github.io](https://osrspathfinder.github.io/). (Website repo: [github.com/dQw4w9WgXcQ/osrs-pathfinder-site](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-site))
 [![website](https://i.imgur.com/sk5XPSt.png)](https://osrspathfinder.github.io/)
 
 ## Project Layout
