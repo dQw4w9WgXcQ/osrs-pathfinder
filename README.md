@@ -27,6 +27,8 @@ The link path is found using a Dijkstra-like algorithm.  Cost between links are 
 
 Once a link path is found, BFS is used to find the exact tile path.  BFS is much more efficient than running Dijkstra's on individual tiles.  Additionally, A* was previously used, for which a heuristic is not possible without first finding a the link path.  (see below for details about why BFS was chosen over A*)
 
+There are additional multi-threading and caching considerations for which a two layer pathfinding algorithm is beneficial.  
+
 In the image above, the link path is Start -> Dungeon#2 -> (some links at very high coordinates the game uses for the underground area) -> Ship#0 -> Door#2876  -> Ship(tooltip hidden) -> Finish.  Links are represented by cyan lines.  The tile path is represented by blue lines.
 
 ### Details
