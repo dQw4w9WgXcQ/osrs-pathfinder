@@ -18,7 +18,7 @@ Website repo: [github.com/dQw4w9WgXcQ/osrs-pathfinder-site](https://github.com/d
 ## The Pathfinding Algorithm
 Pathfinding is done in two stages.  First, a path is found through links between "components" using Dijkstra's.  Then, guided by the link path, the tile path can be found efficiently using BFS.  
 
-Components are islands of tiles that are internally reachable to eachother.  (similar to the popular coding interview question "number of islands")  Links are doors, stairs, ships, and other shortcuts that connect components to eachother.  Distance between links (through components) are calcualted during graph generation.  An edge is added from each link to all other links in it's component.  
+Components are islands of tiles that are internally reachable to eachother.  (similar to the popular coding interview question "number of islands")  Links are doors, stairs, ships, and other shortcuts that connect components to eachother.  Distances between links (through components) are calcualted during graph generation.  An edge is added from each link to all other links in it's component.  
 
 In the image below, each color represents an island aka component.  Cyan lines represent links, while blue lines represent the tile path.  
 ![](https://i.imgur.com/MaD51oN.png)
