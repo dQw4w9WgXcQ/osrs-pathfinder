@@ -23,7 +23,7 @@ Components are islands of tiles that are internally reachable to eachother witho
 In the image below, each color represents an island aka component.  
 ![](https://i.imgur.com/MaD51oN.png)
 
-The link path is found using a Dijkstra-like algorithm.  Cost between links are calcualted during graph generation.  
+The link path is found using a Dijkstra-like algorithm.  Cost between links are calcualted during graph generation.  An edge is added from each inbound link to all outbound links within a component.  
 
 Once a link path is found, BFS is used to find the exact tile path.  BFS is much more efficient than running Dijkstra's on individual tiles.  Additionally, A* was previously used, for which a heuristic is not possible without first finding a the link path.  (see below for details about why BFS was chosen over A*)
 
