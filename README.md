@@ -16,7 +16,7 @@ Website repo: [github.com/dQw4w9WgXcQ/osrs-pathfinder-site](https://github.com/d
 
 
 ## Hierarchical Dijkstra/A* Algorithm
-Pathfinding is done in two layers.  First, a path is found through links between "components".  Then, guided by the link path, an exact tile path can be efficiently calculated.  
+Pathfinding is done in two layers.  First, a path is found through links between "components".  Then, guided by the link path, an exact tile path can be efficiently found.  
 
 Components are islands of tiles that are internally reachable to eachother without going through a link.  (conceptually similar to the popular coding interview question "number of islands")  Links are doors, stairs, ships, or other shortcuts that connect components to eachother.  
 
