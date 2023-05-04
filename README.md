@@ -32,7 +32,7 @@ Although distances between links are calculated during graph generation, distanc
 
 Tile paths could also be cached, but they take up more space, so an LRU/LFU cache should be used (probably Guava's).  This is TODO.  
 
-The pathfinding actually executes in reverse (from destination to start) because of teleports.  Teleports are simply alternate origins.  Reversing allows teleports to be added as destinations instead.  Pathfinding with multiple destinations is more efficient than multiple origins.  
+The pathfinding actually executes in reverse (from destination to start) because of teleports.  Teleports are simply alternate origins.  Reversing allows teleports to be added as destinations instead.  Pathfinding with multiple origins is more efficient than multiple destinations.  
 
 ## Types of Links
 
