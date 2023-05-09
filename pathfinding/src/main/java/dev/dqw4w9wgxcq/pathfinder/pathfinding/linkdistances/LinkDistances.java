@@ -41,7 +41,7 @@ public class LinkDistances {
         var startTime = System.currentTimeMillis();
         var distances = pathfindingWorld.distances(key.position(), tos);
         var finishTime = System.currentTimeMillis();
-        log.info("distances {} in {}ms", key.outbound() ? "outbound" : "inbound", finishTime - startTime);
+        log.debug("distances {} in {}ms", key.outbound() ? "outbound" : "inbound", finishTime - startTime);
 
         return distances;
     }

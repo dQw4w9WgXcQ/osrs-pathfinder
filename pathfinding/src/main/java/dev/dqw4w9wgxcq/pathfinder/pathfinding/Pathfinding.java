@@ -44,7 +44,7 @@ public class Pathfinding {
         var linkPath = findLinkPath(start, finish, agent);
 
         if (linkPath == null) {
-            log.info("no path from {} to {} for agent {}", start, finish, agent);
+            log.debug("no path from {} to {} for agent {}", start, finish, agent);
             return new PathfindingResult(start, finish, null);
         }
 
@@ -74,7 +74,7 @@ public class Pathfinding {
         steps.add(new WalkStep(curr.plane(), tilePath));
 
         var endTime = System.currentTimeMillis();
-        log.info("steps in {}ms", endTime - startTime);
+        log.debug("steps in {}ms", endTime - startTime);
 
         return steps;
     }
@@ -135,7 +135,7 @@ public class Pathfinding {
                 Collections.reverse(path);
 
                 var endTime = System.currentTimeMillis();
-                log.info("link path (took {}ms)", endTime - startTime);
+                log.debug("link path (took {}ms)", endTime - startTime);
                 return path;
             }
 
@@ -175,7 +175,7 @@ public class Pathfinding {
         }
 
         var endTime = System.currentTimeMillis();
-        log.info("no link path (took {}ms)", endTime - startTime);
+        log.debug("no link path (took {}ms)", endTime - startTime);
         return null;
     }
 
@@ -201,7 +201,7 @@ public class Pathfinding {
             var curr = frontier.poll();
             if (plane[curr.x()][curr.y()] != -1) {
                 var finishTime = System.currentTimeMillis();
-                log.info("closest position {} in {} from {}", curr, finishTime - startTime, position);
+                log.debug("closest position {} in {} from {}", curr, finishTime - startTime, position);
                 return new Position(curr.x(), curr.y(), position.plane());
             }
 
