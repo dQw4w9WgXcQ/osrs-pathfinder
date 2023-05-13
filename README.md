@@ -11,8 +11,8 @@ Website repo: [github.com/dQw4w9WgXcQ/osrs-pathfinder-site](https://github.com/d
 [![website](https://i.imgur.com/sk5XPSt.png)](https://osrspathfinder.github.io/)
 
 ## Project Layout
-- [graph-generation](graph-generation/src/main/java/dev/dqw4w9wgxcq/pathfinder/graphgeneration) - Generates a pathfinding graph from data extracted from the game's cache files.  
-- [pathfinding](/pathfinding/src/main/java/dev/dqw4w9wgxcq/pathfinder) - Consumes the generated graph and finds paths with a hierarchical dijkstra/A* algorithm.
+- [graph-generation](graph-generation/src/main/java/dev/dqw4w9wgxcq/pathfinder/graphgeneration) - Generates the graph from data extracted from the game's cache files and serializes it for later use by the pathfinding service.  
+- [pathfinding](/pathfinding/src/main/java/dev/dqw4w9wgxcq/pathfinder) - Consumes the generated graph and finds paths with a hierarchical dijkstra/A* algorithm.  This package is depended on by the REST service.  
 
 
 ## The Pathfinding Algorithm
