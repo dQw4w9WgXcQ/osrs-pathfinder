@@ -41,8 +41,7 @@ Doors are found by looking for game objects with locationType 0,1,2,3 (a wall), 
 
 Some known IDs of non-bidirectional doors or doors that require keys need to be hardcoded as IGNORED_IDS.  These are added as SpecialLinks instead.  
 ### Stair
-Stairs are found by looking for game objects with the "Climb-up" or "Climb-down" action.  The area in the plane above or below is checked.  The link is added if a non-blocked tile is found nearby.  ![image](https://user-images.githubusercontent.com/22358065/218912932-b59a069f-f3ee-49bc-b3c3-200fbddd01f8.png)
-
+Stairs are found by looking for game objects with the "Climb-up" or "Climb-down" action.  The area in the plane above or below is checked.  The link is added if a non-blocked tile is found nearby.
 
 Some stairs skip a plane (i.e. from 0 -> 2).  These stairs were found by looking for invalid stairs that link to known invalid components in planes 1-3.  Once they were found, their IDs were hardcoded in a blocklist.  There still may be some invalid stairs remaining.      
 ### Wilderness Ditch
