@@ -8,6 +8,8 @@ Used in a REST service at: [github.com/dQw4w9WgXcQ/osrs-pathfinder-service](http
 
 Website repo: [github.com/dQw4w9WgXcQ/osrs-pathfinder-site](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-site)
 
+Rust tile pathfinder: [github.com/dQw4w9WgXcQ/osrs-pathfinder-tile](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-tile)
+
 [![website](https://i.imgur.com/sk5XPSt.png)](https://osrspathfinder.github.io/)
 
 ## Project Layout
