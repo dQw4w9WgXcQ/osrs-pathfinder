@@ -1,6 +1,8 @@
 # OSRS Pathfinder
 
-A pathfinding library to help bots navigate around Old School Runescape.  Handles doors, stairs, ships, dungeons, teleports, and other links.  Demonstrated at [osrspathfinder.github.io](https://osrspathfinder.github.io/). 
+A pathfinding library to help bots navigate around Old School Runescape.  Handles doors, stairs, ships, dungeons, teleports, and other links.  
+
+Demonstrated at [osrspathfinder.github.io](https://osrspathfinder.github.io/). 
 
 [![website](https://i.imgur.com/sk5XPSt.png)](https://osrspathfinder.github.io/)
 
