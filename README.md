@@ -32,7 +32,7 @@ In the image below, each color represents a component.  Cyan lines represent lin
 ### Details
 The two stage design also allows for better caching and duplication.  Finding the tile path is the majority of resource usage, so the A* pathfinder was rewritten in Rust and separated out into it's own service.  Additionally, the tile pathfinder is also compiled to WASM and ran client-side in the visualizer website.  Users of the website only need to request link paths from the API (bots using the API directly still request full paths).  
 
-Although distances between links are calculated during graph generation, distances from the start/end tile to all links in the start/end component need to be calculated for each request.  Finding distances to all links in a component is O(N), but N can be in the millions.  Still, this isn't a performance issue for valid paths.  Additionally, distances take up very little space and are be cached in process memory without eviction.  
+Although distances between links are calculated during graph generation, distances from the start/end tile to all links in the start/end component need to be calculated for each request.  Finding distances to all links in a component is O(N), but N can be in the millions.  Still, this isn't a performance issue for valid paths.  Additionally, distances take up very little space and are cached in process memory without eviction.  
 
 Tile and link paths are also cached, but they take up more space and are cached in Redis with LFU eviction.  
 
