@@ -1,12 +1,10 @@
 # OSRS Pathfinder
 
-A pathfinding library to help bots navigate around Old School Runescape.  Handles traversal through doors, stairs, ships, dungeons, and other links.  
-
-Demonstrated at [osrspathfinder.github.io](https://osrspathfinder.github.io/). 
+A pathfinding library to help bots navigate around Old School Runescape.  Handles traversal through doors, stairs, ships, dungeons, and other links.  Demonstrated at [osrspathfinder.github.io](https://osrspathfinder.github.io/). 
 
 Spring REST service: [github.com/dQw4w9WgXcQ/osrs-pathfinder-service](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-service)
 
-Website repo: [github.com/dQw4w9WgXcQ/osrs-pathfinder-site](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-site)
+Leaflet visualizer website: [github.com/dQw4w9WgXcQ/osrs-pathfinder-site](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-site)
 
 Rust tile pathfinder: [github.com/dQw4w9WgXcQ/osrs-pathfinder-tile](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-tile)
 
