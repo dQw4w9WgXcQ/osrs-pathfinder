@@ -4,7 +4,7 @@ import dev.dqw4w9wgxcq.pathfinder.commons.domain.Point;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Position;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.Link;
 import dev.dqw4w9wgxcq.pathfinder.pathfinding.Algo;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.PathfindingWorld;
+import dev.dqw4w9wgxcq.pathfinder.pathfinding.TilePathfinding;
 import dev.dqw4w9wgxcq.pathfinder.pathfinding.domain.ComponentGraph;
 import dev.dqw4w9wgxcq.pathfinder.pathfinding.edge.LinkEdge;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class CreateComponentGraph {
     private static final boolean ESTIMATE_DISTANCES = false;//to speed up graph generation during development
 
-    public static ComponentGraph create(LinkedComponents linkedComponents, PathfindingWorld pathfindingWorld) {
+    public static ComponentGraph create(LinkedComponents linkedComponents, TilePathfinding tilePathfinding) {
         log.info("Creating component graph, count:{}", linkedComponents.linkedComponents().size());
 
         var graph = new HashMap<Link, List<LinkEdge>>();
@@ -31,7 +31,7 @@ public class CreateComponentGraph {
             for (var inboundLink : component.inboundLinks()) {
                 Map<Point, Integer> distances;
                 if (!ESTIMATE_DISTANCES) {
-                    distances = pathfindingWorld.distances(
+                    distances = tilePathfinding.distances(
                             inboundLink.destination(),
                             component.outboundLinks().stream()
                                     .map(Link::origin)

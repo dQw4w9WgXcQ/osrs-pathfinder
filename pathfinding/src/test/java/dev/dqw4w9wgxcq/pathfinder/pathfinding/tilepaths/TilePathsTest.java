@@ -1,4 +1,4 @@
-package dev.dqw4w9wgxcq.pathfinder.pathfinding.localpaths;
+package dev.dqw4w9wgxcq.pathfinder.pathfinding.tilepaths;
 
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Point;
 import org.junit.jupiter.api.Test;
@@ -7,7 +7,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class LocalPathsTest {
+class TilePathsTest {
 
     @Test
     void minifyPath() {
@@ -24,7 +24,7 @@ class LocalPathsTest {
                         new Point(0, 0),
                         new Point(4, 4)
                 ),
-                LocalPaths.minifyPath(path)
+                TilePaths.toMinifiedPath(path)
         );
 
         var path2 = List.of(
@@ -41,7 +41,7 @@ class LocalPathsTest {
                         new Point(2, 0),
                         new Point(4, 2)
                 ),
-                LocalPaths.minifyPath(path2)
+                TilePaths.toMinifiedPath(path2)
         );
 
         var path3 = List.of(
@@ -60,7 +60,7 @@ class LocalPathsTest {
                         new Point(4, 2),
                         new Point(5, 2)
                 ),
-                LocalPaths.minifyPath(path3)
+                TilePaths.toMinifiedPath(path3)
         );
     }
 }

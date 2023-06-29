@@ -7,9 +7,9 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
-public record PathfindingWorld(PathfindingGrid[] planes) {
-    public static PathfindingWorld create(int[][][] planes) {
-        return new PathfindingWorld(Arrays.stream(planes).map(PathfindingGrid::new).toArray(PathfindingGrid[]::new));
+public record TilePathfinding(PathfindingGrid[] planes) {
+    public static TilePathfinding create(int[][][] planes) {
+        return new TilePathfinding(Arrays.stream(planes).map(PathfindingGrid::new).toArray(PathfindingGrid[]::new));
     }
 
     public Map<Point, Integer> distances(Position from, Set<Point> tos) {

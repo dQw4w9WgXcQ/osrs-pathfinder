@@ -2,10 +2,10 @@ package dev.dqw4w9wgxcq.pathfinder.graphgeneration.link;
 
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Position;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.StairLink;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.domain.ComponentGrid;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Util;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileWorld;
+import dev.dqw4w9wgxcq.pathfinder.pathfinding.domain.ComponentGrid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ObjectID;

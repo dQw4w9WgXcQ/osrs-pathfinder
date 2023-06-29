@@ -1,8 +1,8 @@
-package dev.dqw4w9wgxcq.pathfinder.pathfinding.linkdistances;
+package dev.dqw4w9wgxcq.pathfinder.pathfinding.tiledistances;
 
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Point;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Position;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.PathfindingWorld;
+import dev.dqw4w9wgxcq.pathfinder.pathfinding.TilePathfinding;
 import dev.dqw4w9wgxcq.pathfinder.pathfinding.domain.ComponentGraph;
 import dev.dqw4w9wgxcq.pathfinder.pathfinding.domain.ComponentGrid;
 import lombok.RequiredArgsConstructor;
@@ -14,11 +14,11 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Slf4j
-public class LinkDistances {
+public class TileDistances {
     private record CacheKey(Position position, boolean outbound) {
     }
 
-    private final PathfindingWorld pathfindingWorld;
+    private final TilePathfinding tilePathfinding;
     private final ComponentGrid componentGrid;
     private final ComponentGraph componentGraph;
 
@@ -39,7 +39,7 @@ public class LinkDistances {
                 .collect(Collectors.toSet());
 
         var startTime = System.currentTimeMillis();
-        var distances = pathfindingWorld.distances(key.position(), tos);
+        var distances = tilePathfinding.distances(key.position(), tos);
         var finishTime = System.currentTimeMillis();
         log.debug("distances {} in {}ms", key.outbound() ? "outbound" : "inbound", finishTime - startTime);
 

@@ -9,9 +9,9 @@ import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathstep.PathStep;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathstep.WalkStep;
 import dev.dqw4w9wgxcq.pathfinder.pathfinding.domain.ComponentGraph;
 import dev.dqw4w9wgxcq.pathfinder.pathfinding.domain.ComponentGrid;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.linkdistances.LinkDistances;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.localpaths.LocalPaths;
 import dev.dqw4w9wgxcq.pathfinder.pathfinding.store.GraphStore;
+import dev.dqw4w9wgxcq.pathfinder.pathfinding.tiledistances.TileDistances;
+import dev.dqw4w9wgxcq.pathfinder.pathfinding.tilepaths.TilePaths;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
@@ -23,15 +23,15 @@ import java.util.*;
 public class Pathfinding {
     private final ComponentGrid componentGrid;
     private final ComponentGraph componentGraph;
-    private final LinkDistances linkDistances;
-    private final LocalPaths localPaths;
+    private final TileDistances tileDistances;
+    private final TilePaths tilePaths;
 
     public static Pathfinding create(GraphStore graphStore) {
-        var pathfindingWorld = PathfindingWorld.create(graphStore.grid());
+        var tilePathfinding = TilePathfinding.create(graphStore.grid());
         var componentGrid = new ComponentGrid(graphStore.componentGrid());
-        var linkDistances = new LinkDistances(pathfindingWorld, componentGrid, graphStore.componentGraph());
-        var localPaths = new LocalPaths(pathfindingWorld);
-        return new Pathfinding(componentGrid, graphStore.componentGraph(), linkDistances, localPaths);
+        var tileDistances = new TileDistances(tilePathfinding, componentGrid, graphStore.componentGraph());
+        var tilePaths = new TilePaths(tilePathfinding);
+        return new Pathfinding(componentGrid, graphStore.componentGraph(), tileDistances, tilePaths);
     }
 
     public PathfindingResult findPath(Position start, Position finish, Agent agent) {
@@ -62,7 +62,7 @@ public class Pathfinding {
         var curr = start;
         var steps = new ArrayList<PathStep>();
         for (var link : linkPath) {
-            var walkPath = localPaths.get(curr.plane(), curr.point(), link.origin().point());
+            var walkPath = tilePaths.get(curr.plane(), curr.point(), link.origin().point());
 
             steps.add(new WalkStep(curr.plane(), walkPath));
             steps.add(new LinkStep(link));
@@ -70,7 +70,7 @@ public class Pathfinding {
             curr = link.destination();
         }
 
-        var tilePath = localPaths.get(curr.plane(), curr.point(), finish.point());
+        var tilePath = tilePaths.get(curr.plane(), curr.point(), finish.point());
         steps.add(new WalkStep(curr.plane(), tilePath));
 
         var endTime = System.currentTimeMillis();
@@ -93,8 +93,8 @@ public class Pathfinding {
         var startComponent = componentGrid.componentOf(start);
         var endComponent = componentGrid.componentOf(finish);
 
-        var startDistances = linkDistances.get(start, true);
-        var endDistances = linkDistances.get(finish, false);
+        var startDistances = tileDistances.get(start, true);
+        var endDistances = tileDistances.get(finish, false);
 
         var seenFrom = new HashMap<Link, Link>();
         var linkDistances = new HashMap<Link, Integer>();

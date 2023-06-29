@@ -3,7 +3,7 @@ package dev.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Util;
 import dev.dqw4w9wgxcq.pathfinder.pathfinding.PathfindingGrid;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.PathfindingWorld;
+import dev.dqw4w9wgxcq.pathfinder.pathfinding.TilePathfinding;
 import dev.dqw4w9wgxcq.pathfinder.pathfinding.domain.TileFlags;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -60,7 +60,7 @@ public class TileWorld {
         return tileWorld;
     }
 
-    public PathfindingWorld toPathfindingWorld() {
+    public TilePathfinding toPathfindingWorld() {
         log.info("Converting to PathfindingWorld");
         var start = System.currentTimeMillis();
         var planes = Arrays.stream(this.planes)
@@ -69,7 +69,7 @@ public class TileWorld {
                 .toArray(PathfindingGrid[]::new);
         var time = (System.currentTimeMillis() - start) / 1000;
         log.info("Converted to PathfindingWorld in {}s", time);
-        return new PathfindingWorld(planes);
+        return new TilePathfinding(planes);
     }
 
     static void markRegionValid(TileGrid[] planes, Region region) {
