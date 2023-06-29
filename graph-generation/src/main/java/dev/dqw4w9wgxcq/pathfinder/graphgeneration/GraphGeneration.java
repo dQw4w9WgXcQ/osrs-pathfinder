@@ -111,7 +111,7 @@ public class GraphGeneration {
         try {
             new LinkStore(links).save(outDir);
         } catch (IOException e) {
-            log.debug(null, e);
+            log.debug("writing links failed", e);
             System.err.println("writing links failed");
             System.exit(1);
             return;
