@@ -22,15 +22,12 @@ import java.io.IOException;
 @Slf4j
 public class GraphGeneration {
     public static void main(String[] args) {
-        var cacheOpt = new Option("c", "cache", true, "Path to osrs cache dir that the game populates at C:\\Users\\user\\jagexcache\\oldschool\\LIVE\\");
-        var xteasOpt = new Option("x", "xteas", true, "Path to xteas JSON file");
-        var outOpt = new Option("o", "out", true, "Output directory");
+        var cacheOpt = new Option("c", "cache", true, "Path to osrs cache dir that the game populates at C:\\Users\\user\\jagexcache\\oldschool\\LIVE\\  Defaults to ./cache");
+        var xteasOpt = new Option("x", "xteas", true, "Path to xteas JSON file.  Defaults to ./xteas.json");
+        var outOpt = new Option("o", "out", true, "Output directory.  Defaults to ./output");
         var leafletOpt = new Option("l", "leaflet", false, "Generate leaflet images");
         var otherDataOpt = new Option("d", "data", false, "Generate other data (objects, items, etc.)");
         var skipGraphOpt = new Option("s", "skip-graph", false, "Skip graph output (only links will be written)");
-
-        cacheOpt.setRequired(true);
-        xteasOpt.setRequired(true);
 
         var options = new Options();
         options.addOption(cacheOpt);
@@ -44,27 +41,27 @@ public class GraphGeneration {
         try {
             cmd = new DefaultParser().parse(options, args);
         } catch (ParseException e) {
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
             new HelpFormatter().printHelp("pathfinder", options);
             System.exit(1);
             return;
         }
 
-        var cacheDir = new File(cmd.getOptionValue("cache"));
+        var cacheDir = new File(cmd.getOptionValue("cache", "cache"));
         if (!cacheDir.exists()) {
-            System.out.println("Cache dir does not exist");
+            System.err.println("Cache dir does not exist");
             System.exit(1);
             return;
         }
 
-        var xteasFile = new File(cmd.getOptionValue("xteas"));
+        var xteasFile = new File(cmd.getOptionValue("xteas", "xteas.json"));
         if (!xteasFile.exists()) {
-            System.out.println("Xteas file does not exist");
+            System.err.println("Xteas file does not exist");
             System.exit(1);
             return;
         }
 
-        var outDir = new File(cmd.getOptionValue("out", System.getProperty("user.dir")));
+        var outDir = new File(cmd.getOptionValue("out", System.getProperty("user.dir") + System.getProperty("file.separator") + "output"));
         //noinspection ResultOfMethodCallIgnored
         outDir.mkdirs();
 
@@ -72,23 +69,23 @@ public class GraphGeneration {
         try {
             cacheData = CacheData.load(cacheDir, xteasFile);
         } catch (FileNotFoundException e) {
-            log.error(null, e);
-            System.out.println("cache dir missing expected content");
+            log.debug("cache dir missing expected content", e);
+            System.err.println("cache dir missing expected content");
             System.exit(1);
             return;
         } catch (IOException e) {
-            log.error(null, e);
-            System.out.println("reading cache data failed");
+            log.debug("reading cache data failed", e);
+            System.err.println("reading cache data failed");
             System.exit(1);
             return;
         } catch (JsonIOException e) {
-            log.error(null, e);
-            System.out.println("reading xtea failed");
+            log.debug("reading xtea failed", e);
+            System.err.println("reading xtea failed");
             System.exit(1);
             return;
         } catch (JsonSyntaxException e) {
-            log.error(null, e);
-            System.out.println("xteas json malformed");
+            log.debug("xteas json malformed", e);
+            System.err.println("xteas json malformed");
             System.exit(1);
             return;
         }
@@ -103,8 +100,8 @@ public class GraphGeneration {
             try {
                 LeafletImages.write(new File(outDir, "leaflet"), cacheDir, xteasFile, componentGrid);
             } catch (IOException e) {
-                log.error(null, e);
-                System.out.println("writing leaflet images failed");
+                log.debug("writing leaflet images failed", e);
+                System.err.println("writing leaflet images failed");
                 System.exit(1);
                 return;
             }
@@ -114,8 +111,8 @@ public class GraphGeneration {
         try {
             new LinkStore(links).save(outDir);
         } catch (IOException e) {
-            log.error(null, e);
-            System.out.println("writing links failed");
+            log.debug(null, e);
+            System.err.println("writing links failed");
             System.exit(1);
             return;
         }
@@ -131,8 +128,8 @@ public class GraphGeneration {
         try {
             new GraphStore(contiguousComponents.planes(), pathfindingWorld.grid(), componentGraph).save(outDir);
         } catch (IOException e) {
-            log.error(null, e);
-            System.out.println("writing graph failed");
+            log.debug("writing graph failed", e);
+            System.err.println("writing graph failed");
             System.exit(1);
             return;
         }
