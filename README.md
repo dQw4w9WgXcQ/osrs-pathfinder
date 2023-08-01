@@ -1,7 +1,10 @@
 # OSRS Pathfinder
 
-A pathfinding library to help bots navigate around Old School Runescape. Handles doors, stairs, ships, dungeons,
-teleports, and other links.
+A pathfinding service that helps bots navigate around Old School Runescape. 
+
+Generates a pathfinding graph from data extracted from the game cache.  The graph is loaded in a REST service to serve paths.
+
+Handles doors, stairs, ships, dungeons, teleports, and other links.  
 
 Demonstrated at [osrspathfinder.github.io](https://osrspathfinder.github.io/).
 
@@ -9,13 +12,11 @@ Demonstrated at [osrspathfinder.github.io](https://osrspathfinder.github.io/).
 
 ### Related repos:
 
-Spring REST
-service: [github.com/dQw4w9WgXcQ/osrs-pathfinder-service](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-service)
+Spring REST service: [github.com/dQw4w9WgXcQ/osrs-pathfinder-service](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-service)
 
-Leaflet visualizer
-website: [github.com/dQw4w9WgXcQ/osrs-pathfinder-site](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-site)
+Leaflet visualization website: [github.com/dQw4w9WgXcQ/osrs-pathfinder-site](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-site)
 
-Rust tile pathfinder: [github.com/dQw4w9WgXcQ/osrs-pathfinder-tile](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-tile)
+Rust A* tile pathfinder: [github.com/dQw4w9WgXcQ/osrs-pathfinder-tile](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-tile)
 
 ## Project Layout
 
@@ -26,8 +27,10 @@ Rust tile pathfinder: [github.com/dQw4w9WgXcQ/osrs-pathfinder-tile](https://gith
 
 ## The Pathfinding Algorithm
 
-Pathfinding is done in two stages. First, a link path is found using Dijkstra's. Then, guided by the link path, the tile
-path can be found efficiently using A*.
+Pathfinding is done in two stages. First, a link path is found using Dijkstra's. Then, tile paths are found between links.  
+
+In the image below, each color represents a component. Cyan lines represent links, while blue lines represent the tile
+path.  
 
 Links are doors, stairs, ships, and other shortcuts.  "Components" are islands of tiles connected by links. Distances
 between links (through components) are calcualted during graph generation to create the weighted Dijkstra's graph. An
@@ -37,23 +40,18 @@ The tile path is found with A*. A* requires a heuristic and can only be used on 
 becomes possible to create a heuristic. Additionally, while A* is fast in the average case, it is very inefficient in
 the worst case. By finding the link path, we can gaurentee a valid path exists and will never hit the worst case.
 
-In the image below, each color represents a component. Cyan lines represent links, while blue lines represent the tile
-path.  
+
 ![](https://i.imgur.com/MaD51oN.png)
 
 ### Details
 
-The two stage design also allows for better caching and duplication. Finding the tile path is the majority of resource
-usage, so the A* pathfinder was rewritten in Rust and separated out into it's own service. Additionally, the tile
-pathfinder is also compiled to WASM and ran client-side in the visualizer website. Users of the website only need to
-request link paths from the API (bots using the API directly still request full paths).
-
 Although distances between links are calculated during graph generation, distances from the start/end tile to all links
-in the start/end component need to be calculated for each request. Finding distances to all links in a component is O(
-N), but N can be in the millions. Still, this isn't a performance issue for valid paths. Additionally, distances take up
+in the start/end component need to be calculated for each request. Finding distances to all links in a component is O(N),
+but N can be in the millions. Still, this isn't a performance issue for valid paths. Additionally, distances take up
 very little space and are cached in process memory without eviction.
 
-Tile and link paths are also cached, but they take up more space and are cached in Redis with LFU eviction.
+The two stage design also allows for better caching and replication. Since finding the tile path is the majority of resource
+usage, the A* pathfinder was rewritten in Rust and separated out into it's own service, which can be replicated independely.  
 
 ## Types of Links
 
