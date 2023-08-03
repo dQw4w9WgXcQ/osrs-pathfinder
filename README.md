@@ -2,7 +2,7 @@
 
 A pathfinding service that helps bots navigate around Old School Runescape. 
 
-Generates a pathfinding graph from data extracted from the game cache.  The graph is loaded in a REST service to serve paths.
+Uses data from the game cache to generate the pathfinding graph.  
 
 Handles doors, stairs, ships, dungeons, teleports, and other links.  
 
