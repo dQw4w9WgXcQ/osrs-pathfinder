@@ -27,17 +27,16 @@ Rust A* tile pathfinder: [github.com/dQw4w9WgXcQ/osrs-pathfinder-tile](https://g
 
 ## The Pathfinding Algorithm
 
-Pathfinding is done in two stages. First, a link path is found using Dijkstra's. Then, tile paths are found between links.  
+Pathfinding is done in two stages. First, a link path is found using Dijkstra's. Then, tile paths are found between links using A*.  
 
-In the image below, each color represents a component. Cyan lines represent links, while blue lines represent the tile
+In the image below, cyan lines represent the link path, while blue lines represent the tile
 path.  
 
-Links are doors, stairs, ships, and other shortcuts.  "Components" are islands of tiles connected by links. Distances
-between links (through components) are calcualted during graph generation to create the weighted Dijkstra's graph. An
+Links are doors, stairs, ships, and other shortcuts.  "Components" are islands of tiles connected by links (shown as colored areas in the image below). During graph generation, Distances
+between links (through components) are calculated to create the weighted Dijkstra's graph. An
 edge is added from each link to all other links in it's component.
 
-The tile path is found with A*. A* requires a heuristic and can only be used on tiles. Once the link path is found, it
-becomes possible to create a heuristic. Additionally, while A* is fast in the average case, it is very inefficient in
+Since A* uses a heuristic, it can only be used on tiles after the link path is found.  Additionally, while A* is fast in the average case, it is very inefficient in
 the worst case. By finding the link path, we can gaurentee a valid path exists and will never hit the worst case.
 
 
