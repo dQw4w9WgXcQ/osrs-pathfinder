@@ -29,13 +29,13 @@ public class DoorLinks {
 
     public static List<DoorLink> find(CacheData cacheData, List<Location> objectLocations, ComponentGrid componentGrid) {
         log.info("finding door links");
-        long startTime = System.currentTimeMillis();
+        var startTime = System.currentTimeMillis();
 
         var doorIds = findDoorIds(cacheData.objectData().definitions().values());
-        log.debug("found {} doorIds", doorIds.size());
+        log.info("found {} doorIds", doorIds.size());
 
         List<DoorLink> links = new ArrayList<>();
-        int id = 0;
+        var id = 0;
         for (var location : objectLocations) {
             if (!doorIds.contains(location.getId())) {
                 continue;
@@ -113,6 +113,7 @@ public class DoorLinks {
     }
 
     private static Wall determineDoorDirection(int locationType, int orientation) {
+        //noinspection SwitchStatementWithTooFewBranches
         return switch (locationType) {
             case 0 -> switch (orientation) {
                 case 0 -> Wall.W;

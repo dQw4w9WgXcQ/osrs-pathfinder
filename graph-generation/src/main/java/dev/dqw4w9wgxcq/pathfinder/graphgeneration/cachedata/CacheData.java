@@ -25,12 +25,12 @@ public record CacheData(RegionData regionData, ObjectData objectData) {
         var store = new Store(cacheDir);
         store.load();
 
-        var xteaManager = new XteaKeyManager();
+        var xteaKeyManager = new XteaKeyManager();
         try (var is = new FileInputStream(xteasJson)) {
-            xteaManager.loadKeys(is);
+            xteaKeyManager.loadKeys(is);
         }
 
-        var regionData = RegionData.load(store, xteaManager);
+        var regionData = RegionData.load(store, xteaKeyManager);
         var objectData = ObjectData.load(store);
 
         try {

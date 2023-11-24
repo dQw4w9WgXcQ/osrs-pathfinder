@@ -26,7 +26,7 @@ public class GraphGeneration {
         var xteasOpt = new Option("x", "xteas", true, "Path to xteas JSON file.  Defaults to ./xteas.json");
         var outOpt = new Option("o", "out", true, "Output directory.  Defaults to ./output");
         var leafletOpt = new Option("l", "leaflet", false, "Generate leaflet images");
-        var otherDataOpt = new Option("d", "data", false, "Generate other data (objects, items, etc.)");
+//        var otherDataOpt = new Option("d", "data", false, "Generate other data (objects, items, etc.)");
         var skipGraphOpt = new Option("s", "skip-graph", false, "Skip graph output (only links will be written)");
 
         var options = new Options();
@@ -34,7 +34,7 @@ public class GraphGeneration {
         options.addOption(xteasOpt);
         options.addOption(outOpt);
         options.addOption(leafletOpt);
-        options.addOption(otherDataOpt);
+//        options.addOption(otherDataOpt);
         options.addOption(skipGraphOpt);
 
         CommandLine cmd;
@@ -92,7 +92,7 @@ public class GraphGeneration {
 
         var objectLocations = cacheData.regionData().getLocationsAdjustedFor0x2();
         var tileWorld = TileWorld.create(cacheData, objectLocations);
-        var pathfindingWorld = tileWorld.toPathfindingWorld();
+        var tilePathfinding = tileWorld.toPathfinding();
         var contiguousComponents = ContiguousComponents.create(tileWorld.getPlanes());
         var componentGrid = new ComponentGrid(contiguousComponents.planes());
 
@@ -123,10 +123,10 @@ public class GraphGeneration {
         }
 
         var linkedComponents = LinkedComponents.create(contiguousComponents, links);
-        var componentGraph = CreateComponentGraph.create(linkedComponents, pathfindingWorld);
+        var componentGraph = CreateComponentGraph.create(linkedComponents, tilePathfinding);
 
         try {
-            new GraphStore(contiguousComponents.planes(), pathfindingWorld.grid(), componentGraph).save(outDir);
+            new GraphStore(contiguousComponents.planes(), tilePathfinding.grid(), componentGraph).save(outDir);
         } catch (IOException e) {
             log.debug("writing graph failed", e);
             System.err.println("writing graph failed");

@@ -2,17 +2,20 @@ package dev.dqw4w9wgxcq.pathfinder.graphgeneration.link;
 
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Position;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.SpecialLink;
+import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ObjectID;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class SpecialLinks {
     private static final String OBJECT_ID = "objectId";
     private static final String ACTION = "action";
 
     public static List<SpecialLink> find() {
+        log.info("special links");
         var links = new ArrayList<SpecialLink>();
 
         var id = 0;
@@ -60,6 +63,7 @@ public class SpecialLinks {
         );
         links.add(drezelHolyBarrier);
 
+        log.info("found {} special links", links.size());
         return links;
     }
 

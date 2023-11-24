@@ -60,15 +60,15 @@ public class TileWorld {
         return tileWorld;
     }
 
-    public TilePathfinding toPathfindingWorld() {
-        log.info("Converting to PathfindingWorld");
+    public TilePathfinding toPathfinding() {
+        log.info("Converting to TilePathfinding");
         var start = System.currentTimeMillis();
         var planes = Arrays.stream(this.planes)
                 .parallel()
                 .map(TileGrid::toPathfindingGrid)
                 .toArray(PathfindingGrid[]::new);
         var time = (System.currentTimeMillis() - start) / 1000;
-        log.info("Converted to PathfindingWorld in {}s", time);
+        log.info("TilePathfinding converted in {}s", time);
         return new TilePathfinding(planes);
     }
 

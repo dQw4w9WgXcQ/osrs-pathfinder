@@ -18,8 +18,8 @@ import java.util.List;
 //todo need to handle runelite returns empty locations list if no xteas for region
 @Slf4j
 public record RegionData(Collection<Region> regions, int highestRegionX, int highestRegionY) {
-    static RegionData load(Store store, XteaKeyManager xteaManager) throws IOException, JsonIOException, JsonSyntaxException {
-        var regionLoader = new RegionLoader(store, xteaManager);
+    static RegionData load(Store store, XteaKeyManager xteaKeyManager) throws IOException, JsonIOException, JsonSyntaxException {
+        var regionLoader = new RegionLoader(store, xteaKeyManager);
 
         regionLoader.loadRegions();//throws JsonIOException, JsonSyntaxException
 
@@ -47,20 +47,20 @@ public record RegionData(Collection<Region> regions, int highestRegionX, int hig
         for (var region : regions) {
             for (var location : region.getLocations()) {
                 var position = location.getPosition();
-                var plane = position.getZ();
+                var z = position.getZ();
                 if ((region.getTileSetting(1, position.getX() - region.getBaseX(), position.getY() - region.getBaseY()) & 0x2) == 0x2) {
                     log.debug("location is 0x2: {}", location);
-                    plane--;
+                    z--;
                 }
 
                 var adjLocation = new Location(
                         location.getId(),
                         location.getType(),
                         location.getOrientation(),
-                        new Position(position.getX(), position.getY(), plane)
+                        new Position(position.getX(), position.getY(), z)
                 );
 
-                if (plane < 0) {
+                if (z < 0) {
                     log.debug("0x2 location is below 0: {}", location);
                     continue;
                 }
@@ -69,6 +69,7 @@ public record RegionData(Collection<Region> regions, int highestRegionX, int hig
             }
         }
 
+        log.info("found {} locations after 0x2", locations.size());
         return locations;
     }
 }

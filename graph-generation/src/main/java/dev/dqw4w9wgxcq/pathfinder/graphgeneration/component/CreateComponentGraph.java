@@ -20,13 +20,18 @@ public class CreateComponentGraph {
     private static final boolean ESTIMATE_DISTANCES = false;//to speed up graph generation during development
 
     public static ComponentGraph create(LinkedComponents linkedComponents, TilePathfinding tilePathfinding) {
-        log.info("Creating component graph, count:{}", linkedComponents.linkedComponents().size());
+        log.info("Creating component graph, linkedCompontents size:{}", linkedComponents.linkedComponents().size());
 
         var graph = new HashMap<Link, List<LinkEdge>>();
 
         var count = 0;
-        var skipCount = 0;
-        for (var component : linkedComponents.linkedComponents()) {
+        var skippedCount = 0;
+        var components = linkedComponents.linkedComponents();
+        for (var component : components) {
+            if (count % 10_000 == 0 && count != 0) {
+                log.info("component {}", count);
+            }
+
             var startTime = System.currentTimeMillis();
             for (var inboundLink : component.inboundLinks()) {
                 Map<Point, Integer> distances;
@@ -43,7 +48,7 @@ public class CreateComponentGraph {
                 for (var outboundLink : component.outboundLinks()) {
                     if (inboundLink == outboundLink) {
                         //can happen if the link origin and destination are in the same component
-                        skipCount++;
+                        skippedCount++;
                         continue;
                     }
 
@@ -60,7 +65,7 @@ public class CreateComponentGraph {
             }
 
             var time = System.currentTimeMillis() - startTime;
-            if (time > 10 * 1000) {
+            if (time > 10_000) {
                 log.info("component {} took {} s", count, (time) / 1000);
             }
             count++;
@@ -73,7 +78,7 @@ public class CreateComponentGraph {
             inboundLinks.add(component.inboundLinks());
         }
 
-        log.info(count + " edges " + skipCount + " links skipped");
+        log.info(count + " edges " + skippedCount + " links skipped");
         return new ComponentGraph(graph, outboundLinks, inboundLinks);
     }
 }
