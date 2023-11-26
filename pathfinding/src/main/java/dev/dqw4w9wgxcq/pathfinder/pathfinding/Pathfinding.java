@@ -10,8 +10,10 @@ import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathstep.WalkStep;
 import dev.dqw4w9wgxcq.pathfinder.pathfinding.domain.ComponentGraph;
 import dev.dqw4w9wgxcq.pathfinder.pathfinding.domain.ComponentGrid;
 import dev.dqw4w9wgxcq.pathfinder.pathfinding.store.GraphStore;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.tiledistances.TileDistances;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.tilepaths.TilePaths;
+import dev.dqw4w9wgxcq.pathfinder.pathfinding.tile.TileDistances;
+import dev.dqw4w9wgxcq.pathfinder.pathfinding.tile.TilePathfinding;
+import dev.dqw4w9wgxcq.pathfinder.pathfinding.tile.TilePaths;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
@@ -19,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 @Slf4j
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class Pathfinding {
     private final ComponentGrid componentGrid;
     private final ComponentGraph componentGraph;
@@ -34,35 +36,35 @@ public class Pathfinding {
         return new Pathfinding(componentGrid, graphStore.componentGraph(), tileDistances, tilePaths);
     }
 
-    public PathfindingResult findPath(Position start, Position finish, Agent agent) {
+    public SuccessPathfindingResult findPath(Position start, Position finish, Agent agent) {
         start = closestIfBlocked(start);
         finish = closestIfBlocked(finish);
         if (start == null || finish == null) {
-            return new PathfindingResult(start, finish, null);
+            return new SuccessPathfindingResult(ResultType.BLOCKED_ORIGIN_OR_DESTINATION, start, finish, null);
         }
 
         var linkPath = findLinkPath(start, finish, agent);
 
         if (linkPath == null) {
-            log.debug("no path from {} to {} for agent {}", start, finish, agent);
-            return new PathfindingResult(start, finish, null);
+            log.info("no path from {} to {} for agent {}", start, finish, agent);
+            return new SuccessPathfindingResult(ResultType.NO_PATH, start, finish, null);
         }
 
-        var steps = toPathSteps(linkPath, start, finish);
+        var steps = toSteps(linkPath, start, finish);
 
-        return new PathfindingResult(start, finish, steps);
+        return new SuccessPathfindingResult(ResultType.SUCCESS, start, finish, steps);
     }
 
     /**
      * Finds tile paths between links and combines them into a list of path steps.
      */
-    private List<PathStep> toPathSteps(List<Link> linkPath, Position start, Position finish) {
+    private List<PathStep> toSteps(List<Link> linkPath, Position start, Position finish) {
         var startTime = System.currentTimeMillis();
 
         var curr = start;
         var steps = new ArrayList<PathStep>();
         for (var link : linkPath) {
-            var walkPath = tilePaths.get(curr.plane(), curr.point(), link.origin().point());
+            var walkPath = tilePaths.get(curr.plane(), curr.toPoint(), link.origin().toPoint());
 
             steps.add(new WalkStep(curr.plane(), walkPath));
             steps.add(new LinkStep(link));
@@ -70,7 +72,7 @@ public class Pathfinding {
             curr = link.destination();
         }
 
-        var tilePath = tilePaths.get(curr.plane(), curr.point(), finish.point());
+        var tilePath = tilePaths.get(curr.plane(), curr.toPoint(), finish.toPoint());
         steps.add(new WalkStep(curr.plane(), tilePath));
 
         var endTime = System.currentTimeMillis();
@@ -114,7 +116,7 @@ public class Pathfinding {
         log.debug("{} start links", startLinks.size());
         for (var startLink : startLinks) {
             if (agent.hasRequirements(startLink.requirements())) {
-                var distance = startDistances.get(startLink.origin().point());
+                var distance = startDistances.get(startLink.origin().toPoint());
                 queue.add(new Node(startLink, distance, false));
                 linkDistances.put(startLink, distance);
             }
@@ -142,7 +144,7 @@ public class Pathfinding {
             //simulate end component edges
             if (componentGrid.componentOf(curr.link().destination()) == endComponent) {
                 log.debug("adding end link {}", curr);
-                queue.add(new Node(curr.link(), curr.distance() + endDistances.get(curr.link().destination().point()), true));
+                queue.add(new Node(curr.link(), curr.distance() + endDistances.get(curr.link().destination().toPoint()), true));
                 //don't need linkDistances because finding an end node terminates the search
             }
 
@@ -182,6 +184,7 @@ public class Pathfinding {
     private @Nullable Position closestIfBlocked(Position position) {
         var plane = componentGrid.planes()[position.plane()];
         if (plane[position.x()][position.y()] != -1) {
+            log.debug("position {} is not blocked", position);
             return position;
         }
 
@@ -190,7 +193,7 @@ public class Pathfinding {
 
         var seen = new HashSet<Point>();
         var frontier = new ArrayDeque<Point>();
-        frontier.add(position.point());
+        frontier.add(position.toPoint());
         var i = 0;
         while (!frontier.isEmpty()) {
             if (i++ > 10000) {

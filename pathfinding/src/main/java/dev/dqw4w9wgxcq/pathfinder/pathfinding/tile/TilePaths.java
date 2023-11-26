@@ -1,7 +1,6 @@
-package dev.dqw4w9wgxcq.pathfinder.pathfinding.tilepaths;
+package dev.dqw4w9wgxcq.pathfinder.pathfinding.tile;
 
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Point;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.TilePathfinding;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.VisibleForTesting;

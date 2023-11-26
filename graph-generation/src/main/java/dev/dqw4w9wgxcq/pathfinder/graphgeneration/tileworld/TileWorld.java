@@ -3,7 +3,7 @@ package dev.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Util;
 import dev.dqw4w9wgxcq.pathfinder.pathfinding.PathfindingGrid;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.TilePathfinding;
+import dev.dqw4w9wgxcq.pathfinder.pathfinding.tile.TilePathfinding;
 import dev.dqw4w9wgxcq.pathfinder.pathfinding.domain.TileFlags;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;

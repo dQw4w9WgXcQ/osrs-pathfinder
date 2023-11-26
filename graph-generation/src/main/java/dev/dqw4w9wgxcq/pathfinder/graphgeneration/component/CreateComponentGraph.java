@@ -4,7 +4,7 @@ import dev.dqw4w9wgxcq.pathfinder.commons.domain.Point;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Position;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.Link;
 import dev.dqw4w9wgxcq.pathfinder.pathfinding.Algo;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.TilePathfinding;
+import dev.dqw4w9wgxcq.pathfinder.pathfinding.tile.TilePathfinding;
 import dev.dqw4w9wgxcq.pathfinder.pathfinding.domain.ComponentGraph;
 import dev.dqw4w9wgxcq.pathfinder.pathfinding.edge.LinkEdge;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +40,7 @@ public class CreateComponentGraph {
                             inboundLink.destination(),
                             component.outboundLinks().stream()
                                     .map(Link::origin)
-                                    .map(Position::point)
+                                    .map(Position::toPoint)
                                     .collect(Collectors.toSet())
                     );
                 }
@@ -54,8 +54,8 @@ public class CreateComponentGraph {
 
                     log.debug("Adding edge from {} to {}", inboundLink, outboundLink);
                     var distance = ESTIMATE_DISTANCES
-                            ? Algo.chebyshev(inboundLink.destination().point(), outboundLink.origin().point())
-                            : distances.get(outboundLink.origin().point());
+                            ? Algo.chebyshev(inboundLink.destination().toPoint(), outboundLink.origin().toPoint())
+                            : distances.get(outboundLink.origin().toPoint());
                     var cost = outboundLink.cost() + distance;
 
                     var edge = new LinkEdge(outboundLink, cost);

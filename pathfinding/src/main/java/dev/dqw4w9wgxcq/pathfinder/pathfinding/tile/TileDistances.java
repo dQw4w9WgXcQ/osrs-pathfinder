@@ -1,8 +1,7 @@
-package dev.dqw4w9wgxcq.pathfinder.pathfinding.tiledistances;
+package dev.dqw4w9wgxcq.pathfinder.pathfinding.tile;
 
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Point;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Position;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.TilePathfinding;
 import dev.dqw4w9wgxcq.pathfinder.pathfinding.domain.ComponentGraph;
 import dev.dqw4w9wgxcq.pathfinder.pathfinding.domain.ComponentGrid;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +34,7 @@ public class TileDistances {
         var links = componentGraph.linksOfComponent(componentGrid.componentOf(key.position()), key.outbound());
         var tos = links.stream()
                 .map(l -> key.outbound() ? l.origin() : l.destination())
-                .map(Position::point)
+                .map(Position::toPoint)
                 .collect(Collectors.toSet());
 
         var startTime = System.currentTimeMillis();

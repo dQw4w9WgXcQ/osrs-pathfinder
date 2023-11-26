@@ -1,7 +1,8 @@
-package dev.dqw4w9wgxcq.pathfinder.pathfinding;
+package dev.dqw4w9wgxcq.pathfinder.pathfinding.tile;
 
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Point;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Position;
+import dev.dqw4w9wgxcq.pathfinder.pathfinding.PathfindingGrid;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -13,7 +14,7 @@ public record TilePathfinding(PathfindingGrid[] planes) {
     }
 
     public Map<Point, Integer> distances(Position from, Set<Point> tos) {
-        return planes[from.plane()].distances(from.point(), tos);
+        return planes[from.plane()].distances(from.toPoint(), tos);
     }
 
     public int[][][] grid() {
