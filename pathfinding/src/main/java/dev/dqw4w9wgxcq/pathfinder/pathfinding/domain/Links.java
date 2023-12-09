@@ -1,6 +1,13 @@
 package dev.dqw4w9wgxcq.pathfinder.pathfinding.domain;
 
-import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.*;
+import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.DoorLink;
+import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.DungeonLink;
+import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.Link;
+import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.LinkType;
+import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.ShipLink;
+import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.SpecialLink;
+import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.StairLink;
+import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.WildernessDitchLink;
 
 import java.util.ArrayList;
 import java.util.List;

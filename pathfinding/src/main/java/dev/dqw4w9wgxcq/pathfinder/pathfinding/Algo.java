@@ -4,7 +4,11 @@ import dev.dqw4w9wgxcq.pathfinder.commons.domain.Point;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 
 @Slf4j
 public class Algo {
