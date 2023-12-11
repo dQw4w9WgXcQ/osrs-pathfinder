@@ -1,4 +1,4 @@
-package dev.dqw4w9wgxcq.pathfinder.pathfinding;
+package dev.dqw4w9wgxcq.pathfinder;
 
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Point;
 import lombok.extern.slf4j.Slf4j;
@@ -153,7 +153,7 @@ public record PathfindingGrid(int[][] grid) {
 
         if (!tos.isEmpty()) {
             var msg = tos.stream().map(Point::toString).collect(Collectors.joining(","));
-            throw new IllegalArgumentException("not in componenet: " + msg);
+            throw new IllegalArgumentException("not in component: " + msg);
         }
 
         return distances;

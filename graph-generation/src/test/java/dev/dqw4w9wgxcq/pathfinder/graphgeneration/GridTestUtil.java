@@ -1,7 +1,7 @@
 package dev.dqw4w9wgxcq.pathfinder.graphgeneration;
 
+import dev.dqw4w9wgxcq.pathfinder.commons.TileFlags;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileGrid;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.domain.TileFlags;
 
 public class GridTestUtil {
     public static String stringify(TileGrid grid) {

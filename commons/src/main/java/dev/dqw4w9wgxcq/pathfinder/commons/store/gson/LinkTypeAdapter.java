@@ -1,4 +1,4 @@
-package dev.dqw4w9wgxcq.pathfinder.pathfinding.store.gson;
+package dev.dqw4w9wgxcq.pathfinder.commons.store.gson;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
@@ -6,7 +6,7 @@ import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.Link;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.LinkType;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.domain.Links;
+import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.Links;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.Nullable;
 

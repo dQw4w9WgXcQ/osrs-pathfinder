@@ -1,10 +1,10 @@
-package dev.dqw4w9wgxcq.pathfinder.pathfinding.store;
+package dev.dqw4w9wgxcq.pathfinder.commons.store;
 
 import com.google.gson.GsonBuilder;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.Link;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.domain.ComponentGraph;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.domain.Links;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.store.gson.LinkTypeAdapter;
+import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.ComponentGraph;
+import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.Links;
+import dev.dqw4w9wgxcq.pathfinder.commons.store.gson.LinkTypeAdapter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 

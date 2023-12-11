@@ -2,7 +2,7 @@ package dev.dqw4w9wgxcq.pathfinder.graphgeneration.link;
 
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Position;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.WildernessDitchLink;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.domain.ComponentGrid;
+import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.ComponentGrid;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ObjectID;
 import net.runelite.cache.region.Location;

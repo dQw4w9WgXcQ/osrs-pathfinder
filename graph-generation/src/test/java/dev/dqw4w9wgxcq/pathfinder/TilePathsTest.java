@@ -1,4 +1,4 @@
-package dev.dqw4w9wgxcq.pathfinder.pathfinding.tile;
+package dev.dqw4w9wgxcq.pathfinder;
 
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Point;
 import org.junit.jupiter.api.Test;

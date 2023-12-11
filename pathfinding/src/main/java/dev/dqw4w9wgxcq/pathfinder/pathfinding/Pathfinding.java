@@ -1,18 +1,17 @@
 package dev.dqw4w9wgxcq.pathfinder.pathfinding;
 
+import dev.dqw4w9wgxcq.pathfinder.commons.TilePathfinding;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Agent;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Point;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Position;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.Link;
+import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.ComponentGraph;
+import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.ComponentGrid;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathstep.LinkStep;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathstep.PathStep;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathstep.WalkStep;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.domain.ComponentGraph;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.domain.ComponentGrid;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.store.GraphStore;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.tile.TileDistances;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.tile.TilePathfinding;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.tile.TilePaths;
+import dev.dqw4w9wgxcq.pathfinder.commons.store.GraphStore;
+import dev.dqw4w9wgxcq.pathfinder.pathfinding.tile.LinkDistances;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,18 +31,15 @@ import java.util.PriorityQueue;
 public class Pathfinding {
     private final ComponentGrid componentGrid;
     private final ComponentGraph componentGraph;
-    private final TileDistances tileDistances;
-    private final TilePaths tilePaths;
+    private final LinkDistances linkDistances;
+    private final TilePathfinding tilePathfinding;
 
-    public static Pathfinding create(GraphStore graphStore) {
-        var tilePathfinding = TilePathfinding.create(graphStore.grid());
+    public static Pathfinding create(GraphStore graphStore, TilePathfinding tilePathfinding) {
         var componentGrid = new ComponentGrid(graphStore.componentGrid());
-        var tileDistances = new TileDistances(tilePathfinding, componentGrid, graphStore.componentGraph());
-        var tilePaths = new TilePaths(tilePathfinding);
-        return new Pathfinding(componentGrid, graphStore.componentGraph(), tileDistances, tilePaths);
+        var tileDistances = new LinkDistances(tilePathfinding, componentGrid, graphStore.componentGraph());
+        return new Pathfinding(componentGrid, graphStore.componentGraph(), tileDistances, tilePathfinding);
     }
 
-    @SuppressWarnings("unused")
     public PathfindingResult findPath(Position start, Position finish, Agent agent) {
         start = closestIfBlocked(start);
         finish = closestIfBlocked(finish);
@@ -72,7 +68,7 @@ public class Pathfinding {
         var curr = start;
         var steps = new ArrayList<PathStep>();
         for (var link : linkPath) {
-            var walkPath = tilePaths.get(curr.plane(), curr.toPoint(), link.origin().toPoint());
+            var walkPath = tilePathfinding.findPath(curr.plane(), curr.toPoint(), link.origin().toPoint());
 
             steps.add(new WalkStep(curr.plane(), walkPath));
             steps.add(new LinkStep(link));
@@ -80,7 +76,7 @@ public class Pathfinding {
             curr = link.destination();
         }
 
-        var tilePath = tilePaths.get(curr.plane(), curr.toPoint(), finish.toPoint());
+        var tilePath = tilePathfinding.findPath(curr.plane(), curr.toPoint(), finish.toPoint());
         steps.add(new WalkStep(curr.plane(), tilePath));
 
         var endTime = System.currentTimeMillis();
@@ -103,8 +99,8 @@ public class Pathfinding {
         var startComponent = componentGrid.componentOf(start);
         var endComponent = componentGrid.componentOf(finish);
 
-        var startDistances = tileDistances.get(start, true);
-        var endDistances = tileDistances.get(finish, false);
+        var startDistances = linkDistances.findDistances(start, true);
+        var endDistances = linkDistances.findDistances(finish, false);
 
         var seenFrom = new HashMap<Link, Link>();
         var linkDistances = new HashMap<Link, Integer>();

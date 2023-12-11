@@ -2,6 +2,9 @@ package dev.dqw4w9wgxcq.pathfinder.graphgeneration;
 
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
+import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.ComponentGrid;
+import dev.dqw4w9wgxcq.pathfinder.commons.store.GraphStore;
+import dev.dqw4w9wgxcq.pathfinder.commons.store.LinkStore;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.component.ContiguousComponents;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.component.CreateComponentGraph;
@@ -9,9 +12,6 @@ import dev.dqw4w9wgxcq.pathfinder.graphgeneration.component.LinkedComponents;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.leafletimages.LeafletImages;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.link.FindLinks;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileWorld;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.domain.ComponentGrid;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.store.GraphStore;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.store.LinkStore;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
@@ -23,6 +23,7 @@ import org.apache.commons.cli.ParseException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 
 @Slf4j
 public class GraphGeneration {
@@ -31,7 +32,6 @@ public class GraphGeneration {
         var xteasOpt = new Option("x", "xteas", true, "Path to xteas JSON file.  Defaults to ./xteas.json");
         var outOpt = new Option("o", "out", true, "Output directory.  Defaults to ./output");
         var leafletOpt = new Option("l", "leaflet", false, "Generate leaflet images");
-//        var otherDataOpt = new Option("d", "data", false, "Generate other data (objects, items, etc.)");
         var skipGraphOpt = new Option("s", "skip-graph", false, "Skip graph output (only links will be written)");
 
         var options = new Options();
@@ -39,7 +39,6 @@ public class GraphGeneration {
         options.addOption(xteasOpt);
         options.addOption(outOpt);
         options.addOption(leafletOpt);
-//        options.addOption(otherDataOpt);
         options.addOption(skipGraphOpt);
 
         CommandLine cmd;
@@ -52,21 +51,21 @@ public class GraphGeneration {
             return;
         }
 
-        var cacheDir = new File(cmd.getOptionValue("cache", "cache"));
+        var cacheDir = new File(cmd.getOptionValue(cacheOpt, "cache"));
         if (!cacheDir.exists()) {
             System.err.println("Cache dir does not exist");
             System.exit(1);
             return;
         }
 
-        var xteasFile = new File(cmd.getOptionValue("xteas", "xteas.json"));
+        var xteasFile = new File(cmd.getOptionValue(xteasOpt, "xteas.json"));
         if (!xteasFile.exists()) {
             System.err.println("Xteas file does not exist");
             System.exit(1);
             return;
         }
 
-        var outDir = new File(cmd.getOptionValue("out", System.getProperty("user.dir") + System.getProperty("file.separator") + "output"));
+        var outDir = new File(cmd.getOptionValue(outOpt, System.getProperty("user.dir") + FileSystems.getDefault().getSeparator() + "output"));
         //noinspection ResultOfMethodCallIgnored
         outDir.mkdirs();
 
@@ -101,7 +100,7 @@ public class GraphGeneration {
         var contiguousComponents = ContiguousComponents.create(tileWorld.getPlanes());
         var componentGrid = new ComponentGrid(contiguousComponents.planes());
 
-        if (cmd.hasOption("leaflet")) {
+        if (cmd.hasOption(leafletOpt)) {
             try {
                 LeafletImages.write(new File(outDir, "leaflet"), cacheDir, xteasFile, componentGrid);
             } catch (IOException e) {
@@ -113,8 +112,9 @@ public class GraphGeneration {
         }
 
         var links = FindLinks.find(cacheData, objectLocations, componentGrid, tileWorld);
+        var linkStore = new LinkStore(links);
         try {
-            new LinkStore(links).save(outDir);
+            linkStore.save(outDir);
         } catch (IOException e) {
             log.debug("writing links failed", e);
             System.err.println("writing links failed");
@@ -122,16 +122,16 @@ public class GraphGeneration {
             return;
         }
 
-        if (cmd.hasOption("skip-graph")) {
+        if (cmd.hasOption(skipGraphOpt)) {
             log.info("Skipping graph");
             return;
         }
 
         var linkedComponents = LinkedComponents.create(contiguousComponents, links);
         var componentGraph = CreateComponentGraph.create(linkedComponents, tilePathfinding);
-
+        var graphStore = new GraphStore(contiguousComponents.planes(), tilePathfinding.grid(), componentGraph);
         try {
-            new GraphStore(contiguousComponents.planes(), tilePathfinding.grid(), componentGraph).save(outDir);
+            graphStore.save(outDir);
         } catch (IOException e) {
             log.debug("writing graph failed", e);
             System.err.println("writing graph failed");

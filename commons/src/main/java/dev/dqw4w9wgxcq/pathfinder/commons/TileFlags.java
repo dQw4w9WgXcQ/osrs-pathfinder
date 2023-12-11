@@ -1,4 +1,4 @@
-package dev.dqw4w9wgxcq.pathfinder.pathfinding.domain;
+package dev.dqw4w9wgxcq.pathfinder.commons;
 
 import lombok.extern.slf4j.Slf4j;
 

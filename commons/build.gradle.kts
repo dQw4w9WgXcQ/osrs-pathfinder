@@ -1,6 +1,6 @@
 dependencies {
-    implementation("org.jetbrains:annotations:23.0.0")
     implementation("net.runelite:runelite-api:${Versions.runelite}")
+    implementation("com.google.code.gson:gson:${Versions.gson}")
 }
 
 tasks {

@@ -1,4 +1,4 @@
-package dev.dqw4w9wgxcq.pathfinder.pathfinding.edge;
+package dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding;
 
 public record TeleportEdge() implements Edge {
     @Override

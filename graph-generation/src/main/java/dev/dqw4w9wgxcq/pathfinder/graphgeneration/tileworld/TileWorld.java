@@ -1,10 +1,10 @@
 package dev.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld;
 
+import dev.dqw4w9wgxcq.pathfinder.PathfindingGrid;
+import dev.dqw4w9wgxcq.pathfinder.TilePathfindingForGraphGen;
+import dev.dqw4w9wgxcq.pathfinder.commons.TileFlags;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Util;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.PathfindingGrid;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.domain.TileFlags;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.tile.TilePathfinding;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.cache.definitions.ObjectDefinition;
@@ -60,7 +60,7 @@ public class TileWorld {
         return tileWorld;
     }
 
-    public TilePathfinding toPathfinding() {
+    public TilePathfindingForGraphGen toPathfinding() {
         log.info("Converting to TilePathfinding");
         var start = System.currentTimeMillis();
         var planes = Arrays.stream(this.planes)
@@ -69,7 +69,7 @@ public class TileWorld {
                 .toArray(PathfindingGrid[]::new);
         var time = (System.currentTimeMillis() - start) / 1000;
         log.info("TilePathfinding converted in {}s", time);
-        return new TilePathfinding(planes);
+        return new TilePathfindingForGraphGen(planes);
     }
 
     static void markRegionValid(TileGrid[] planes, Region region) {

@@ -1,9 +1,9 @@
 package dev.dqw4w9wgxcq.pathfinder.graphgeneration.link;
 
+import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.ComponentGrid;
+import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.Links;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileWorld;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.domain.ComponentGrid;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.domain.Links;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.cache.region.Location;
 

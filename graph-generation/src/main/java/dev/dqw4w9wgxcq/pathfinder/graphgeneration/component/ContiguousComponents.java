@@ -1,8 +1,8 @@
 package dev.dqw4w9wgxcq.pathfinder.graphgeneration.component;
 
+import dev.dqw4w9wgxcq.pathfinder.commons.TileFlags;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Point;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileGrid;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.domain.TileFlags;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayDeque;

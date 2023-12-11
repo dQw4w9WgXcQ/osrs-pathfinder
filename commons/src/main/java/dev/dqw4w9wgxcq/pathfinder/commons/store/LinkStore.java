@@ -1,7 +1,7 @@
-package dev.dqw4w9wgxcq.pathfinder.pathfinding.store;
+package dev.dqw4w9wgxcq.pathfinder.commons.store;
 
 import com.google.gson.Gson;
-import dev.dqw4w9wgxcq.pathfinder.pathfinding.domain.Links;
+import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.Links;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;

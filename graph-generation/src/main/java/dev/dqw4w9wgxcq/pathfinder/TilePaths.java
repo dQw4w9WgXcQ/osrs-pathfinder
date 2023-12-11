@@ -1,4 +1,4 @@
-package dev.dqw4w9wgxcq.pathfinder.pathfinding.tile;
+package dev.dqw4w9wgxcq.pathfinder;
 
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Point;
 import lombok.RequiredArgsConstructor;
@@ -11,16 +11,15 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class TilePaths {
-    private final TilePathfinding tilePathfinding;
+    private final TilePathfindingForGraphGen tilePathfinding;
 
-    public List<Point> get(int plane, Point start, Point end) {
-        //todo caching
+    public List<Point> findPath(int plane, Point start, Point end) {
         return newPath(plane, start, end);
     }
 
     private List<Point> newPath(int plane, Point start, Point end) {
         var startTime = System.currentTimeMillis();
-        var path = tilePathfinding.planes()[plane].findPath(start, end);
+        var path = tilePathfinding.findPath(plane, start, end);
         var endTime = System.currentTimeMillis();
         log.debug("local path from {} to {} in {} ms", start, end, endTime - startTime);
         if (path == null) {
