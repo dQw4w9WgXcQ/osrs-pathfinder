@@ -1,4 +1,4 @@
-package dev.dqw4w9wgxcq.pathfinder;
+package dev.dqw4w9wgxcq.pathfinder.graphgeneration.pathfinding;
 
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Point;
 import lombok.Getter;

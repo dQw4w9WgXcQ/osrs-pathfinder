@@ -1,4 +1,4 @@
-package dev.dqw4w9wgxcq.pathfinder.graphgeneration.extra;
+package dev.dqw4w9wgxcq.pathfinder.graphgeneration;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;

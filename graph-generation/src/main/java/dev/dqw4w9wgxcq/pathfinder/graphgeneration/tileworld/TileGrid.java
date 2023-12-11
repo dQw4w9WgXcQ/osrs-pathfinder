@@ -1,9 +1,9 @@
 package dev.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld;
 
 import com.google.common.base.Preconditions;
-import dev.dqw4w9wgxcq.pathfinder.PathfindingGrid;
 import dev.dqw4w9wgxcq.pathfinder.commons.TileFlags;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Util;
+import dev.dqw4w9wgxcq.pathfinder.graphgeneration.pathfinding.PathfindingGrid;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.VisibleForTesting;
