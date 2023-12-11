@@ -43,23 +43,24 @@ public class Pathfinding {
         return new Pathfinding(componentGrid, graphStore.componentGraph(), tileDistances, tilePaths);
     }
 
-    public SuccessPathfindingResult findPath(Position start, Position finish, Agent agent) {
+    @SuppressWarnings("unused")
+    public PathfindingResult findPath(Position start, Position finish, Agent agent) {
         start = closestIfBlocked(start);
         finish = closestIfBlocked(finish);
         if (start == null || finish == null) {
-            return new SuccessPathfindingResult(ResultType.BLOCKED_ORIGIN_OR_DESTINATION, start, finish, null);
+            return new PathfindingResult.Blocked(start, finish);
         }
 
         var linkPath = findLinkPath(start, finish, agent);
 
         if (linkPath == null) {
             log.info("no path from {} to {} for agent {}", start, finish, agent);
-            return new SuccessPathfindingResult(ResultType.NO_PATH, start, finish, null);
+            return new PathfindingResult.Unreachable(start, finish);
         }
 
         var steps = toSteps(linkPath, start, finish);
 
-        return new SuccessPathfindingResult(ResultType.SUCCESS, start, finish, steps);
+        return new PathfindingResult.Success(start, finish, steps);
     }
 
     /**
@@ -144,7 +145,7 @@ public class Pathfinding {
                 Collections.reverse(path);
 
                 var endTime = System.currentTimeMillis();
-                log.debug("link path (took {}ms)", endTime - startTime);
+                log.debug("link path took {}ms", endTime - startTime);
                 return path;
             }
 
