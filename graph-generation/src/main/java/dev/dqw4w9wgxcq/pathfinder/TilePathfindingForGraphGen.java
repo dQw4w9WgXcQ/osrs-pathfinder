@@ -3,13 +3,17 @@ package dev.dqw4w9wgxcq.pathfinder;
 import dev.dqw4w9wgxcq.pathfinder.commons.TilePathfinding;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Point;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Position;
+import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public record TilePathfindingForGraphGen(PathfindingGrid[] planes) implements TilePathfinding {
+@RequiredArgsConstructor
+public class TilePathfindingForGraphGen implements TilePathfinding {
+    private final PathfindingGrid[] planes;
+
     public static TilePathfindingForGraphGen create(int[][][] planes) {
         return new TilePathfindingForGraphGen(Arrays.stream(planes).map(PathfindingGrid::new).toArray(PathfindingGrid[]::new));
     }

@@ -1,6 +1,9 @@
 package dev.dqw4w9wgxcq.pathfinder;
 
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Point;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayDeque;
@@ -13,7 +16,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
-public record PathfindingGrid(int[][] grid) {
+@RequiredArgsConstructor
+@Accessors(fluent = true)
+public class PathfindingGrid {
     public static final int NORTH = 1;
     public static final int SOUTH = 1 << 1;
     public static final int EAST = 1 << 2;
@@ -22,6 +27,9 @@ public record PathfindingGrid(int[][] grid) {
     public static final int NORTH_WEST = 1 << 5;
     public static final int SOUTH_EAST = 1 << 6;
     public static final int SOUTH_WEST = 1 << 7;
+
+    @Getter
+    private final int[][] grid;
 
     //bfs
     public List<Point> findPath(Point from, Point to) {

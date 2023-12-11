@@ -14,6 +14,7 @@ import dev.dqw4w9wgxcq.pathfinder.commons.store.GraphStore;
 import dev.dqw4w9wgxcq.pathfinder.pathfinding.tile.LinkDistances;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,6 +26,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.function.Supplier;
 
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
@@ -66,23 +71,35 @@ public class Pathfinding {
         var startTime = System.currentTimeMillis();
 
         var curr = start;
-        var steps = new ArrayList<PathStep>();
+        var steps = new ArrayList<Supplier<PathStep>>();
         for (var link : linkPath) {
-            var walkPath = tilePathfinding.findPath(curr.plane(), curr.toPoint(), link.origin().toPoint());
-
-            steps.add(new WalkStep(curr.plane(), walkPath));
-            steps.add(new LinkStep(link));
-
+            var pathFuture = findPathAsync(curr.plane(), curr.toPoint(), link.origin().toPoint());
+            var finalCurr = curr;
+            steps.add(() -> awaitPath(finalCurr.plane(), pathFuture));
+            steps.add(() -> new LinkStep(link));
             curr = link.destination();
         }
 
-        var tilePath = tilePathfinding.findPath(curr.plane(), curr.toPoint(), finish.toPoint());
-        steps.add(new WalkStep(curr.plane(), tilePath));
+        var pathFuture = findPathAsync(curr.plane(), curr.toPoint(), finish.toPoint());
+        var finalCurr1 = curr;
+        steps.add(() -> awaitPath(finalCurr1.plane(), pathFuture));
 
         var endTime = System.currentTimeMillis();
         log.debug("steps in {}ms", endTime - startTime);
 
-        return steps;
+        return steps.stream().map(Supplier::get).toList();
+    }
+
+    //need fix, should move limiting somewhere else
+    private final ExecutorService exe = Executors.newFixedThreadPool(10);
+
+    private Future<List<Point>> findPathAsync(int plane, Point start, Point end) {
+        return exe.submit(() -> tilePathfinding.findPath(plane, start, end));
+    }
+
+    @SneakyThrows
+    private WalkStep awaitPath(int plane, Future<List<Point>> pathFuture) {
+        return new WalkStep(plane, pathFuture.get());
     }
 
     /**
