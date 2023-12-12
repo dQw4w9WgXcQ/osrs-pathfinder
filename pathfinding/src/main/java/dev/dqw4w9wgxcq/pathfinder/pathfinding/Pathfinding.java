@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -39,6 +40,8 @@ public class Pathfinding {
     private final LinkDistances linkDistances;
     private final TilePathfinding tilePathfinding;
 
+    private final ExecutorService asyncExe = Executors.newCachedThreadPool();
+
     public static Pathfinding create(GraphStore graphStore, TilePathfinding tilePathfinding) {
         var componentGrid = new ComponentGrid(graphStore.componentGrid());
         var tileDistances = new LinkDistances(tilePathfinding, componentGrid, graphStore.componentGraph());
@@ -46,22 +49,26 @@ public class Pathfinding {
     }
 
     public PathfindingResult findPath(Position start, Position finish, Agent agent) {
-        start = closestIfBlocked(start);
-        finish = closestIfBlocked(finish);
-        if (start == null || finish == null) {
-            return new PathfindingResult.Blocked(start, finish);
+        var startFuture = asyncExe.submit(() -> closestIfBlocked(start));
+        var finishFuture = asyncExe.submit(() -> closestIfBlocked(finish));
+
+        var fixedStart = await(startFuture);
+        var fixedFinish = await(finishFuture);
+
+        if (fixedStart == null || fixedFinish == null) {
+            return new PathfindingResult.Blocked(fixedStart, fixedFinish);
         }
 
-        var linkPath = findLinkPath(start, finish, agent);
+        var linkPath = findLinkPath(fixedStart, fixedFinish, agent);
 
         if (linkPath == null) {
-            log.info("no path from {} to {} for agent {}", start, finish, agent);
-            return new PathfindingResult.Unreachable(start, finish);
+            log.info("no path from {} to {} for agent {}", fixedStart, fixedFinish, agent);
+            return new PathfindingResult.Unreachable(fixedStart, fixedFinish);
         }
 
-        var steps = toSteps(linkPath, start, finish);
+        var steps = toSteps(linkPath, fixedStart, fixedFinish);
 
-        return new PathfindingResult.Success(start, finish, steps);
+        return new PathfindingResult.Success(fixedStart, fixedFinish, steps);
     }
 
     /**
@@ -74,14 +81,14 @@ public class Pathfinding {
         var steps = new ArrayList<Supplier<PathStep>>();
         for (var link : linkPath) {
             var pathFuture = findPathAsync(curr.plane(), curr.toPoint(), link.origin().toPoint());
-            var finalCurr = curr;
+            final var finalCurr = curr;
             steps.add(() -> awaitPath(finalCurr.plane(), pathFuture));
             steps.add(() -> new LinkStep(link));
             curr = link.destination();
         }
 
         var pathFuture = findPathAsync(curr.plane(), curr.toPoint(), finish.toPoint());
-        var finalCurr1 = curr;
+        final var finalCurr1 = curr;
         steps.add(() -> awaitPath(finalCurr1.plane(), pathFuture));
 
         var endTime = System.currentTimeMillis();
@@ -90,16 +97,12 @@ public class Pathfinding {
         return steps.stream().map(Supplier::get).toList();
     }
 
-    //need fix, should move limiting somewhere else
-    private final ExecutorService exe = Executors.newFixedThreadPool(10);
-
     private Future<List<Point>> findPathAsync(int plane, Point start, Point end) {
-        return exe.submit(() -> tilePathfinding.findPath(plane, start, end));
+        return asyncExe.submit(() -> tilePathfinding.findPath(plane, start, end));
     }
 
-    @SneakyThrows
     private WalkStep awaitPath(int plane, Future<List<Point>> pathFuture) {
-        return new WalkStep(plane, pathFuture.get());
+        return new WalkStep(plane, await(pathFuture));
     }
 
     /**
@@ -116,8 +119,11 @@ public class Pathfinding {
         var startComponent = componentGrid.componentOf(start);
         var endComponent = componentGrid.componentOf(finish);
 
-        var startDistances = linkDistances.findDistances(start, true);
-        var endDistances = linkDistances.findDistances(finish, false);
+        var startDistancesFuture = asyncExe.submit(() -> linkDistances.findDistances(start, true));
+        var endDistancesFuture = asyncExe.submit(() -> linkDistances.findDistances(finish, false));
+
+        var startDistances = await(startDistancesFuture);
+        var endDistances = await(endDistancesFuture);
 
         var seenFrom = new HashMap<Link, Link>();
         var linkDistances = new HashMap<Link, Integer>();
@@ -259,5 +265,10 @@ public class Pathfinding {
         }
 
         throw new IllegalStateException("No position found");//will never happen unless the graph is invalid
+    }
+
+    @SneakyThrows({InterruptedException.class, ExecutionException.class})
+    private <T> T await(Future<T> future) {
+        return future.get();
     }
 }
