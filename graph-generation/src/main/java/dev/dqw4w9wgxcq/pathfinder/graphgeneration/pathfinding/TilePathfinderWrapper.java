@@ -20,7 +20,12 @@ public class TilePathfinderWrapper implements TilePathfinder {
     private final TilePathfinder delegate;
     private final int maxConcurrency = 10;
 
-    private final Semaphore newPathSemaphore = new Semaphore(maxConcurrency);
+
+    private record PathCacheKey(int plane, Point start, Point end) {
+    }
+
+    private final Map<PathCacheKey, List<Point>> pathCache = new ConcurrentHashMap<>();
+    private final Semaphore pathSemaphore = new Semaphore(maxConcurrency, true);
 
     @Override
     public List<Point> findPath(int plane, Point start, Point end) {
@@ -37,22 +42,17 @@ public class TilePathfinderWrapper implements TilePathfinder {
         return delegate.isRemote();
     }
 
-    private record PathCacheKey(int plane, Point start, Point end) {
-    }
-
-    private final Map<PathCacheKey, List<Point>> pathCache = new ConcurrentHashMap<>();
-
     @SneakyThrows(InterruptedException.class)
     private List<Point> newPath(int plane, Point start, Point end) {
         List<Point> path;
         long time;
         try {
-            newPathSemaphore.acquire();
+            pathSemaphore.acquire();
             var startTime = System.currentTimeMillis();
             path = delegate.findPath(plane, start, end);
             time = System.currentTimeMillis() - startTime;
         } finally {
-            newPathSemaphore.release();
+            pathSemaphore.release();
         }
 
         log.debug("from {} to {} in {} ms", start, end, time);
