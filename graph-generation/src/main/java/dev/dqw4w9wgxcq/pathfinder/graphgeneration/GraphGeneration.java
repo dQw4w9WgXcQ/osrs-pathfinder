@@ -96,7 +96,7 @@ public class GraphGeneration {
 
         var objectLocations = cacheData.regionData().getLocationsAdjustedFor0x2();
         var tileWorld = TileWorld.create(cacheData, objectLocations);
-        var tilePathfinding = tileWorld.toPathfinding();
+        var tilePathfinder = tileWorld.toPathfinder();
         var contiguousComponents = ContiguousComponents.create(tileWorld.getPlanes());
         var componentGrid = new ComponentGrid(contiguousComponents.planes());
 
@@ -128,8 +128,8 @@ public class GraphGeneration {
         }
 
         var linkedComponents = LinkedComponents.create(contiguousComponents, links);
-        var componentGraph = CreateComponentGraph.create(linkedComponents, tilePathfinding);
-        var graphStore = new GraphStore(contiguousComponents.planes(), tilePathfinding.grid(), componentGraph);
+        var componentGraph = CreateComponentGraph.create(linkedComponents, tilePathfinder);
+        var graphStore = new GraphStore(contiguousComponents.planes(), tilePathfinder.grid(), componentGraph);
         try {
             graphStore.save(outDir);
         } catch (IOException e) {

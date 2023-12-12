@@ -1,6 +1,6 @@
 package dev.dqw4w9wgxcq.pathfinder.pathfinding;
 
-import dev.dqw4w9wgxcq.pathfinder.commons.TilePathfinding;
+import dev.dqw4w9wgxcq.pathfinder.commons.TilePathfinder;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Agent;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Point;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Position;
@@ -38,14 +38,14 @@ public class Pathfinding {
     private final ComponentGrid componentGrid;
     private final ComponentGraph componentGraph;
     private final LinkDistances linkDistances;
-    private final TilePathfinding tilePathfinding;
+    private final TilePathfinder tilePathfinder;
 
     private final ExecutorService asyncExe = Executors.newCachedThreadPool();
 
-    public static Pathfinding create(GraphStore graphStore, TilePathfinding tilePathfinding) {
+    public static Pathfinding create(GraphStore graphStore, TilePathfinder tilePathfinder) {
         var componentGrid = new ComponentGrid(graphStore.componentGrid());
-        var tileDistances = new LinkDistances(tilePathfinding, componentGrid, graphStore.componentGraph());
-        return new Pathfinding(componentGrid, graphStore.componentGraph(), tileDistances, tilePathfinding);
+        var tileDistances = new LinkDistances(tilePathfinder, componentGrid, graphStore.componentGraph());
+        return new Pathfinding(componentGrid, graphStore.componentGraph(), tileDistances, tilePathfinder);
     }
 
     public PathfindingResult findPath(Position start, Position finish, Agent agent) {
@@ -98,7 +98,7 @@ public class Pathfinding {
     }
 
     private Future<List<Point>> findPathAsync(int plane, Point start, Point end) {
-        return asyncExe.submit(() -> tilePathfinding.findPath(plane, start, end));
+        return asyncExe.submit(() -> tilePathfinder.findPath(plane, start, end));
     }
 
     private WalkStep awaitPath(int plane, Future<List<Point>> pathFuture) {

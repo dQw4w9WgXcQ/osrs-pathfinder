@@ -1,6 +1,6 @@
 package dev.dqw4w9wgxcq.pathfinder.graphgeneration.pathfinding;
 
-import dev.dqw4w9wgxcq.pathfinder.commons.TilePathfinding;
+import dev.dqw4w9wgxcq.pathfinder.commons.TilePathfinder;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Point;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Position;
 import lombok.RequiredArgsConstructor;
@@ -11,11 +11,11 @@ import java.util.Map;
 import java.util.Set;
 
 @RequiredArgsConstructor
-public class TilePathfindingForGraphGen implements TilePathfinding {
+public class TilePathfinderForGraphGen implements TilePathfinder {
     private final PathfindingGrid[] planes;
 
-    public static TilePathfindingForGraphGen create(int[][][] planes) {
-        return new TilePathfindingForGraphGen(Arrays.stream(planes).map(PathfindingGrid::new).toArray(PathfindingGrid[]::new));
+    public static TilePathfinderForGraphGen create(int[][][] planes) {
+        return new TilePathfinderForGraphGen(Arrays.stream(planes).map(PathfindingGrid::new).toArray(PathfindingGrid[]::new));
     }
 
     @Override

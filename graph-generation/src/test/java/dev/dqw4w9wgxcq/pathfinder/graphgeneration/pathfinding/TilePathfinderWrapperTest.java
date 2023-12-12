@@ -7,7 +7,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class TilePathsTest {
+class TilePathfinderWrapperTest {
 
     @Test
     void minifyPath() {
@@ -24,7 +24,7 @@ class TilePathsTest {
                         new Point(0, 0),
                         new Point(4, 4)
                 ),
-                TilePaths.toMinifiedPath(path)
+                TilePathfinderWrapper.toMinifiedPath(path)
         );
 
         var path2 = List.of(
@@ -41,7 +41,7 @@ class TilePathsTest {
                         new Point(2, 0),
                         new Point(4, 2)
                 ),
-                TilePaths.toMinifiedPath(path2)
+                TilePathfinderWrapper.toMinifiedPath(path2)
         );
 
         var path3 = List.of(
@@ -60,7 +60,7 @@ class TilePathsTest {
                         new Point(4, 2),
                         new Point(5, 2)
                 ),
-                TilePaths.toMinifiedPath(path3)
+                TilePathfinderWrapper.toMinifiedPath(path3)
         );
     }
 }

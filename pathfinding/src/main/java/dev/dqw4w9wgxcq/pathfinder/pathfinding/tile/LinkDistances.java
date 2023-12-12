@@ -1,6 +1,6 @@
 package dev.dqw4w9wgxcq.pathfinder.pathfinding.tile;
 
-import dev.dqw4w9wgxcq.pathfinder.commons.TilePathfinding;
+import dev.dqw4w9wgxcq.pathfinder.commons.TilePathfinder;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Point;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Position;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.ComponentGraph;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class LinkDistances {
-    private final TilePathfinding tilePathfinding;
+    private final TilePathfinder tilePathfinder;
     private final ComponentGrid componentGrid;
     private final ComponentGraph componentGraph;
 
@@ -25,7 +25,7 @@ public class LinkDistances {
     private final Map<CacheKey, Map<Point, Integer>> cache = new ConcurrentHashMap<>();
 
     public Map<Point, Integer> findDistances(Position position, boolean isOutbound) {
-        if (!tilePathfinding.isRemote()) {
+        if (!tilePathfinder.isRemote()) {
             return cache.computeIfAbsent(new CacheKey(position, isOutbound), k -> {
                 log.debug("cache miss {} {}", k.position(), k.isOutbound() ? "outbound" : "inbound");
                 return internalFindDistances(k.position(), k.isOutbound());
@@ -48,7 +48,7 @@ public class LinkDistances {
                 .collect(Collectors.toSet());
 
         var startTime = System.currentTimeMillis();
-        var distances = tilePathfinding.distances(position, tos);
+        var distances = tilePathfinder.distances(position, tos);
         var finishTime = System.currentTimeMillis();
         log.debug("distances {} in {}ms", isOutbound ? "outbound" : "inbound", finishTime - startTime);
 
