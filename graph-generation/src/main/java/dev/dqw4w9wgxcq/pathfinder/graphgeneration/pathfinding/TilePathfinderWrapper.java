@@ -4,21 +4,27 @@ import dev.dqw4w9wgxcq.pathfinder.commons.TilePathfinder;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Point;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Position;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Semaphore;
 
 @RequiredArgsConstructor
 @Slf4j
 public class TilePathfinderWrapper implements TilePathfinder {
-    private final TilePathfinderForGraphGen delegate;
+    private final TilePathfinder delegate;
+    private final int maxConcurrency = 10;
+
+    private final Semaphore newPathSemaphore = new Semaphore(maxConcurrency);
 
     @Override
     public List<Point> findPath(int plane, Point start, Point end) {
-        return newPath(plane, start, end);
+        return pathCache.computeIfAbsent(new PathCacheKey(plane, start, end), k -> newPath(k.plane(), k.start(), k.end()));
     }
 
     @Override
@@ -31,11 +37,26 @@ public class TilePathfinderWrapper implements TilePathfinder {
         return delegate.isRemote();
     }
 
+    private record PathCacheKey(int plane, Point start, Point end) {
+    }
+
+    private final Map<PathCacheKey, List<Point>> pathCache = new ConcurrentHashMap<>();
+
+    @SneakyThrows(InterruptedException.class)
     private List<Point> newPath(int plane, Point start, Point end) {
-        var startTime = System.currentTimeMillis();
-        var path = delegate.findPath(plane, start, end);
-        var endTime = System.currentTimeMillis();
-        log.debug("local path from {} to {} in {} ms", start, end, endTime - startTime);
+        List<Point> path;
+        long time;
+        try {
+            newPathSemaphore.acquire();
+            var startTime = System.currentTimeMillis();
+            path = delegate.findPath(plane, start, end);
+            time = System.currentTimeMillis() - startTime;
+        } finally {
+            newPathSemaphore.release();
+        }
+
+        log.debug("from {} to {} in {} ms", start, end, time);
+
         if (path == null) {
             log.debug("no path found");
             return null;
