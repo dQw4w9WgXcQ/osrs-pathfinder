@@ -1,4 +1,4 @@
-package dev.dqw4w9wgxcq.pathfinder.graphgeneration.pathfinding;
+package dev.dqw4w9wgxcq.pathfinder.tilepathfinding;
 
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Point;
 import lombok.extern.slf4j.Slf4j;

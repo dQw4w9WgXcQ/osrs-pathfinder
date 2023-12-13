@@ -5,8 +5,8 @@ import dev.dqw4w9wgxcq.pathfinder.commons.domain.Position;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.Link;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.ComponentGraph;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.LinkEdge;
-import dev.dqw4w9wgxcq.pathfinder.graphgeneration.pathfinding.Algo;
-import dev.dqw4w9wgxcq.pathfinder.graphgeneration.pathfinding.TilePathfinderForGraphGen;
+import dev.dqw4w9wgxcq.pathfinder.tilepathfinding.Algo;
+import dev.dqw4w9wgxcq.pathfinder.tilepathfinding.TilePathfinderForGraphGen;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;

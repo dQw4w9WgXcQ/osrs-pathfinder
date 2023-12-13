@@ -1,4 +1,4 @@
-package dev.dqw4w9wgxcq.pathfinder.graphgeneration.pathfinding;
+package dev.dqw4w9wgxcq.pathfinder.tilepathfinding;
 
 //import dev.dqw4w9wgxcq.pathfinder.domain.Point;
 //import org.junit.jupiter.api.Test;

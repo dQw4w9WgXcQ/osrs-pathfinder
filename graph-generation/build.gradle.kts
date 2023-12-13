@@ -1,5 +1,6 @@
 dependencies {
     implementation(project(":commons"))
+    implementation(project(":tile-pathfinding"))
     implementation("net.runelite:cache:${Versions.runelite}") {
         exclude(group = "com.google.code", module = "gson")
     }
