@@ -3,7 +3,6 @@ package dev.dqw4w9wgxcq.pathfinder.graphgeneration.pathfinding;
 import dev.dqw4w9wgxcq.pathfinder.commons.TilePathfinder;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Point;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Position;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -14,18 +13,19 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 
-@RequiredArgsConstructor
 @Slf4j
 public class TilePathfinderWrapper implements TilePathfinder {
-    private final TilePathfinder delegate;
-    private final int maxConcurrency = 10;
-
-
     private record PathCacheKey(int plane, Point start, Point end) {
     }
 
+    private final TilePathfinder delegate;
+    private final Semaphore pathSemaphore;
     private final Map<PathCacheKey, List<Point>> pathCache = new ConcurrentHashMap<>();
-    private final Semaphore pathSemaphore = new Semaphore(maxConcurrency, true);
+
+    public TilePathfinderWrapper(TilePathfinder delegate, int maxConcurrency) {
+        this.delegate = delegate;
+        pathSemaphore = new Semaphore(maxConcurrency, true);
+    }
 
     @Override
     public List<Point> findPath(int plane, Point start, Point end) {
