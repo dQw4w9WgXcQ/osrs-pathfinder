@@ -28,6 +28,8 @@ import java.nio.file.FileSystems;
 @Slf4j
 public class GraphGeneration {
     public static void main(String[] args) {
+        var startTime = System.currentTimeMillis();
+
         var cacheOpt = new Option("c", "cache", true, "Path to osrs cache dir that the game populates at C:\\Users\\user\\jagexcache\\oldschool\\LIVE\\  Defaults to ./cache");
         var xteasOpt = new Option("x", "xteas", true, "Path to xteas JSON file.  Defaults to ./xteas.json");
         var outOpt = new Option("o", "out", true, "Output directory.  Defaults to ./output");
@@ -139,6 +141,7 @@ public class GraphGeneration {
             return;
         }
 
-        log.info("done");
+        var time = (System.currentTimeMillis() - startTime) / 1000.0;
+        log.info("finished in {}s", time);
     }
 }

@@ -5,7 +5,6 @@ import dev.dqw4w9wgxcq.pathfinder.commons.domain.Position;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.Link;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.ComponentGraph;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.LinkEdge;
-import dev.dqw4w9wgxcq.pathfinder.tilepathfinding.Algo;
 import dev.dqw4w9wgxcq.pathfinder.tilepathfinding.TilePathfinderForGraphGen;
 import lombok.extern.slf4j.Slf4j;
 
@@ -54,7 +53,7 @@ public class CreateComponentGraph {
 
                     log.debug("Adding edge from {} to {}", inboundLink, outboundLink);
                     var distance = ESTIMATE_DISTANCES
-                            ? Algo.chebyshev(inboundLink.destination().toPoint(), outboundLink.origin().toPoint())
+                            ? chebyshev(inboundLink.destination().toPoint(), outboundLink.origin().toPoint())
                             : distances.get(outboundLink.origin().toPoint());
                     var cost = outboundLink.cost() + distance;
 
@@ -80,5 +79,9 @@ public class CreateComponentGraph {
 
         log.info(count + " edges " + skippedCount + " links skipped");
         return new ComponentGraph(graph, outboundLinks, inboundLinks);
+    }
+
+    private static int chebyshev(Point from, Point to) {
+        return Math.max(Math.abs(from.x() - to.x()), Math.abs(from.y() - to.y()));
     }
 }
