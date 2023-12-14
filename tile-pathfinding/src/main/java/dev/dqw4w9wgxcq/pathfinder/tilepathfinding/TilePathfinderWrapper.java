@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.Semaphore;
 
 @Slf4j
@@ -20,16 +23,20 @@ public class TilePathfinderWrapper implements TilePathfinder {
 
     private final TilePathfinder delegate;
     private final Semaphore pathSemaphore;
-    private final Map<PathCacheKey, List<Point>> pathCache = new ConcurrentHashMap<>();
+    private final Map<PathCacheKey, Future<List<Point>>> pathCache = new ConcurrentHashMap<>();
 
     public TilePathfinderWrapper(TilePathfinder delegate, int maxConcurrency) {
         this.delegate = delegate;
         pathSemaphore = new Semaphore(maxConcurrency, true);
     }
 
+    @SneakyThrows({InterruptedException.class, ExecutionException.class})
     @Override
     public List<Point> findPath(int plane, Point start, Point end) {
-        return pathCache.computeIfAbsent(new PathCacheKey(plane, start, end), k -> newPath(k.plane(), k.start(), k.end()));
+        return pathCache.computeIfAbsent(
+                new PathCacheKey(plane, start, end),
+                k -> new FutureTask<>(() -> newPath(k.plane(), k.start(), k.end()))
+        ).get();
     }
 
     @Override
@@ -42,8 +49,7 @@ public class TilePathfinderWrapper implements TilePathfinder {
         return delegate.isRemote();
     }
 
-    @SneakyThrows(InterruptedException.class)
-    private List<Point> newPath(int plane, Point start, Point end) {
+    private List<Point> newPath(int plane, Point start, Point end) throws InterruptedException {
         List<Point> path;
         long time;
         try {
