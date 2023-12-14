@@ -35,7 +35,11 @@ public class TilePathfinderWrapper implements TilePathfinder {
     public List<Point> findPath(int plane, Point start, Point end) {
         return pathCache.computeIfAbsent(
                 new PathCacheKey(plane, start, end),
-                k -> new FutureTask<>(() -> newPath(k.plane(), k.start(), k.end()))
+                k -> {
+                    var task = new FutureTask<>(() -> newPath(k.plane(), k.start(), k.end()));
+                    task.run();
+                    return task;
+                }
         ).get();
     }
 
