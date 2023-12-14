@@ -7,12 +7,11 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.Semaphore;
 
@@ -23,7 +22,7 @@ public class TilePathfinderWrapper implements TilePathfinder {
 
     private final TilePathfinder delegate;
     private final Semaphore pathSemaphore;
-    private final Map<PathCacheKey, Future<List<Point>>> pathCache = new ConcurrentHashMap<>();
+    private final Map<PathCacheKey, FutureTask<List<Point>>> pathCache = new HashMap<>();
 
     public TilePathfinderWrapper(TilePathfinder delegate, int maxConcurrency) {
         this.delegate = delegate;
@@ -33,14 +32,20 @@ public class TilePathfinderWrapper implements TilePathfinder {
     @SneakyThrows({InterruptedException.class, ExecutionException.class})
     @Override
     public List<Point> findPath(int plane, Point start, Point end) {
-        return pathCache.computeIfAbsent(
-                new PathCacheKey(plane, start, end),
-                k -> {
-                    var task = new FutureTask<>(() -> newPath(k.plane(), k.start(), k.end()));
-                    task.run();
-                    return task;
-                }
-        ).get();
+        var key = new PathCacheKey(plane, start, end);
+
+        FutureTask<List<Point>> future;
+        synchronized (pathCache) {
+            if (pathCache.containsKey(key)) {
+                future = pathCache.get(key);
+            } else {
+                future = new FutureTask<>(() -> newPath(plane, start, end));
+                pathCache.put(key, future);
+                future.run();
+            }
+        }
+
+        return future.get();
     }
 
     @Override
