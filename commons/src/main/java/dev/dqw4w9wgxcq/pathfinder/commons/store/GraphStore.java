@@ -4,7 +4,6 @@ import com.google.gson.GsonBuilder;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.Link;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.ComponentGraph;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.Links;
-import dev.dqw4w9wgxcq.pathfinder.commons.store.gson.LinkTypeAdapter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,11 +19,7 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 @Slf4j
-public record GraphStore(
-        int[][][] componentGrid,
-        int[][][] grid,
-        ComponentGraph componentGraph
-) {
+public record GraphStore(int[][][] componentGrid, ComponentGraph componentGraph) {
     public void save(File dir) throws IOException {
         log.info("saving graph to {}", dir);
 
@@ -42,15 +37,9 @@ public record GraphStore(
             try (var oos = new ObjectOutputStream(zos)) {
                 oos.writeObject(componentGrid);
 
-                zos.putNextEntry(new ZipEntry("grid.dat"));
-                try (var oos2 = new ObjectOutputStream(zos)) {
-                    log.info("writing grid.dat");
-                    oos2.writeObject(grid);
-
-                    log.info("writing componentgraph.json");
-                    zos.putNextEntry(new ZipEntry("componentgraph.json"));
-                    zos.write(graphGson.toJson(componentGraph).getBytes());
-                }
+                log.info("writing componentgraph.json");
+                zos.putNextEntry(new ZipEntry("componentgraph.json"));
+                zos.write(graphGson.toJson(componentGraph).getBytes());
             }
         }
     }
@@ -60,7 +49,6 @@ public record GraphStore(
         log.info("loading graph from {}", is);
 
         int[][][] componentGrid;
-        int[][][] pathfindingGrid;
         ComponentGraph componentGraph;
 
         var graphGson = new GsonBuilder()
@@ -74,15 +62,10 @@ public record GraphStore(
                 componentGrid = (int[][][]) ois.readObject();
 
                 zis.getNextEntry();
-                try (var ois2 = new ObjectInputStream(zis)) {
-                    pathfindingGrid = (int[][][]) ois2.readObject();
-
-                    zis.getNextEntry();
-                    componentGraph = graphGson.fromJson(new InputStreamReader(zis), ComponentGraph.class);
-                }
+                componentGraph = graphGson.fromJson(new InputStreamReader(zis), ComponentGraph.class);
             }
         }
 
-        return new GraphStore(componentGrid, pathfindingGrid, componentGraph);
+        return new GraphStore(componentGrid, componentGraph);
     }
 }

@@ -44,8 +44,8 @@ public class Pathfinding {
 
     public static Pathfinding create(GraphStore graphStore, TilePathfinder tilePathfinder) {
         var componentGrid = new ComponentGrid(graphStore.componentGrid());
-        var tileDistances = new LinkDistances(tilePathfinder, componentGrid, graphStore.componentGraph());
-        return new Pathfinding(componentGrid, graphStore.componentGraph(), tileDistances, tilePathfinder);
+        var linkDistances = new LinkDistances(tilePathfinder, componentGrid, graphStore.componentGraph());
+        return new Pathfinding(componentGrid, graphStore.componentGraph(), linkDistances, tilePathfinder);
     }
 
     public PathfindingResult findPath(Position start, Position finish, Agent agent) {

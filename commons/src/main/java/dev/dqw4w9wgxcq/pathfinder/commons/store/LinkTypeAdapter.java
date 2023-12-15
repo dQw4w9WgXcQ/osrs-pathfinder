@@ -1,4 +1,4 @@
-package dev.dqw4w9wgxcq.pathfinder.commons.store.gson;
+package dev.dqw4w9wgxcq.pathfinder.commons.store;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
@@ -19,7 +19,7 @@ import java.io.IOException;
  */
 @SuppressWarnings("JavadocReference")
 @RequiredArgsConstructor
-public class LinkTypeAdapter extends TypeAdapter<Link> {
+class LinkTypeAdapter extends TypeAdapter<Link> {
     private final @Nullable Links links;
 
     @Override

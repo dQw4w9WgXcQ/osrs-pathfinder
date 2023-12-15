@@ -4,6 +4,7 @@ import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.ComponentGrid;
 import dev.dqw4w9wgxcq.pathfinder.commons.store.GraphStore;
+import dev.dqw4w9wgxcq.pathfinder.commons.store.GridStore;
 import dev.dqw4w9wgxcq.pathfinder.commons.store.LinkStore;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.component.ContiguousComponents;
@@ -23,7 +24,6 @@ import org.apache.commons.cli.ParseException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.FileSystems;
 
 @Slf4j
 public class GraphGeneration {
@@ -32,7 +32,7 @@ public class GraphGeneration {
 
         var cacheOpt = new Option("c", "cache", true, "Path to osrs cache dir that the game populates at C:\\Users\\user\\jagexcache\\oldschool\\LIVE\\  Defaults to ./cache");
         var xteasOpt = new Option("x", "xteas", true, "Path to xteas JSON file.  Defaults to ./xteas.json");
-        var outOpt = new Option("o", "out", true, "Output directory.  Defaults to ./output");
+        var outOpt = new Option("o", "out", true, "Output directory.  Defaults to ./");
         var leafletOpt = new Option("l", "leaflet", false, "Generate leaflet images");
         var skipGraphOpt = new Option("s", "skip-graph", false, "Skip graph output (only links will be written)");
 
@@ -67,7 +67,7 @@ public class GraphGeneration {
             return;
         }
 
-        var outDir = new File(cmd.getOptionValue(outOpt, System.getProperty("user.dir") + FileSystems.getDefault().getSeparator() + "output"));
+        var outDir = new File(cmd.getOptionValue(outOpt, System.getProperty("user.dir")));
         //noinspection ResultOfMethodCallIgnored
         outDir.mkdirs();
 
@@ -129,9 +129,20 @@ public class GraphGeneration {
             return;
         }
 
+        var gridStore = new GridStore(tilePathfinder.grid());
+        try {
+            gridStore.save(outDir);
+        } catch (IOException e) {
+            log.debug("writing grid failed", e);
+            System.err.println("writing grid failed");
+            System.exit(1);
+            return;
+        }
+
         var linkedComponents = LinkedComponents.create(contiguousComponents, links);
         var componentGraph = CreateComponentGraph.create(linkedComponents, tilePathfinder);
-        var graphStore = new GraphStore(contiguousComponents.planes(), tilePathfinder.grid(), componentGraph);
+
+        var graphStore = new GraphStore(contiguousComponents.planes(), componentGraph);
         try {
             graphStore.save(outDir);
         } catch (IOException e) {
