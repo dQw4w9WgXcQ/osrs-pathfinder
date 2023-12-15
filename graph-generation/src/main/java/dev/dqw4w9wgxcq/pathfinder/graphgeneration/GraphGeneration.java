@@ -98,9 +98,9 @@ public class GraphGeneration {
 
         var objectLocations = cacheData.regionData().getLocationsAdjustedFor0x2();
         var tileWorld = TileWorld.create(cacheData, objectLocations);
-        var tilePathfinder = tileWorld.toPathfinder();
         var contiguousComponents = ContiguousComponents.create(tileWorld.getPlanes());
         var componentGrid = new ComponentGrid(contiguousComponents.planes());
+        var tilePathfinder = tileWorld.toPathfinder(contiguousComponents.planes());
 
         if (cmd.hasOption(leafletOpt)) {
             try {

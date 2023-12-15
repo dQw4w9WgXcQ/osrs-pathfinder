@@ -2,6 +2,7 @@ package dev.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld;
 
 import com.google.common.base.Preconditions;
 import dev.dqw4w9wgxcq.pathfinder.commons.TileFlags;
+import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.ComponentGrid;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Util;
 import dev.dqw4w9wgxcq.pathfinder.tilepathfinding.PathfindingGrid;
 import lombok.Getter;
@@ -274,11 +275,15 @@ public class TileGrid {
         return true;
     }
 
-    public PathfindingGrid toPathfindingGrid() {
-        var grid = new int[width][height];
+    public PathfindingGrid toPathfindingGrid(int[][] componentIds) {
+        var grid = new short[width][height];
 
         for (int x = 0; x < grid.length; x++) {
             for (int y = 0; y < grid[0].length; y++) {
+                if (ComponentGrid.isBlocked(componentIds, x, y)) {
+                    continue;
+                }
+
                 if (!checkFlag(x, y, TileFlags.HAVE_DATA)) {
                     continue;
                 }

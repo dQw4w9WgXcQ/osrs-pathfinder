@@ -11,6 +11,7 @@ import net.runelite.cache.definitions.ObjectDefinition;
 import net.runelite.cache.region.Location;
 import net.runelite.cache.region.Region;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -60,13 +61,17 @@ public class TileWorld {
         return tileWorld;
     }
 
-    public TilePathfinderForGraphGen toPathfinder() {
+    public TilePathfinderForGraphGen toPathfinder(int[][][] componentIds) {
         log.info("Converting to TilePathfinder");
         var start = System.currentTimeMillis();
-        var planes = Arrays.stream(this.planes)
-                .parallel()
-                .map(TileGrid::toPathfindingGrid)
-                .toArray(PathfindingGrid[]::new);
+        var list = new ArrayList<PathfindingGrid>();
+        var tileGrids = this.planes;
+        for (var i = 0; i < tileGrids.length; i++) {
+            var it = tileGrids[i];
+            var pathfindingGrid = it.toPathfindingGrid(componentIds[i]);
+            list.add(pathfindingGrid);
+        }
+        var planes = list.toArray(new PathfindingGrid[0]);
         var time = (System.currentTimeMillis() - start) / 1000;
         log.info("TilePathfinder converted in {}s", time);
         return new TilePathfinderForGraphGen(planes);

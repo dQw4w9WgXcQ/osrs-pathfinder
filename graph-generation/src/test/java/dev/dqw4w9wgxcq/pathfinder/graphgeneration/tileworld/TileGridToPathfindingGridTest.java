@@ -13,7 +13,7 @@ class TileGridToPathfindingGridTest {
     @Test
     void empty() {
         var tg = createTileGrid();
-        var pathfindingGrid = tg.toPathfindingGrid();
+        var pathfindingGrid = createPathfindingGrid(tg);
         assertTrue((pathfindingGrid.grid()[0][0] & PathfindingGrid.EAST) != 0);
     }
 
@@ -21,7 +21,7 @@ class TileGridToPathfindingGridTest {
     void bounds() {
         var tg = createTileGrid();
 
-        var pathfindingGrid = tg.toPathfindingGrid();
+        var pathfindingGrid = createPathfindingGrid(tg);
         assertEquals(0, pathfindingGrid.grid()[0][0] & PathfindingGrid.WEST);
     }
 
@@ -31,7 +31,7 @@ class TileGridToPathfindingGridTest {
 
         tg.markTile(0, 0, TileFlags.N_WALL);
 
-        var pathfindingGrid = tg.toPathfindingGrid();
+        var pathfindingGrid = createPathfindingGrid(tg);
 
         assertEquals(0, pathfindingGrid.grid()[0][0] & PathfindingGrid.NORTH);
     }
@@ -42,7 +42,7 @@ class TileGridToPathfindingGridTest {
 
         tg.markTile(0, 1, TileFlags.S_WALL);
 
-        var pathfindingGrid = tg.toPathfindingGrid();
+        var pathfindingGrid = createPathfindingGrid(tg);
 
         assertEquals(0, pathfindingGrid.grid()[0][0] & PathfindingGrid.NORTH);
     }
@@ -53,7 +53,7 @@ class TileGridToPathfindingGridTest {
 
         tg.markTile(0, 0, TileFlags.NE_WALL);
 
-        var pathfindingGrid = tg.toPathfindingGrid();
+        var pathfindingGrid = createPathfindingGrid(tg);
 
         assertEquals(0, pathfindingGrid.grid()[0][0] & PathfindingGrid.NORTH_EAST);
     }
@@ -64,7 +64,7 @@ class TileGridToPathfindingGridTest {
 
         tg.markTile(1, 1, TileFlags.SW_WALL);
 
-        var pathfindingGrid = tg.toPathfindingGrid();
+        var pathfindingGrid = createPathfindingGrid(tg);
 
         assertEquals(0, pathfindingGrid.grid()[0][0] & PathfindingGrid.NORTH_EAST);
     }
@@ -74,7 +74,7 @@ class TileGridToPathfindingGridTest {
         var tg = createTileGrid();
 
         tg.markTile(0, 0, TileFlags.E_WALL);
-        var pathfindingGrid = tg.toPathfindingGrid();
+        var pathfindingGrid = createPathfindingGrid(tg);
         assertEquals(0, pathfindingGrid.grid()[0][0] & PathfindingGrid.NORTH_EAST);
     }
 
@@ -84,7 +84,7 @@ class TileGridToPathfindingGridTest {
 
         tg.markTile(1, 0, TileFlags.W_WALL);
 
-        var pathfindingGrid = tg.toPathfindingGrid();
+        var pathfindingGrid = createPathfindingGrid(tg);
 
         assertEquals(0, pathfindingGrid.grid()[0][0] & PathfindingGrid.NORTH_EAST);
     }
@@ -95,7 +95,7 @@ class TileGridToPathfindingGridTest {
 
         tg.markObject(1, 0, 1, 1, false);
 
-        var pathfindingGrid = tg.toPathfindingGrid();
+        var pathfindingGrid = createPathfindingGrid(tg);
 
         assertEquals(0, pathfindingGrid.grid()[0][0] & PathfindingGrid.NORTH_EAST);
     }
@@ -106,7 +106,7 @@ class TileGridToPathfindingGridTest {
 
         tg.unmarkTile(0, 1, TileFlags.HAVE_DATA);
 
-        var pathfindingGrid = tg.toPathfindingGrid();
+        var pathfindingGrid = createPathfindingGrid(tg);
 
         assertEquals(0, pathfindingGrid.grid()[0][0] & PathfindingGrid.NORTH);
         assertEquals(0, pathfindingGrid.grid()[0][0] & PathfindingGrid.NORTH_EAST);
@@ -121,5 +121,9 @@ class TileGridToPathfindingGridTest {
         }
 
         return tileGrid;
+    }
+
+    PathfindingGrid createPathfindingGrid(TileGrid tg) {
+        return tg.toPathfindingGrid(new int[tg.getWidth()][tg.getHeight()]);
     }
 }

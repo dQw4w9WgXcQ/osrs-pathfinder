@@ -8,6 +8,10 @@ public record ComponentGrid(int[][][] planes) {
     }
 
     public boolean isBlocked(Position position) {
-        return componentOf(position) < 0;
+        return isBlocked(planes[position.plane()], position.x(), position.y());
+    }
+
+    public static boolean isBlocked(int[][] plane, int x, int y) {
+        return plane[x][y] < 0;
     }
 }

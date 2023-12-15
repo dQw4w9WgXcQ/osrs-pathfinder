@@ -29,7 +29,7 @@ public class PathfindingGrid {
     public static final int SOUTH_WEST = 1 << 7;
 
     @Getter
-    private final int[][] grid;
+    private final short[][] grid;
 
     //bfs
     public List<Point> findPath(Point from, Point to) {

@@ -14,7 +14,7 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 @Slf4j
-public record GridStore(int[][][] grid) {
+public record GridStore(short[][][] grid) {
     public void save(File dir) throws IOException {
         log.info("saving grid to {}", dir);
 
@@ -35,13 +35,13 @@ public record GridStore(int[][][] grid) {
     public static GridStore load(InputStream is) throws IOException {
         log.info("loading grid from {}", is);
 
-        int[][][] grid;
+        short[][][] grid;
         try (is;
              var zis = new ZipInputStream(is)) {
             log.info("reading grid.dat");
             zis.getNextEntry();
             try (var ois = new ObjectInputStream(zis)) {
-                grid = (int[][][]) ois.readObject();
+                grid = (short[][][]) ois.readObject();
             }
         }
 
