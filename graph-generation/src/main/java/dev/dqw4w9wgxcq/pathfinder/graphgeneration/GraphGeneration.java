@@ -141,7 +141,7 @@ public class GraphGeneration {
             return;
         }
 
-        var time = (System.currentTimeMillis() - startTime) / 1000.0;
+        var time = (System.currentTimeMillis() - startTime) / 1000;
         log.info("finished in {}s", time);
     }
 }

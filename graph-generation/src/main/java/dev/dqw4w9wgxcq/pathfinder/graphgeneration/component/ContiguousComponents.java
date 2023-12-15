@@ -1,7 +1,9 @@
 package dev.dqw4w9wgxcq.pathfinder.graphgeneration.component;
 
+import com.google.common.base.Preconditions;
 import dev.dqw4w9wgxcq.pathfinder.commons.TileFlags;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Point;
+import dev.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Util;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileGrid;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,16 +36,17 @@ public record ContiguousComponents(int[][][] planes, List<Integer> sizes) {
             }
         }
 
+        //mark known invalid regions
+        //https://i.imgur.com/LfKa5hz.png
+        var X = 18;
+        var Y = 39;
+        for (var z = 1; z < gridPlanes.length; z++) {
+            floodfill(planes[z], gridPlanes[z], X * Util.REGION_SIZE, Y * Util.REGION_SIZE, -2);
+        }
+
         var id = 0;
-        var invalidId = -2;
         for (var z = 0; z < gridPlanes.length; z++) {
             var grid = gridPlanes[z];
-
-            //purge unreachable area in planes >0
-//            if (z != 0) {
-//                var unreachableSize = floodfill(planes[z], grid, 3200, 3200, invalidId--);
-//                log.info("unreachable area plane:{} size:{}", z, unreachableSize);
-//            }
 
             for (var x = 0; x < grid.getWidth(); x++) {
                 for (var y = 0; y < grid.getHeight(); y++) {
@@ -70,6 +73,11 @@ public record ContiguousComponents(int[][][] planes, List<Integer> sizes) {
             }
         }
 
+        //mark invalid regions back to -1
+        for (var z = 1; z < gridPlanes.length; z++) {
+            floodfill(planes[z], gridPlanes[z], X * Util.REGION_SIZE, Y * Util.REGION_SIZE, -1);
+        }
+
         var finishTime = System.currentTimeMillis();
         log.info("Found {} components smallest:{} largest:{} average:{} total:{} in {}ms",
                 sizes.size(),
@@ -83,8 +91,11 @@ public record ContiguousComponents(int[][][] planes, List<Integer> sizes) {
 
     //in place algo cuts mem usage by ~4gb
     private static int floodfill(int[][] plane, TileGrid grid, int startX, int startY, int id) {
-        var frontier = new ArrayDeque<Point>();
+        var oldId = plane[startX][startY];
+        Preconditions.checkState(oldId != id, "oldId{} == id{}", oldId, id);
+
         plane[startX][startY] = id;
+        var frontier = new ArrayDeque<Point>();
         frontier.add(new Point(startX, startY));
         var size = 1;
         //dfs
@@ -103,7 +114,7 @@ public record ContiguousComponents(int[][][] planes, List<Integer> sizes) {
                     if (grid.canTravelInDirection(edge.x(), edge.y(), dx, dy)) {
                         var x = edge.x() + dx;
                         var y = edge.y() + dy;
-                        if (plane[x][y] == -1) {
+                        if (plane[x][y] == oldId) {
                             plane[x][y] = id;
                             frontier.push(new Point(x, y));
                             size++;
