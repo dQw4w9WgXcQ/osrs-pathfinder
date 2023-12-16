@@ -276,7 +276,7 @@ public class TileGrid {
     }
 
     public PathfindingGrid toPathfindingGrid(int[][] componentIds) {
-        var grid = new short[width][height];
+        var grid = new byte[width][height];
 
         for (int x = 0; x < grid.length; x++) {
             for (int y = 0; y < grid[0].length; y++) {

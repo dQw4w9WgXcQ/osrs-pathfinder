@@ -11,7 +11,7 @@ public record ComponentGrid(int[][][] planes) {
         return isBlocked(planes[position.plane()], position.x(), position.y());
     }
 
-    public static boolean isBlocked(int[][] plane, int x, int y) {
-        return plane[x][y] < 0;
+    public static boolean isBlocked(int[][] grid, int x, int y) {
+        return grid[x][y] < 0;
     }
 }

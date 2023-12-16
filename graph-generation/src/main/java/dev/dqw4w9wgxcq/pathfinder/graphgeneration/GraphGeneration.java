@@ -100,7 +100,6 @@ public class GraphGeneration {
         var tileWorld = TileWorld.create(cacheData, objectLocations);
         var contiguousComponents = ContiguousComponents.create(tileWorld.getPlanes());
         var componentGrid = new ComponentGrid(contiguousComponents.planes());
-        var tilePathfinder = tileWorld.toPathfinder(contiguousComponents.planes());
 
         if (cmd.hasOption(leafletOpt)) {
             try {
@@ -129,6 +128,7 @@ public class GraphGeneration {
             return;
         }
 
+        var tilePathfinder = tileWorld.toPathfinder(contiguousComponents.planes());
         var gridStore = new GridStore(tilePathfinder.grid());
         try {
             gridStore.save(outDir);

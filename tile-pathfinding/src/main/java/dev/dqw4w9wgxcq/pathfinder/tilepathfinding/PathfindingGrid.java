@@ -19,17 +19,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Accessors(fluent = true)
 public class PathfindingGrid {
-    public static final int NORTH = 1;
-    public static final int SOUTH = 1 << 1;
-    public static final int EAST = 1 << 2;
-    public static final int WEST = 1 << 3;
-    public static final int NORTH_EAST = 1 << 4;
-    public static final int NORTH_WEST = 1 << 5;
-    public static final int SOUTH_EAST = 1 << 6;
-    public static final int SOUTH_WEST = 1 << 7;
+    public static final byte NORTH = 1;
+    public static final byte SOUTH = 1 << 1;
+    public static final byte EAST = 1 << 2;
+    public static final byte WEST = 1 << 3;
+    public static final byte NORTH_EAST = 1 << 4;
+    public static final byte NORTH_WEST = 1 << 5;
+    public static final byte SOUTH_EAST = 1 << 6;
+    public static final byte SOUTH_WEST = (byte) (1 << 7);
 
     @Getter
-    private final short[][] grid;
+    private final byte[][] grid;
 
     //bfs
     public List<Point> findPath(Point from, Point to) {

@@ -14,7 +14,7 @@ import java.util.Set;
 public class TilePathfinderForGraphGen implements TilePathfinder {
     private final PathfindingGrid[] planes;
 
-    public static TilePathfinderForGraphGen create(short[][][] planes) {
+    public static TilePathfinderForGraphGen create(byte[][][] planes) {
         return new TilePathfinderForGraphGen(Arrays.stream(planes).map(PathfindingGrid::new).toArray(PathfindingGrid[]::new));
     }
 
@@ -33,8 +33,8 @@ public class TilePathfinderForGraphGen implements TilePathfinder {
         return planes[from.plane()].distances(from.toPoint(), tos);
     }
 
-    public short[][][] grid() {
-        var out = new short[planes.length][][];
+    public byte[][][] grid() {
+        var out = new byte[planes.length][][];
         for (var i = 0; i < planes.length; i++) {
             out[i] = planes[i].grid();
         }

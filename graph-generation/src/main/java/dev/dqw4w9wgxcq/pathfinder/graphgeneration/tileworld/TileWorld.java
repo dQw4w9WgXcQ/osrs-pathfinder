@@ -67,9 +67,7 @@ public class TileWorld {
         var list = new ArrayList<PathfindingGrid>();
         var tileGrids = this.planes;
         for (var i = 0; i < tileGrids.length; i++) {
-            var it = tileGrids[i];
-            var pathfindingGrid = it.toPathfindingGrid(componentIds[i]);
-            list.add(pathfindingGrid);
+            list.add(tileGrids[i].toPathfindingGrid(componentIds[i]));
         }
         var planes = list.toArray(new PathfindingGrid[0]);
         var time = (System.currentTimeMillis() - start) / 1000;
