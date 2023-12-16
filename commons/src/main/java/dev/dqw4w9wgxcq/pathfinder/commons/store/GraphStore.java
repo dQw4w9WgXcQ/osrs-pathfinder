@@ -9,9 +9,9 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -47,8 +47,8 @@ public record GraphStore(int[][][] componentGrid, ComponentGraph componentGraph)
     }
 
     @SneakyThrows(ClassNotFoundException.class)
-    public static GraphStore load(InputStream is, Links links) throws IOException {
-        log.info("loading graph from {}", is);
+    public static GraphStore load(File file, Links links) throws IOException {
+        log.info("loading graph from {}", file);
 
         int[][][] componentGrid;
         ComponentGraph componentGraph;
@@ -57,8 +57,7 @@ public record GraphStore(int[][][] componentGrid, ComponentGraph componentGraph)
                 .registerTypeHierarchyAdapter(Link.class, new LinkTypeAdapter(links))
                 .create();
 
-        try (is;
-             var zis = new ZipInputStream(is)) {
+        try (var zis = new ZipInputStream(new FileInputStream(file))) {
             zis.getNextEntry();
             try (var ois = new ObjectInputStream(zis)) {
                 componentGrid = (int[][][]) ois.readObject();

@@ -5,9 +5,9 @@ import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.Links;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -30,12 +30,11 @@ public record LinkStore(Links links) {
         }
     }
 
-    public static LinkStore load(InputStream is) throws IOException {
-        log.info("loading links from {}", is);
+    public static LinkStore load(File file) throws IOException {
+        log.info("loading links from {}", file);
 
         Links links;
-        try (is;
-             var zis = new ZipInputStream(is)) {
+        try (var zis = new ZipInputStream(new FileInputStream(file))) {
             zis.getNextEntry();
             links = GSON.fromJson(new InputStreamReader(zis), Links.class);
         }
