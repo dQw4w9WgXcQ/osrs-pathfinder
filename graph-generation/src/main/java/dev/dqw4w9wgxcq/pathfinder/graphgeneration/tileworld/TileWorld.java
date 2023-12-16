@@ -1,8 +1,8 @@
 package dev.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld;
 
+import dev.dqw4w9wgxcq.pathfinder.commons.Constants;
 import dev.dqw4w9wgxcq.pathfinder.commons.TileFlags;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
-import dev.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Util;
 import dev.dqw4w9wgxcq.pathfinder.tilepathfinding.PathfindingGrid;
 import dev.dqw4w9wgxcq.pathfinder.tilepathfinding.TilePathfinderForGraphGen;
 import lombok.Getter;
@@ -18,18 +18,16 @@ import java.util.Map;
 
 @Slf4j
 public class TileWorld {
-    public static final int PLANES_SIZE = 4;
-
     @Getter
     private final int sizeX, sizeY;
     @Getter
     private final TileGrid[] planes;
 
     TileWorld(int regionSizeX, int regionSizeY) {
-        this.sizeX = (regionSizeX + 1) * Util.REGION_SIZE;
-        this.sizeY = (regionSizeY + 1) * Util.REGION_SIZE;
+        this.sizeX = (regionSizeX + 1) * Constants.REGION_SIZE;
+        this.sizeY = (regionSizeY + 1) * Constants.REGION_SIZE;
 
-        planes = new TileGrid[PLANES_SIZE];
+        planes = new TileGrid[Constants.PLANES_SIZE];
         Arrays.setAll(planes, x -> new TileGrid(sizeX, sizeY));
     }
 
@@ -87,8 +85,8 @@ public class TileWorld {
         var baseY = region.getBaseY();
 
         for (var renderPlane = 0; renderPlane < planes.length; renderPlane++) {
-            for (var x = 0; x < Util.REGION_SIZE; x++) {
-                for (var y = 0; y < Util.REGION_SIZE; y++) {
+            for (var x = 0; x < Constants.REGION_SIZE; x++) {
+                for (var y = 0; y < Constants.REGION_SIZE; y++) {
                     if ((region.getTileSetting(renderPlane, x, y) & 0x1) == 0x1) {
                         var collisionPlane = renderPlane;
                         if ((region.getTileSetting(1, x, y) & 0x2) == 0x2) {

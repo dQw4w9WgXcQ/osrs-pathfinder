@@ -1,5 +1,6 @@
 package dev.dqw4w9wgxcq.pathfinder.commons.store;
 
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.Link;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.ComponentGraph;
@@ -20,16 +21,17 @@ import java.util.zip.ZipOutputStream;
 
 @Slf4j
 public record GraphStore(int[][][] componentGrid, ComponentGraph componentGraph) {
+    private static final Gson saveGson = new GsonBuilder()
+            .enableComplexMapKeySerialization()
+            .registerTypeHierarchyAdapter(Link.class, new LinkTypeAdapter(null))
+            .create();
+
     public void save(File dir) throws IOException {
         log.info("saving graph to {}", dir);
 
         //noinspection ResultOfMethodCallIgnored
         dir.mkdirs();
 
-        var graphGson = new GsonBuilder()
-                .enableComplexMapKeySerialization()
-                .registerTypeHierarchyAdapter(Link.class, new LinkTypeAdapter(null))
-                .create();
         try (var fos = new FileOutputStream(new File(dir, "graph.zip"));
              var zos = new ZipOutputStream(fos)) {
             log.info("writing componentgrid.dat");
@@ -39,7 +41,7 @@ public record GraphStore(int[][][] componentGrid, ComponentGraph componentGraph)
 
                 log.info("writing componentgraph.json");
                 zos.putNextEntry(new ZipEntry("componentgraph.json"));
-                zos.write(graphGson.toJson(componentGraph).getBytes());
+                zos.write(saveGson.toJson(componentGraph).getBytes());
             }
         }
     }
@@ -51,7 +53,7 @@ public record GraphStore(int[][][] componentGrid, ComponentGraph componentGraph)
         int[][][] componentGrid;
         ComponentGraph componentGraph;
 
-        var graphGson = new GsonBuilder()
+        var loadGson = new GsonBuilder()
                 .registerTypeHierarchyAdapter(Link.class, new LinkTypeAdapter(links))
                 .create();
 
@@ -62,7 +64,7 @@ public record GraphStore(int[][][] componentGrid, ComponentGraph componentGraph)
                 componentGrid = (int[][][]) ois.readObject();
 
                 zis.getNextEntry();
-                componentGraph = graphGson.fromJson(new InputStreamReader(zis), ComponentGraph.class);
+                componentGraph = loadGson.fromJson(new InputStreamReader(zis), ComponentGraph.class);
             }
         }
 

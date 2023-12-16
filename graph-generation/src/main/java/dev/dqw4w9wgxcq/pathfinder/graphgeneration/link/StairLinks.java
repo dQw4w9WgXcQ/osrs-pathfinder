@@ -1,5 +1,6 @@
 package dev.dqw4w9wgxcq.pathfinder.graphgeneration.link;
 
+import dev.dqw4w9wgxcq.pathfinder.commons.Constants;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Position;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.StairLink;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.ComponentGrid;
@@ -67,7 +68,7 @@ public class StairLinks {
                 destinationPlane--;
             }
 
-            if (destinationPlane < 0 || destinationPlane >= TileWorld.PLANES_SIZE) {
+            if (destinationPlane < 0 || destinationPlane >= Constants.PLANES_SIZE) {
                 log.debug("stair at {} is out of bounds up:{}", location.getPosition(), up);
                 continue;
             }

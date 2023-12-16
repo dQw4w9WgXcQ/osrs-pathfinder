@@ -1,9 +1,8 @@
 package dev.dqw4w9wgxcq.pathfinder.graphgeneration.leafletimages;
 
 import com.google.common.base.Preconditions;
+import dev.dqw4w9wgxcq.pathfinder.commons.Constants;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.ComponentGrid;
-import dev.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Util;
-import dev.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileWorld;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.cache.MapImageDumper;
 import net.runelite.cache.fs.Store;
@@ -44,12 +43,12 @@ public class LeafletImages {
     public static void write(File outDir, File cacheDir, File xteasJson, ComponentGrid componentGrid) throws IOException {
         log.info("LeafletImages dir:{}", outDir);
 
-        for (var plane = 0; plane < TileWorld.PLANES_SIZE; plane++) {
+        for (var plane = 0; plane < Constants.PLANES_SIZE; plane++) {
             var componentsImage = generateFullComponentsImage(false, plane, componentGrid);
             writeLeafletImages(plane, new File(outDir, "component"), componentsImage, 1);
         }
 
-        for (var plane = 0; plane < TileWorld.PLANES_SIZE; plane++) {
+        for (var plane = 0; plane < Constants.PLANES_SIZE; plane++) {
             var blockedImage = generateFullComponentsImage(true, plane, componentGrid);
             writeLeafletImages(plane, new File(outDir, "blocked"), blockedImage, 1);
         }
@@ -125,8 +124,8 @@ public class LeafletImages {
         var width = grid.length;
         var height = grid[0].length;
 
-        Preconditions.checkArgument(width % Util.REGION_SIZE == 0, "grid width must be multiple of {} (region size), found {}", Util.REGION_SIZE, width);
-        Preconditions.checkArgument(height % Util.REGION_SIZE == 0, "grid height must be multiple of {} (region size), found {}", Util.REGION_SIZE, height);
+        Preconditions.checkArgument(width % Constants.REGION_SIZE == 0, "grid width must be multiple of {} (region size), found {}", Constants.REGION_SIZE, width);
+        Preconditions.checkArgument(height % Constants.REGION_SIZE == 0, "grid height must be multiple of {} (region size), found {}", Constants.REGION_SIZE, height);
 
         var img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 

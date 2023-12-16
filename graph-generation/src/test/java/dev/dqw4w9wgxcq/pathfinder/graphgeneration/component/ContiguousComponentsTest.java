@@ -1,8 +1,8 @@
 package dev.dqw4w9wgxcq.pathfinder.graphgeneration.component;
 
+import dev.dqw4w9wgxcq.pathfinder.commons.Constants;
 import dev.dqw4w9wgxcq.pathfinder.commons.TileFlags;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.GridTestUtil;
-import dev.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Util;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileGrid;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -80,7 +80,7 @@ public class ContiguousComponentsTest {
 
     @Test
     void noData() {
-        var grid = new TileGrid(Util.REGION_SIZE, Util.REGION_SIZE);
+        var grid = new TileGrid(Constants.REGION_SIZE, Constants.REGION_SIZE);
         grid.markObject(0, 1, 1, 1, true);
         grid.markObject(1, 0, 1, 1, false);
         grid.markObject(1, 1, 1, 1, true);
@@ -94,7 +94,7 @@ public class ContiguousComponentsTest {
     }
 
     private TileGrid createGrid() {
-        var grid = new TileGrid(Util.REGION_SIZE, Util.REGION_SIZE);
+        var grid = new TileGrid(Constants.REGION_SIZE, Constants.REGION_SIZE);
         grid.markRegionHaveData(0, 0);
         return grid;
     }

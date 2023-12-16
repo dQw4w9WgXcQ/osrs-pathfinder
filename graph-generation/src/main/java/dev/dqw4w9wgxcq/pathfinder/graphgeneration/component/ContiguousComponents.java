@@ -1,9 +1,9 @@
 package dev.dqw4w9wgxcq.pathfinder.graphgeneration.component;
 
 import com.google.common.base.Preconditions;
+import dev.dqw4w9wgxcq.pathfinder.commons.Constants;
 import dev.dqw4w9wgxcq.pathfinder.commons.TileFlags;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Point;
-import dev.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Util;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileGrid;
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,7 +41,7 @@ public record ContiguousComponents(int[][][] planes, List<Integer> sizes) {
         var X = 18;
         var Y = 39;
         for (var z = 1; z < gridPlanes.length; z++) {
-            floodfill(planes[z], gridPlanes[z], X * Util.REGION_SIZE, Y * Util.REGION_SIZE, -2);
+            floodfill(planes[z], gridPlanes[z], X * Constants.REGION_SIZE, Y * Constants.REGION_SIZE, -2);
         }
 
         var id = 0;
@@ -75,7 +75,7 @@ public record ContiguousComponents(int[][][] planes, List<Integer> sizes) {
 
         //mark invalid regions back to -1
         for (var z = 1; z < gridPlanes.length; z++) {
-            floodfill(planes[z], gridPlanes[z], X * Util.REGION_SIZE, Y * Util.REGION_SIZE, -1);
+            floodfill(planes[z], gridPlanes[z], X * Constants.REGION_SIZE, Y * Constants.REGION_SIZE, -1);
         }
 
         var finishTime = System.currentTimeMillis();

@@ -10,8 +10,6 @@ import java.util.List;
 
 @Slf4j
 public class Util {
-    public static final int REGION_SIZE = 64;
-
     public static int packRegionId(int x, int y) {
         return x << 8 | y;
     }

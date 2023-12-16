@@ -1,9 +1,9 @@
 package dev.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld;
 
 import com.google.common.base.Preconditions;
+import dev.dqw4w9wgxcq.pathfinder.commons.Constants;
 import dev.dqw4w9wgxcq.pathfinder.commons.TileFlags;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.ComponentGrid;
-import dev.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Util;
 import dev.dqw4w9wgxcq.pathfinder.tilepathfinding.PathfindingGrid;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -64,10 +64,10 @@ public class TileGrid {
 
     @VisibleForTesting
     public void markRegionHaveData(int regionX, int regionY) {
-        var baseX = regionX * Util.REGION_SIZE;
-        var baseY = regionY * Util.REGION_SIZE;
-        for (var x = baseX; x < baseX + Util.REGION_SIZE; x++) {
-            for (var y = baseY; y < baseY + Util.REGION_SIZE; y++) {
+        var baseX = regionX * Constants.REGION_SIZE;
+        var baseY = regionY * Constants.REGION_SIZE;
+        for (var x = baseX; x < baseX + Constants.REGION_SIZE; x++) {
+            for (var y = baseY; y < baseY + Constants.REGION_SIZE; y++) {
                 markTile(x, y, TileFlags.HAVE_DATA);
             }
         }
