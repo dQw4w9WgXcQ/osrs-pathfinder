@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
-public enum Wall {
+public enum WallDirection {
     N(TileFlags.N_WALL, 0, 1),
     E(TileFlags.E_WALL, 1, 0),
     S(TileFlags.S_WALL, 0, -1),
@@ -21,7 +21,7 @@ public enum Wall {
         return TileFlags.getOpposite(flag);
     }
 
-    public static Wall fromDXY(int dx, int dy) {
+    public static WallDirection fromDXY(int dx, int dy) {
         if (dx == 0) {
             if (dy == 1) {
                 return N;

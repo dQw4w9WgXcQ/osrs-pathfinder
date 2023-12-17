@@ -5,7 +5,7 @@ import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.DoorLink;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.ComponentGrid;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.commons.Util;
-import dev.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.Wall;
+import dev.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.WallDirection;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.ObjectID;
 import net.runelite.cache.definitions.ObjectDefinition;
@@ -112,14 +112,14 @@ public class DoorLinks {
         return true;
     }
 
-    private static Wall determineDoorDirection(int locationType, int orientation) {
+    private static WallDirection determineDoorDirection(int locationType, int orientation) {
         //noinspection SwitchStatementWithTooFewBranches
         return switch (locationType) {
             case 0 -> switch (orientation) {
-                case 0 -> Wall.W;
-                case 1 -> Wall.N;
-                case 2 -> Wall.E;
-                case 3 -> Wall.S;
+                case 0 -> WallDirection.W;
+                case 1 -> WallDirection.N;
+                case 2 -> WallDirection.E;
+                case 3 -> WallDirection.S;
                 default ->
                         throw new IllegalArgumentException("cant handle locationType:" + locationType + " orientation:" + orientation);
             };
