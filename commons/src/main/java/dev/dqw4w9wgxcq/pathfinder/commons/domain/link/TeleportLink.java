@@ -12,8 +12,8 @@ public record TeleportLink(
         List<Requirement> requirements
 ) implements Link {
     @Override
-    public LinkType type() {
-        return LinkType.TELEPORT;
+    public Type type() {
+        return Type.TELEPORT;
     }
 
     @Override

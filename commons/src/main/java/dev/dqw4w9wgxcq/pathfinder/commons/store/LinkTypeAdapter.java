@@ -5,7 +5,6 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.Link;
-import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.LinkType;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.Links;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +39,7 @@ class LinkTypeAdapter extends TypeAdapter<Link> {
 
         reader.beginObject();
         Integer id = null;
-        LinkType type = null;
+        Link.Type type = null;
 
         while (reader.hasNext()) {
             var token = reader.peek();
@@ -49,7 +48,7 @@ class LinkTypeAdapter extends TypeAdapter<Link> {
                 if (entryName.equals("id")) {
                     id = reader.nextInt();
                 } else if (entryName.equals("type")) {
-                    type = LinkType.valueOf(reader.nextString());
+                    type = Link.Type.valueOf(reader.nextString());
                 }
             }
         }

@@ -13,8 +13,8 @@ public record StairLink(
         boolean up
 ) implements Link {
     @Override
-    public LinkType type() {
-        return LinkType.STAIR;
+    public Type type() {
+        return Type.STAIR;
     }
 
     @Override

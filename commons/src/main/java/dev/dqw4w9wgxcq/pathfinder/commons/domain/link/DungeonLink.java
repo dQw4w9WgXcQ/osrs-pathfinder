@@ -13,8 +13,8 @@ public record DungeonLink(
         String action
 ) implements Link {
     @Override
-    public LinkType type() {
-        return LinkType.DUNGEON;
+    public Type type() {
+        return Type.DUNGEON;
     }
 
     @Override

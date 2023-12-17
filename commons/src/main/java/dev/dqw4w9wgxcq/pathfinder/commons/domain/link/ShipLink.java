@@ -7,8 +7,8 @@ import java.util.List;
 
 public record ShipLink(int id, Position origin, Position destination) implements Link {
     @Override
-    public LinkType type() {
-        return LinkType.SHIP;
+    public Type type() {
+        return Type.SHIP;
     }
 
     @Override

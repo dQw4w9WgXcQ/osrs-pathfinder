@@ -6,7 +6,7 @@ import dev.dqw4w9wgxcq.pathfinder.commons.domain.requirement.Requirement;
 import java.util.List;
 
 public sealed interface Link permits DoorLink, DungeonLink, ShipLink, SpecialLink, StairLink, TeleportLink, WildernessDitchLink {
-    LinkType type();
+    Type type();
 
     /**
      * index of the link
@@ -23,4 +23,15 @@ public sealed interface Link permits DoorLink, DungeonLink, ShipLink, SpecialLin
     int cost();
 
     List<Requirement> requirements();
+
+    enum Type {
+        DOOR,
+        STAIR,
+        DUNGEON,
+        SHIP,
+        WILDERNESS_DITCH,
+        SPECIAL,
+        TELEPORT,
+        ;
+    }
 }

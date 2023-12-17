@@ -15,7 +15,7 @@ public record SpecialLink(
         Map<String, Object> extra
 ) implements Link {
     @Override
-    public LinkType type() {
-        return LinkType.SPECIAL;
+    public Type type() {
+        return Type.SPECIAL;
     }
 }

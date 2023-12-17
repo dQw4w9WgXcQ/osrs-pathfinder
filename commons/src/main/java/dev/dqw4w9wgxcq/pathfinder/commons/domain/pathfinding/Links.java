@@ -3,7 +3,6 @@ package dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.DoorLink;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.DungeonLink;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.Link;
-import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.LinkType;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.ShipLink;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.SpecialLink;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.StairLink;
@@ -34,7 +33,7 @@ public record Links(
         return out;
     }
 
-    public Link getLink(LinkType type, int id) {
+    public Link getLink(Link.Type type, int id) {
         var link = switch (type) {
             case DOOR -> doorLinks.get(id);
             case STAIR -> stairLinks.get(id);
