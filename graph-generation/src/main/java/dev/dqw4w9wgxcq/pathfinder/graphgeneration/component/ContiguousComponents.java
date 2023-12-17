@@ -16,7 +16,6 @@ import java.util.List;
  * @param planes A 3d array representing the tile grid.  Each value is the ID of the component that the tile belongs to.  Negative values are invalid (see comments).
  * @param sizes  Only used in tests.  The size (in tiles) of each component.  Component ID corresponds to index.
  */
-//todo purge known invalid components
 @Slf4j
 public record ContiguousComponents(int[][][] planes, List<Integer> sizes) {
     public int count() {
