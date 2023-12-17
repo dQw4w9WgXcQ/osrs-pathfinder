@@ -5,7 +5,9 @@ import dev.dqw4w9wgxcq.pathfinder.commons.domain.requirement.Requirement;
 
 import java.util.List;
 
-public interface Link {
+public sealed interface Link permits DoorLink, DungeonLink, ShipLink, SpecialLink, StairLink, TeleportLink, WildernessDitchLink {
+    LinkType type();
+
     /**
      * index of the link
      */

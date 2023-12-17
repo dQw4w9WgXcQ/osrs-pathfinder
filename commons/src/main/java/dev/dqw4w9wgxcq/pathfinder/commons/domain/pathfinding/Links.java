@@ -7,6 +7,7 @@ import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.LinkType;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.ShipLink;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.SpecialLink;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.StairLink;
+import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.TeleportLink;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.WildernessDitchLink;
 
 import java.util.ArrayList;
@@ -18,7 +19,8 @@ public record Links(
         List<DungeonLink> dungeonLinks,
         List<ShipLink> shipLinks,
         List<WildernessDitchLink> wildernessDitchLinks,
-        List<SpecialLink> specialLinks
+        List<SpecialLink> specialLinks,
+        List<TeleportLink> teleportLinks
 ) {
     public List<Link> all() {
         var out = new ArrayList<Link>();
@@ -28,6 +30,7 @@ public record Links(
         out.addAll(shipLinks);
         out.addAll(wildernessDitchLinks);
         out.addAll(specialLinks);
+        out.addAll(teleportLinks);
         return out;
     }
 
@@ -39,6 +42,7 @@ public record Links(
             case SHIP -> shipLinks.get(id);
             case WILDERNESS_DITCH -> wildernessDitchLinks.get(id);
             case SPECIAL -> specialLinks.get(id);
+            case TELEPORT -> teleportLinks.get(id);
         };
 
         assert link != null;

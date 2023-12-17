@@ -5,25 +5,19 @@ import dev.dqw4w9wgxcq.pathfinder.commons.domain.requirement.Requirement;
 
 import java.util.List;
 
-public record DungeonLink(
+public record TeleportLink(
         int id,
         Position origin,
         Position destination,
-        int objectId,
-        String action
+        List<Requirement> requirements
 ) implements Link {
     @Override
     public LinkType type() {
-        return LinkType.DUNGEON;
+        return LinkType.TELEPORT;
     }
 
     @Override
     public int cost() {
         return 10;
-    }
-
-    @Override
-    public List<Requirement> requirements() {
-        return List.of();
     }
 }

@@ -11,6 +11,11 @@ public record WildernessDitchLink(
         Position destination
 ) implements Link {
     @Override
+    public LinkType type() {
+        return LinkType.WILDERNESS_DITCH;
+    }
+
+    @Override
     public int cost() {
         return 10;
     }

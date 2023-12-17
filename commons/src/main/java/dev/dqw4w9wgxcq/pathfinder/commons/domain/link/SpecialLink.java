@@ -14,4 +14,8 @@ public record SpecialLink(
         List<Requirement> requirements,
         Map<String, Object> extra
 ) implements Link {
+    @Override
+    public LinkType type() {
+        return LinkType.SPECIAL;
+    }
 }

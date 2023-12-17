@@ -21,10 +21,11 @@ public class FindLinks {
         var shipLinks = ShipLinks.find();
         var wildernessDitchLinks = WildernessDitchLinks.find(objectLocations, componentGrid);
         var specialLinks = SpecialLinks.find();
+        var teleportLinks = TeleportLinks.find();
 
         var endTime = System.currentTimeMillis();
         log.info("found links in {}ms", endTime - startTime);
 
-        return new Links(doorLinks, stairLinks, dungeonLinks, shipLinks, wildernessDitchLinks, specialLinks);
+        return new Links(doorLinks, stairLinks, dungeonLinks, shipLinks, wildernessDitchLinks, specialLinks, teleportLinks);
     }
 }

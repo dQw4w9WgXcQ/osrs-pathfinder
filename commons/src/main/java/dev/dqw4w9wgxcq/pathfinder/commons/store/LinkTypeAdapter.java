@@ -28,7 +28,7 @@ class LinkTypeAdapter extends TypeAdapter<Link> {
         writer.name("id");
         writer.value(value.id());
         writer.name("type");
-        writer.value(LinkType.of(value).name());
+        writer.value(value.type().name());
         writer.endObject();
     }
 

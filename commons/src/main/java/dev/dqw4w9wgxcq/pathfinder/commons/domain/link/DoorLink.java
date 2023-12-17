@@ -15,6 +15,11 @@ public record DoorLink(
         int objectId
 ) implements Link {
     @Override
+    public LinkType type() {
+        return LinkType.DOOR;
+    }
+
+    @Override
     public int cost() {
         return 10;
     }

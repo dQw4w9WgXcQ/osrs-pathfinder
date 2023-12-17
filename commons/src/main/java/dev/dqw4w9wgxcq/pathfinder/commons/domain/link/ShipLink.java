@@ -7,6 +7,11 @@ import java.util.List;
 
 public record ShipLink(int id, Position origin, Position destination) implements Link {
     @Override
+    public LinkType type() {
+        return LinkType.SHIP;
+    }
+
+    @Override
     public int cost() {
         return 30;
     }
