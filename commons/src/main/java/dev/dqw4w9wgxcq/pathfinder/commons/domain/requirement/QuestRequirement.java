@@ -5,6 +5,11 @@ import net.runelite.api.Quest;
 
 public record QuestRequirement(Quest quest) implements Requirement {
     @Override
+    public Type type() {
+        return Type.QUEST;
+    }
+
+    @Override
     public boolean test(Agent agent) {
         if (agent.quests() == null) return true;
 

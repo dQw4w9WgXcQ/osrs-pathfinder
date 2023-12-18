@@ -6,6 +6,11 @@ import java.util.HashMap;
 
 public record ItemRequirement(boolean consumes, int id, int amount) implements Requirement {
     @Override
+    public Type type() {
+        return Type.ITEM;
+    }
+
+    @Override
     public boolean test(Agent agent) {
         var items = agent.items();
         if (items == null) return true;

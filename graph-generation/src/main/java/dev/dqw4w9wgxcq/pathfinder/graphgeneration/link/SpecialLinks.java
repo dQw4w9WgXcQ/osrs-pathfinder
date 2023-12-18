@@ -43,7 +43,6 @@ public class SpecialLinks {
                 new Position(3267, 3227, 0),
                 new Position(3268, 3227, 0),
                 10,
-                //todo fix requirement serialization
                 List.of(new ItemRequirement(true, ItemID.COINS_995, 10)),
                 Map.of(
                         OBJECT_ID, ObjectID.GATE_44052,
@@ -58,7 +57,6 @@ public class SpecialLinks {
                 new Position(3440, 9887, 0),
                 new Position(3439, 3485, 0),
                 10,
-                //todo fix requirement serialization
                 List.of(new QuestRequirement(Quest.PRIEST_IN_PERIL)),
                 Map.of(
                         OBJECT_ID, ObjectID.HOLY_BARRIER,

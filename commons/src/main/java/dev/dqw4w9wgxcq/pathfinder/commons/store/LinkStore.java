@@ -1,7 +1,9 @@
 package dev.dqw4w9wgxcq.pathfinder.commons.store;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.Links;
+import dev.dqw4w9wgxcq.pathfinder.commons.domain.requirement.Requirement;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -15,7 +17,9 @@ import java.util.zip.ZipOutputStream;
 
 @Slf4j
 public record LinkStore(Links links) {
-    private static final Gson GSON = new Gson();
+    private static final Gson GSON = new GsonBuilder()
+            .registerTypeHierarchyAdapter(Requirement.class, new RequirementTypeAdapter())
+            .create();
 
     public void save(File dir) throws IOException {
         log.info("saving links to {}", dir);
