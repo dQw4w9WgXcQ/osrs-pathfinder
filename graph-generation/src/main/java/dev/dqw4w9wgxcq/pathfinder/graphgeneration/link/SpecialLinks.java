@@ -2,8 +2,12 @@ package dev.dqw4w9wgxcq.pathfinder.graphgeneration.link;
 
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Position;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.SpecialLink;
+import dev.dqw4w9wgxcq.pathfinder.commons.domain.requirement.ItemRequirement;
+import dev.dqw4w9wgxcq.pathfinder.commons.domain.requirement.QuestRequirement;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.api.ItemID;
 import net.runelite.api.ObjectID;
+import net.runelite.api.Quest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,8 +43,8 @@ public class SpecialLinks {
                 new Position(3267, 3227, 0),
                 new Position(3268, 3227, 0),
                 10,
-//                List.of(new ItemRequirement(ItemID.COINS_995, 10)),
-                List.of(),//todo fix requirement serialization
+                //todo fix requirement serialization
+                List.of(new ItemRequirement(true, ItemID.COINS_995, 10)),
                 Map.of(
                         OBJECT_ID, ObjectID.GATE_44052,
                         ACTION, "Pay-toll(10gp)"
@@ -54,8 +58,8 @@ public class SpecialLinks {
                 new Position(3440, 9887, 0),
                 new Position(3439, 3485, 0),
                 10,
-//                List.of(new QuestRequirement(Quest.PRIEST_IN_PERIL));
-                List.of(),//todo fix requirement serialization
+                //todo fix requirement serialization
+                List.of(new QuestRequirement(Quest.PRIEST_IN_PERIL)),
                 Map.of(
                         OBJECT_ID, ObjectID.HOLY_BARRIER,
                         ACTION, "Pass-through"

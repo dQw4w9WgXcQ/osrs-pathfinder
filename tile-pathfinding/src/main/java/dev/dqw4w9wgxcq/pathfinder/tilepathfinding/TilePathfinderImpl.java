@@ -11,11 +11,11 @@ import java.util.Map;
 import java.util.Set;
 
 @RequiredArgsConstructor
-public class TilePathfinderForGraphGen implements TilePathfinder {
+public class TilePathfinderImpl implements TilePathfinder {
     private final PathfindingGrid[] planes;
 
-    public static TilePathfinderForGraphGen create(byte[][][] planes) {
-        return new TilePathfinderForGraphGen(Arrays.stream(planes).map(PathfindingGrid::new).toArray(PathfindingGrid[]::new));
+    public static TilePathfinderImpl create(byte[][][] planes) {
+        return new TilePathfinderImpl(Arrays.stream(planes).map(PathfindingGrid::new).toArray(PathfindingGrid[]::new));
     }
 
     @Override

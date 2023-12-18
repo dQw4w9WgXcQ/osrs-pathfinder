@@ -1,11 +1,11 @@
 package dev.dqw4w9wgxcq.pathfinder.graphgeneration.component;
 
+import dev.dqw4w9wgxcq.pathfinder.commons.TilePathfinder;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Point;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Position;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.Link;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.ComponentGraph;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.LinkEdge;
-import dev.dqw4w9wgxcq.pathfinder.tilepathfinding.TilePathfinderForGraphGen;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class CreateComponentGraph {
     private static final boolean ESTIMATE_DISTANCES = false;//to speed up graph generation during development
 
-    public static ComponentGraph create(LinkedComponents linkedComponents, TilePathfinderForGraphGen tilePathfinder) {
+    public static ComponentGraph create(LinkedComponents linkedComponents, TilePathfinder tilePathfinder) {
         log.info("Creating component graph, linkedComponents size:{}", linkedComponents.linkedComponents().size());
 
         var graph = new HashMap<Link, List<LinkEdge>>();

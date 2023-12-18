@@ -4,7 +4,7 @@ import dev.dqw4w9wgxcq.pathfinder.commons.Constants;
 import dev.dqw4w9wgxcq.pathfinder.commons.TileFlags;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
 import dev.dqw4w9wgxcq.pathfinder.tilepathfinding.PathfindingGrid;
-import dev.dqw4w9wgxcq.pathfinder.tilepathfinding.TilePathfinderForGraphGen;
+import dev.dqw4w9wgxcq.pathfinder.tilepathfinding.TilePathfinderImpl;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.cache.definitions.ObjectDefinition;
@@ -59,7 +59,7 @@ public class TileWorld {
         return tileWorld;
     }
 
-    public TilePathfinderForGraphGen toPathfinder(int[][][] componentIds) {
+    public TilePathfinderImpl toPathfinder(int[][][] componentIds) {
         log.info("Converting to TilePathfinder");
         var start = System.currentTimeMillis();
         var list = new ArrayList<PathfindingGrid>();
@@ -70,7 +70,7 @@ public class TileWorld {
         var planes = list.toArray(new PathfindingGrid[0]);
         var time = (System.currentTimeMillis() - start) / 1000;
         log.info("TilePathfinder converted in {}s", time);
-        return new TilePathfinderForGraphGen(planes);
+        return new TilePathfinderImpl(planes);
     }
 
     static void markRegionValid(TileGrid[] planes, Region region) {
