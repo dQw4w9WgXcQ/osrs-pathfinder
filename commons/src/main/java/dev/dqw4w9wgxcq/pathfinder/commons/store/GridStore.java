@@ -30,10 +30,11 @@ public record GridStore(byte[][][] grid) {
 
         try (var fos = new FileOutputStream(new File(dir, "grid.zip"));
              var zos = new ZipOutputStream(fos)) {
-            log.info("writing meta.json");
+            log.debug("writing meta.json");
             zos.putNextEntry(new ZipEntry("meta.json"));
             zos.write(GSON.toJson(new Meta(grid[0].length, grid[0][0].length)).getBytes());
 
+            log.debug("writing grid.dat");
             zos.putNextEntry(new ZipEntry("grid.dat"));
             try (var dos = new DataOutputStream(zos)) {
                 for (var plane : grid) {
@@ -51,12 +52,12 @@ public record GridStore(byte[][][] grid) {
         byte[][][] grid;
         try (var is = new FileInputStream(file);
              var zis = new ZipInputStream(is)) {
-            log.info("reading meta.json");
+            log.debug("reading meta.json");
             zis.getNextEntry();
             var meta = GSON.fromJson(new InputStreamReader(zis), Meta.class);
             log.debug("meta: {}", meta);
 
-            log.info("reading grid.dat");
+            log.debug("reading grid.dat");
             zis.getNextEntry();
             try (var dis = new DataInputStream(zis)) {
                 grid = new byte[Constants.PLANES_SIZE][meta.width][meta.height];
