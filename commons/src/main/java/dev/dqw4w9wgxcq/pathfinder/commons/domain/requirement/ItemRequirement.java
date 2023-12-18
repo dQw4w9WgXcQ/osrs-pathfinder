@@ -4,10 +4,9 @@ import dev.dqw4w9wgxcq.pathfinder.commons.domain.Agent;
 
 import java.util.HashMap;
 
-public record ItemRequirement(boolean consumes, int id, int amount) implements Requirement {
-    @Override
-    public Type type() {
-        return Type.ITEM;
+public record ItemRequirement(Type type, boolean consumes, int id, int amount) implements Requirement {
+    public ItemRequirement(boolean consumes, int id, int amount) {
+        this(Type.ITEM, consumes, id, amount);
     }
 
     @Override

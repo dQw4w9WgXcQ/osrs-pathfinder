@@ -14,9 +14,7 @@ public class RequirementTypeAdapter extends TypeAdapter<Requirement> {
 
     @Override
     public void write(JsonWriter out, Requirement value) throws IOException {
-        var jsonTree = GSON.toJsonTree(value).getAsJsonObject();
-        jsonTree.add("type", GSON.toJsonTree(value.type()));
-        GSON.toJson(jsonTree, out);
+        GSON.toJson(value, value.getClass(), out);
     }
 
     @Override

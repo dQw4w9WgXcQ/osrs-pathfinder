@@ -3,10 +3,9 @@ package dev.dqw4w9wgxcq.pathfinder.commons.domain.requirement;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Agent;
 import net.runelite.api.Quest;
 
-public record QuestRequirement(Quest quest) implements Requirement {
-    @Override
-    public Type type() {
-        return Type.QUEST;
+public record QuestRequirement(Type type, Quest quest) implements Requirement {
+    public QuestRequirement(Quest quest) {
+        this(Type.QUEST, quest);
     }
 
     @Override
