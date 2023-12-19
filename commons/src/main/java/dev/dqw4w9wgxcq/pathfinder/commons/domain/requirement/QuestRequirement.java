@@ -9,7 +9,7 @@ public record QuestRequirement(Type type, Quest quest) implements Requirement {
     }
 
     @Override
-    public boolean test(Agent agent) {
+    public boolean check(Agent agent) {
         if (agent.quests() == null) return true;
 
         return agent.quests().contains(quest);

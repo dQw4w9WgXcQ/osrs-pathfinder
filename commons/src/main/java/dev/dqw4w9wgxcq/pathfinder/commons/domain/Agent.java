@@ -12,7 +12,15 @@ import java.util.Set;
 //items/quests null = pass all requirements
 @With
 public record Agent(int magicLevel, @Nullable Map<Integer, Integer> items, @Nullable Set<Quest> quests) {
-    public boolean hasRequirements(List<Requirement> requirements) {
-        return requirements.stream().allMatch(r -> r.test(this));
+    public boolean checkRequirements(List<Requirement> requirements) {
+        return requirements.stream().allMatch(r -> r.check(this));
+    }
+
+    public Agent affect(List<Requirement> requirements) {
+        var agent = this;
+        for (var req : requirements) {
+            agent = req.affectAgent(agent);
+        }
+        return agent;
     }
 }

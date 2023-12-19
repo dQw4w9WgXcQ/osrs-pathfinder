@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 public sealed interface Requirement permits ItemRequirement, QuestRequirement {
     Type type();
 
-    boolean test(Agent agent);
+    boolean check(Agent agent);
 
     default Agent affectAgent(Agent agent) {
         return agent;

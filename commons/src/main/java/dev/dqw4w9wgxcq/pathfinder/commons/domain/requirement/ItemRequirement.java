@@ -10,7 +10,7 @@ public record ItemRequirement(Type type, boolean consumes, int id, int amount) i
     }
 
     @Override
-    public boolean test(Agent agent) {
+    public boolean check(Agent agent) {
         var items = agent.items();
         if (items == null) return true;
 

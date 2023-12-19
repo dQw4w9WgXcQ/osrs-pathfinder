@@ -16,7 +16,6 @@ import java.io.IOException;
  *
  * @param links can be null if only writing.
  */
-@SuppressWarnings("JavadocReference")
 @RequiredArgsConstructor
 class LinkTypeAdapter extends TypeAdapter<Link> {
     private final @Nullable Links links;

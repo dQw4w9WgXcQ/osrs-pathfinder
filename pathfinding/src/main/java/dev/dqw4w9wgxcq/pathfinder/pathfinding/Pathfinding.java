@@ -30,12 +30,12 @@ public class Pathfinding {
     private final TilePathfinder tilePathfinder;
 
     private final ExecutorService asyncExe = Executors.newCachedThreadPool();
-    private final LinkPathfinding linkPathfinding;
+    private final LinkPathfinder linkPathfinder;
 
     public Pathfinding(ComponentGrid componentGrid, ComponentGraph componentGraph, LinkDistances linkDistances, TilePathfinder tilePathfinder) {
         this.componentGrid = componentGrid;
         this.tilePathfinder = tilePathfinder;
-        this.linkPathfinding = new LinkPathfinding(componentGrid, componentGraph, linkDistances, asyncExe);
+        this.linkPathfinder = new LinkPathfinder(componentGrid, componentGraph, linkDistances, asyncExe);
     }
 
     public static Pathfinding create(GraphStore graphStore, TilePathfinder tilePathfinder) {
@@ -55,7 +55,7 @@ public class Pathfinding {
             return new PathfindingResult.Blocked(fixedStart, fixedFinish);
         }
 
-        var linkPath = linkPathfinding.findLinkPath(fixedStart, fixedFinish, agent);
+        var linkPath = linkPathfinder.findLinkPath(fixedStart, fixedFinish, agent);
 
         if (linkPath == null) {
             log.info("no path from {} to {} for agent {}", fixedStart, fixedFinish, agent);

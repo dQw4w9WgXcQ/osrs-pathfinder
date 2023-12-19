@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutorService;
 
 @Slf4j
 @RequiredArgsConstructor
-class LinkPathfinding {
+class LinkPathfinder {
     private final ComponentGrid componentGrid;
     private final ComponentGraph componentGraph;
     private final LinkDistances linkDistances;
@@ -63,7 +63,7 @@ class LinkPathfinding {
 
         log.debug("{} start links", startLinks.size());
         for (var startLink : startLinks) {
-            if (agent.hasRequirements(startLink.requirements())) {
+            if (agent.checkRequirements(startLink.requirements())) {
                 var distance = startDistances.get(startLink.origin().toPoint());
                 queue.add(new Node(startLink, distance, false));
                 linkDistances.put(startLink, distance);
@@ -105,7 +105,7 @@ class LinkPathfinding {
             for (var linkEdge : linkEdges) {
                 var nextLink = linkEdge.link();
 
-                if (!agent.hasRequirements(nextLink.requirements())) {
+                if (!agent.checkRequirements(nextLink.requirements())) {
                     log.debug("requirements not met for link{}", nextLink);
                     continue;
                 }
