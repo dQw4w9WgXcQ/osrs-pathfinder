@@ -7,9 +7,9 @@ import dev.dqw4w9wgxcq.pathfinder.commons.domain.Position;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.Link;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.ComponentGraph;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.ComponentGrid;
-import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathstep.LinkStep;
-import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathstep.PathStep;
-import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathstep.WalkStep;
+import dev.dqw4w9wgxcq.pathfinder.commons.domain.step.LinkStep;
+import dev.dqw4w9wgxcq.pathfinder.commons.domain.step.Step;
+import dev.dqw4w9wgxcq.pathfinder.commons.domain.step.WalkStep;
 import dev.dqw4w9wgxcq.pathfinder.commons.store.GraphStore;
 import dev.dqw4w9wgxcq.pathfinder.pathfinding.tile.LinkDistances;
 import lombok.extern.slf4j.Slf4j;
@@ -70,11 +70,11 @@ public class Pathfinding {
     /**
      * Finds tile paths between links and combines them into a list of path steps.
      */
-    private List<PathStep> toSteps(List<Link> linkPath, Position start, Position finish) {
+    private List<Step> toSteps(List<Link> linkPath, Position start, Position finish) {
         var startTime = System.currentTimeMillis();
 
         var curr = start;
-        var steps = new ArrayList<Supplier<PathStep>>();
+        var steps = new ArrayList<Supplier<Step>>();
         for (var link : linkPath) {
             var pathFuture = findPathAsync(curr.plane(), curr.toPoint(), link.origin().toPoint());
             final var finalCurr = curr;

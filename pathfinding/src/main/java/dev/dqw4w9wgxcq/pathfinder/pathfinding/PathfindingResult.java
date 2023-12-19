@@ -1,7 +1,7 @@
 package dev.dqw4w9wgxcq.pathfinder.pathfinding;
 
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Position;
-import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathstep.PathStep;
+import dev.dqw4w9wgxcq.pathfinder.commons.domain.step.Step;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -11,9 +11,9 @@ public sealed interface PathfindingResult permits PathfindingResult.Blocked, Pat
             Type type,
             Position start,
             Position finish,
-            List<PathStep> steps
+            List<Step> steps
     ) implements PathfindingResult {
-        Success(Position start, Position finish, List<PathStep> steps) {
+        Success(Position start, Position finish, List<Step> steps) {
             this(Type.SUCCESS, start, finish, steps);
         }
     }

@@ -2,6 +2,7 @@ package dev.dqw4w9wgxcq.pathfinder.commons.domain.link;
 
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Position;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.requirement.Requirement;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -13,7 +14,10 @@ public sealed interface Link permits DoorLink, DungeonLink, ShipLink, SpecialLin
      */
     int id();
 
-    Position origin();
+    /**
+     * null if link is a teleport
+     */
+    @Nullable Position origin();
 
     Position destination();
 

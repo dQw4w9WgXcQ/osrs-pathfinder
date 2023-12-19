@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public record SpecialLink(
+        Type type,
         int id,
         Position origin,
         Position destination,
@@ -14,8 +15,7 @@ public record SpecialLink(
         List<Requirement> requirements,
         Map<String, Object> extra
 ) implements Link {
-    @Override
-    public Type type() {
-        return Type.SPECIAL;
+    public SpecialLink(int id, Position origin, Position destination, int cost, List<Requirement> requirements, Map<String, Object> extra) {
+        this(Type.SPECIAL, id, origin, destination, cost, requirements, extra);
     }
 }

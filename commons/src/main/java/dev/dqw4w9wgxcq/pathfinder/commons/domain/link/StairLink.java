@@ -6,15 +6,15 @@ import dev.dqw4w9wgxcq.pathfinder.commons.domain.requirement.Requirement;
 import java.util.List;
 
 public record StairLink(
+        Type type,
         int id,
         Position origin,
         Position destination,
         int objectId,
         boolean up
 ) implements Link {
-    @Override
-    public Type type() {
-        return Type.STAIR;
+    public StairLink(int id, Position origin, Position destination, int objectId, boolean up) {
+        this(Type.STAIR, id, origin, destination, objectId, up);
     }
 
     @Override

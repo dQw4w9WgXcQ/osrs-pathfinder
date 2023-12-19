@@ -3,7 +3,6 @@ package dev.dqw4w9wgxcq.pathfinder.graphgeneration.link;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Position;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.DungeonLink;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
-import lombok.AllArgsConstructor;
 import net.runelite.api.ObjectID;
 import net.runelite.cache.region.Location;
 
@@ -14,7 +13,6 @@ import java.util.List;
  * searches for dungeon entrances in the normal map and links them to the underground area (100 regions aka 6400 tiles up)
  */
 //todo
-@AllArgsConstructor
 public class DungeonLinks {
     public static List<DungeonLink> find(CacheData cacheData, List<Location> objectLocations) {
         var links = new ArrayList<DungeonLink>();
