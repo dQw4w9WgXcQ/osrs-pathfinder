@@ -1,10 +1,10 @@
 # OSRS Pathfinder
 
-A pathfinding service that helps bots navigate around Old School Runescape. 
+A pathfinding service that helps bots navigate around Old School Runescape.
 
-Uses data from the game cache to generate the pathfinding graph.  
+Uses data from the game cache to generate the pathfinding graph.
 
-Handles doors, stairs, ships, dungeons, teleports, and other links.  
+Handles doors, stairs, ships, dungeons, teleports, and other links.
 
 Demonstrated at [osrspathfinder.github.io](https://osrspathfinder.github.io/).
 
@@ -12,11 +12,14 @@ Demonstrated at [osrspathfinder.github.io](https://osrspathfinder.github.io/).
 
 ### Related repos:
 
-Spring REST service: [github.com/dQw4w9WgXcQ/osrs-pathfinder-service](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-service)
+Spring REST
+service: [github.com/dQw4w9WgXcQ/osrs-pathfinder-service](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-service)
 
-Leaflet visualization website: [github.com/dQw4w9WgXcQ/osrs-pathfinder-site](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-site)
+Leaflet visualization
+website: [github.com/dQw4w9WgXcQ/osrs-pathfinder-site](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-site)
 
-Rust A* tile pathfinder: [github.com/dQw4w9WgXcQ/osrs-pathfinder-tile](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-tile)
+Rust A* tile
+pathfinder: [github.com/dQw4w9WgXcQ/osrs-pathfinder-tile](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-tile)
 
 ## Project Layout
 
@@ -27,29 +30,37 @@ Rust A* tile pathfinder: [github.com/dQw4w9WgXcQ/osrs-pathfinder-tile](https://g
 
 ## The Pathfinding Algorithm
 
-Pathfinding is done in two stages. First, a link path is found using Dijkstra's. Then, tile paths are found between links using A*.  
+Pathfinding is done in two stages. First, a link path is found using Dijkstra's. Then, tile paths are found connecting
+links using A*.
 
-In the image below, cyan lines represent the link path, while blue lines represent the tile
-path.  
+In the image below, cyan lines represent the link path, while blue lines represent the tile path.
 
-Links are doors, stairs, ships, and other shortcuts.  "Components" are islands of contiguous tiles connected by links (shown as colored areas in the image below). During graph generation, Distances
-between links (through components) are calculated to create the weighted Dijkstra's graph. An edge is added from each link to all other links in the same component.
+Links are doors, stairs, ships, and other shortcuts.  "Components" are islands of contiguous tiles connected by links (
+shown as colored areas in the image below). During graph generation, Distances between links (through components) are
+calculated to create the weighted Dijkstra's graph. An edge is added from each link to all other links in the same
+component.
 
-Since A* uses a heuristic, it can only be used on tiles after the link path is found.  Additionally, while A* is fast in the average case, it is very inefficient in
-the worst case. By finding the link path, we can gaurentee a valid path exists and will never hit the worst case.  
-
+This design was chosen for performance, caching, and replication.
 
 ![](https://i.imgur.com/MaD51oN.png)
 
 ### Details
 
+Since A* uses a heuristic, it can only be used on tiles after the link path is found. Additionally, while A* is fast in
+the average case, it's inefficient in the worst case. By finding the link path, we can guarantee a valid path exists and
+will never hit the worst case.
+
+Tile paths are be cached. The tile pathfinder was rewritten in Rust and separated out into its own service, which can be
+replicated independently.
+
 Although distances between links are calculated during graph generation, distances from the start/end tile to all links
-in the start/end component need to be calculated for each request. Finding distances to all links in a component is O(N),
-but N can be in the millions. Still, this isn't a performance issue for valid paths. Additionally, distances take up
+in the start/end component need to be calculated for each request. Finding distances to all links in a component is O(
+N), but N can be in the millions. Still, this isn't a performance issue for valid paths. Additionally, distances take up
 very little space and are cached in process memory without eviction.
 
-The two stage design also allows for better caching and replication. Since finding the tile path is the majority of resource
-usage, the A* pathfinder was rewritten in Rust and separated out into it's own service, which can be replicated independely.  
+The two stage design also allows for better caching and replication. Since finding the tile path is the majority of
+resource usage, the A* pathfinder was rewritten in Rust and separated out into its own service, which can be replicated
+independently.
 
 ## Types of Links
 
