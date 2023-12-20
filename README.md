@@ -50,17 +50,14 @@ Since A* uses a heuristic, it can only be used on tiles after the link path is f
 the average case, it's inefficient in the worst case. By finding the link path, we can guarantee a valid path exists and
 will never hit the worst case.
 
-Tile paths are cached. The tile pathfinder was rewritten in Rust and separated out into its own service, which can be
-replicated independently.
+The majority of resource usage is in finding the tile path. The two stage design allows tile paths to be cached. The
+tile pathfinder was also rewritten in Rust and separated out into its own service, which can be replicated
+independently.
 
 Although distances between links are calculated during graph generation, distances from the start/end tile to all links
 in the start/end component need to be calculated for each request. Finding distances to all links in a component is O(
 N), but N can be in the millions. Still, this isn't a performance issue for valid paths. Additionally, distances take up
 very little space and are cached in process memory without eviction.
-
-The two stage design also allows for better caching and replication. Since finding the tile path is the majority of
-resource usage, the A* pathfinder was rewritten in Rust and separated out into its own service, which can be replicated
-independently.
 
 ## Types of Links
 
