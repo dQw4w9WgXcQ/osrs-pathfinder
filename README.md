@@ -50,7 +50,7 @@ Since A* uses a heuristic, it can only be used on tiles after the link path is f
 the average case, it's inefficient in the worst case. By finding the link path, we can guarantee a valid path exists and
 will never hit the worst case.
 
-Tile paths are be cached. The tile pathfinder was rewritten in Rust and separated out into its own service, which can be
+Tile paths are cached. The tile pathfinder was rewritten in Rust and separated out into its own service, which can be
 replicated independently.
 
 Although distances between links are calculated during graph generation, distances from the start/end tile to all links
