@@ -33,12 +33,12 @@ pathfinder: [github.com/dQw4w9WgXcQ/osrs-pathfinder-tile](https://github.com/dQw
 Pathfinding is done in two stages. First, a link path is found using Dijkstra's. Then, tile paths are found connecting
 links using A*.
 
-In the image below, cyan lines represent the link path, while blue lines represent the tile path.
+In the image below, cyan lines represent the link path, while blue lines represent the tile path. The colored areas
+represent "Components", which are islands of contiguous tiles connected by links.
 
-Links are doors, stairs, ships, and other shortcuts.  "Components" are islands of contiguous tiles connected by links (
-shown as colored areas in the image below). During graph generation, Distances between links (through components) are
-calculated to create the weighted Dijkstra's graph. An edge is added from each link to all other links in the same
-component.
+Links are doors, stairs, ships, and other shortcuts. During graph generation, Distances between links (through
+components) are calculated to create the weighted Dijkstra's graph. An edge is added from each link to all other links
+in the same component.
 
 This design was chosen for performance, caching, and replication.
 
