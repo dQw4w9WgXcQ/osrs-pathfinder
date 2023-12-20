@@ -34,7 +34,7 @@ Pathfinding is done in two stages. First, a link path is found using Dijkstra's.
 links using A*.
 
 In the image below, cyan lines represent the link path, while blue lines represent the tile path. The colored areas
-represent "Components", which are islands of contiguous tiles connected by links.
+represent "components", which are islands of contiguous tiles connected by links.
 
 Links are doors, stairs, ships, and other shortcuts. During graph generation, Distances between links (through
 components) are calculated to create the weighted Dijkstra's graph. An edge is added from each link to all other links
