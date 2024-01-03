@@ -1,6 +1,5 @@
 package dev.dqw4w9wgxcq.pathfinder.commons.store;
 
-import com.google.gson.Gson;
 import dev.dqw4w9wgxcq.pathfinder.commons.Constants;
 import lombok.extern.slf4j.Slf4j;
 
@@ -10,18 +9,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 @Slf4j
 public record GridStore(byte[][][] grid) {
-    private record Meta(int width, int height) {
-    }
-
-    private static final Gson GSON = new Gson();
-
     public void save(File dir) throws IOException {
         log.info("saving grid to {}", dir);
 
@@ -67,31 +60,5 @@ public record GridStore(byte[][][] grid) {
         }
 
         return new GridStore(grid);
-    }
-
-    public static void main(String[] args) throws IOException {
-        var dir = new File(new File(System.getProperty("user.home"), "Desktop"), "asdf");
-
-        var grid = new byte[Constants.PLANES_SIZE][10][15];
-
-        grid[0][0][0] = 1;
-        grid[0][0][1] = 3;
-        grid[0][0][2] = 5;
-        grid[1][3][3] = 7;
-        grid[0][3][4] = (byte) (1 << 7);
-        grid[0][9][14] = 11;
-
-        new GridStore(grid).save(dir);
-
-        var loaded = GridStore.load(new File(dir, "grid.zip"));
-
-        System.out.println(loaded.grid[0][0][0]);
-        System.out.println(loaded.grid[0][0][1]);
-        System.out.println(loaded.grid[0][0][2]);
-        System.out.println(loaded.grid[1][3][3]);
-        System.out.println(loaded.grid[0][3][4]);
-        System.out.println(loaded.grid[0][9][14]);
-
-        System.out.println(Arrays.deepToString(loaded.grid()));
     }
 }
