@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("UnusedAssignment")
 @Slf4j
 public class SpecialLinks {
     private static final String OBJECT_ID = "objectId";

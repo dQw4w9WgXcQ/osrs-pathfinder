@@ -46,6 +46,7 @@ public record GraphStore(int[][][] componentGrid, ComponentGraph componentGraph)
         }
     }
 
+    @SuppressWarnings("unused")
     @SneakyThrows(ClassNotFoundException.class)
     public static GraphStore load(File file, Links links) throws IOException {
         log.info("loading graph from {}", file);

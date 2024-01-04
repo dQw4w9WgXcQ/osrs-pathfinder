@@ -24,6 +24,7 @@ public class TilePathfinderWrapper implements TilePathfinder {
     private final Semaphore pathSemaphore;
     private final Map<PathCacheKey, FutureTask<List<Point>>> pathCache = new HashMap<>();
 
+    @SuppressWarnings("unused")
     public TilePathfinderWrapper(TilePathfinder delegate, int maxConcurrency) {
         this.delegate = delegate;
         pathSemaphore = new Semaphore(maxConcurrency, true);

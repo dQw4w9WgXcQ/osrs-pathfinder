@@ -34,6 +34,7 @@ public record LinkStore(Links links) {
         }
     }
 
+    @SuppressWarnings("unused")
     public static LinkStore load(File file) throws IOException {
         log.info("loading links from {}", file);
 

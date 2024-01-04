@@ -36,6 +36,5 @@ public sealed interface Link permits DoorLink, DungeonLink, ShipLink, SpecialLin
         WILDERNESS_DITCH,
         SPECIAL,
         TELEPORT,
-        ;
     }
 }

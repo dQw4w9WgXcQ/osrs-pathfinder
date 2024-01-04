@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("UnusedAssignment")
 @Slf4j
 public class ShipLinks {
     public static List<ShipLink> find() {

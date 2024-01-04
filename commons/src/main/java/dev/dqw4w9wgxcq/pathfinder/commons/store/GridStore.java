@@ -38,6 +38,7 @@ public record GridStore(byte[][][] grid) {
         }
     }
 
+    @SuppressWarnings("unused")
     public static GridStore load(File file) throws IOException {
         log.info("loading grid from {}", file);
 

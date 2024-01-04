@@ -13,6 +13,7 @@ import java.util.List;
  * searches for dungeon entrances in the normal map and links them to the underground area (100 regions aka 6400 tiles up)
  */
 //todo
+@SuppressWarnings("UnusedAssignment")
 public class DungeonLinks {
     public static List<DungeonLink> find(CacheData cacheData, List<Location> objectLocations) {
         var links = new ArrayList<DungeonLink>();

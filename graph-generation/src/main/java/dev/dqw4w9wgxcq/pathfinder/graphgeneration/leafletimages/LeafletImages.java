@@ -149,7 +149,7 @@ public class LeafletImages {
         return img;
     }
 
-    public static BufferedImage generateFullMapImage(int plane, File cacheDir, File xteasJson) throws IOException {
+    private static BufferedImage generateFullMapImage(int plane, File cacheDir, File xteasJson) throws IOException {
         var xteaKeyManager = new XteaKeyManager();
         try (var is = new FileInputStream(xteasJson)) {
             xteaKeyManager.loadKeys(is);

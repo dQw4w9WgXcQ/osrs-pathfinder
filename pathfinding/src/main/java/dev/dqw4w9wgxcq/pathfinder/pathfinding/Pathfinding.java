@@ -38,12 +38,14 @@ public class Pathfinding {
         this.linkPathfinder = new LinkPathfinder(componentGrid, componentGraph, linkDistances, asyncExe);
     }
 
+    @SuppressWarnings("unused")
     public static Pathfinding create(GraphStore graphStore, TilePathfinder tilePathfinder) {
         var componentGrid = new ComponentGrid(graphStore.componentGrid());
         var linkDistances = new LinkDistances(tilePathfinder, componentGrid, graphStore.componentGraph());
         return new Pathfinding(componentGrid, graphStore.componentGraph(), linkDistances, tilePathfinder);
     }
 
+    @SuppressWarnings("unused")
     public PathfindingResult findPath(Position start, Position finish, Agent agent) {
         var startFuture = asyncExe.submit(() -> closestIfBlocked(start));
         var finishFuture = asyncExe.submit(() -> closestIfBlocked(finish));

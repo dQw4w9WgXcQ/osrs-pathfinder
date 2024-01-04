@@ -10,6 +10,7 @@ import net.runelite.cache.region.Location;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("UnusedAssignment")
 @Slf4j
 public class WildernessDitchLinks {
     public static final int DITCH_ID = ObjectID.WILDERNESS_DITCH;

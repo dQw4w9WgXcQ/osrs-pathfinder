@@ -67,13 +67,13 @@ public class TileFlags {
         return String.join("", getDescriptions(flags));
     }
 
-    private static String getDescription(int flag) {
-        var name = flagDescs.get(flag);
-        if (name == null) {
-            throw new IllegalArgumentException("not a flag: " + flag + " (" + Integer.toBinaryString(flag) + ")");
-        }
-        return name;
-    }
+//    private static String getDescription(int flag) {
+//        var name = flagDescs.get(flag);
+//        if (name == null) {
+//            throw new IllegalArgumentException("not a flag: " + flag + " (" + Integer.toBinaryString(flag) + ")");
+//        }
+//        return name;
+//    }
 
     private static List<String> getDescriptions(int flags) {
         if (flags == 0) {

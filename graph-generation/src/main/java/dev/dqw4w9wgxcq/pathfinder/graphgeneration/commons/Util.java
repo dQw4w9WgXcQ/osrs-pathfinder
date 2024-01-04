@@ -8,6 +8,7 @@ import net.runelite.api.coords.Direction;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unused")
 @Slf4j
 public class Util {
     public static int packRegionId(int x, int y) {

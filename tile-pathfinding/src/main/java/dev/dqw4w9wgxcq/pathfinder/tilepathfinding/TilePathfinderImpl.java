@@ -14,6 +14,7 @@ import java.util.Set;
 public class TilePathfinderImpl implements TilePathfinder {
     private final PathfindingGrid[] planes;
 
+    @SuppressWarnings("unused")
     public static TilePathfinderImpl create(byte[][][] planes) {
         return new TilePathfinderImpl(Arrays.stream(planes).map(PathfindingGrid::new).toArray(PathfindingGrid[]::new));
     }

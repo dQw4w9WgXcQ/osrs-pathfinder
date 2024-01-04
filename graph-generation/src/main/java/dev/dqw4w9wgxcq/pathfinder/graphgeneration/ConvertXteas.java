@@ -48,6 +48,7 @@ public class ConvertXteas {
         System.out.println("wrote " + map.size() + " keys");
     }
 
+    @SuppressWarnings("unused")
     private record XteaOpenRS2Format(int mapsquare, int[] key) {
     }
 }
