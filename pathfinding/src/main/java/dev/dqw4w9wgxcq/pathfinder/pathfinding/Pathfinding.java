@@ -32,7 +32,11 @@ public class Pathfinding {
     private final ExecutorService asyncExe = Executors.newCachedThreadPool();
     private final LinkPathfinder linkPathfinder;
 
-    public Pathfinding(ComponentGrid componentGrid, ComponentGraph componentGraph, LinkDistances linkDistances, TilePathfinder tilePathfinder) {
+    public Pathfinding(
+            ComponentGrid componentGrid,
+            ComponentGraph componentGraph,
+            LinkDistances linkDistances,
+            TilePathfinder tilePathfinder) {
         this.componentGrid = componentGrid;
         this.tilePathfinder = tilePathfinder;
         this.linkPathfinder = new LinkPathfinder(componentGrid, componentGraph, linkDistances, asyncExe);
@@ -78,7 +82,8 @@ public class Pathfinding {
         var curr = start;
         var steps = new ArrayList<Supplier<Step>>();
         for (var link : linkPath) {
-            var pathFuture = findPathAsync(curr.plane(), curr.toPoint(), link.origin().toPoint());
+            var pathFuture =
+                    findPathAsync(curr.plane(), curr.toPoint(), link.origin().toPoint());
             final var finalCurr = curr;
             steps.add(() -> awaitPath(finalCurr.plane(), pathFuture));
             steps.add(() -> new LinkStep(link));
@@ -137,7 +142,7 @@ public class Pathfinding {
                     }
 
                     if (dy != 0 && dx != 0) {
-                        //no diagonals
+                        // no diagonals
                         continue;
                     }
 
@@ -159,6 +164,6 @@ public class Pathfinding {
             }
         }
 
-        throw new IllegalStateException("No position found");//will never happen unless the graph is invalid
+        throw new IllegalStateException("No position found"); // will never happen unless the graph is invalid
     }
 }

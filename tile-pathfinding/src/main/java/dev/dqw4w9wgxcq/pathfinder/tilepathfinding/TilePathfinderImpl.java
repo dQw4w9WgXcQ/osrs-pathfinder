@@ -16,7 +16,8 @@ public class TilePathfinderImpl implements TilePathfinder {
 
     @SuppressWarnings("unused")
     public static TilePathfinderImpl create(byte[][][] planes) {
-        return new TilePathfinderImpl(Arrays.stream(planes).map(PathfindingGrid::new).toArray(PathfindingGrid[]::new));
+        return new TilePathfinderImpl(
+                Arrays.stream(planes).map(PathfindingGrid::new).toArray(PathfindingGrid[]::new));
     }
 
     @Override

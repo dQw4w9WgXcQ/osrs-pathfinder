@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-//items/quests null = pass all requirements
+// items/quests null = pass all requirements
 @With
 public record Agent(int magicLevel, @Nullable Map<Integer, Integer> items, @Nullable Set<Quest> quests) {
     public boolean checkRequirements(List<Requirement> requirements) {

@@ -16,10 +16,12 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class CreateComponentGraph {
-    private static final boolean ESTIMATE_DISTANCES = false;//to speed up graph generation during development
+    private static final boolean ESTIMATE_DISTANCES = false; // to speed up graph generation during development
 
     public static ComponentGraph create(LinkedComponents linkedComponents, TilePathfinder tilePathfinder) {
-        log.info("Creating component graph, linkedComponents size:{}", linkedComponents.linkedComponents().size());
+        log.info(
+                "Creating component graph, linkedComponents size:{}",
+                linkedComponents.linkedComponents().size());
 
         var graph = new HashMap<Link, List<LinkEdge>>();
 
@@ -40,20 +42,21 @@ public class CreateComponentGraph {
                             component.outboundLinks().stream()
                                     .map(Link::origin)
                                     .map(Position::toPoint)
-                                    .collect(Collectors.toSet())
-                    );
+                                    .collect(Collectors.toSet()));
                 }
 
                 for (var outboundLink : component.outboundLinks()) {
                     if (inboundLink == outboundLink) {
-                        //can happen if the link origin and destination are in the same component
+                        // can happen if the link origin and destination are in the same component
                         skippedCount++;
                         continue;
                     }
 
                     log.debug("Adding edge from {} to {}", inboundLink, outboundLink);
                     var distance = ESTIMATE_DISTANCES
-                            ? chebyshev(inboundLink.destination().toPoint(), outboundLink.origin().toPoint())
+                            ? chebyshev(
+                                    inboundLink.destination().toPoint(),
+                                    outboundLink.origin().toPoint())
                             : distances.get(outboundLink.origin().toPoint());
                     var cost = outboundLink.cost() + distance;
 

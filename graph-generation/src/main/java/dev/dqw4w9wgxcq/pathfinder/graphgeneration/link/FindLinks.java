@@ -11,7 +11,8 @@ import java.util.List;
 
 @Slf4j
 public class FindLinks {
-    public static Links find(CacheData cacheData, List<Location> objectLocations, ComponentGrid componentGrid, TileWorld tileWorld) {
+    public static Links find(
+            CacheData cacheData, List<Location> objectLocations, ComponentGrid componentGrid, TileWorld tileWorld) {
         log.info("finding links");
         var startTime = System.currentTimeMillis();
 
@@ -26,6 +27,7 @@ public class FindLinks {
         var endTime = System.currentTimeMillis();
         log.info("found links in {}ms", endTime - startTime);
 
-        return new Links(doorLinks, stairLinks, dungeonLinks, shipLinks, wildernessDitchLinks, specialLinks, teleportLinks);
+        return new Links(
+                doorLinks, stairLinks, dungeonLinks, shipLinks, wildernessDitchLinks, specialLinks, teleportLinks);
     }
 }

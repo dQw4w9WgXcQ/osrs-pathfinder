@@ -3,7 +3,12 @@ package dev.dqw4w9wgxcq.pathfinder.commons.store;
 import dev.dqw4w9wgxcq.pathfinder.commons.Constants;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -18,7 +23,7 @@ public record GridStore(byte[][][] grid) {
         dir.mkdirs();
 
         try (var fos = new FileOutputStream(new File(dir, "grid.zip"));
-             var zos = new ZipOutputStream(fos)) {
+                var zos = new ZipOutputStream(fos)) {
 
             log.debug("writing grid.dat");
             zos.putNextEntry(new ZipEntry("grid.dat"));
@@ -40,7 +45,7 @@ public record GridStore(byte[][][] grid) {
 
         byte[][][] grid;
         try (var is = new FileInputStream(file);
-             var zis = new ZipInputStream(is)) {
+                var zis = new ZipInputStream(is)) {
             log.debug("reading grid.dat");
             zis.getNextEntry();
             try (var dis = new DataInputStream(zis)) {

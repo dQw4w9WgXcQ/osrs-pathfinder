@@ -27,8 +27,12 @@ public record LinkedComponents(List<LinkedComponent> linkedComponents) {
                         var originLinks = new ArrayList<Link>();
                         var destinationLinks = new ArrayList<Link>();
                         for (var link : links.all()) {
-                            var originId = contiguousComponents.planes()[link.origin().plane()][link.origin().x()][link.origin().y()];
-                            var destinationId = contiguousComponents.planes()[link.destination().plane()][link.destination().x()][link.destination().y()];
+                            var originId = contiguousComponents
+                                    .planes()[link.origin().plane()][
+                                    link.origin().x()][link.origin().y()];
+                            var destinationId = contiguousComponents
+                                    .planes()[link.destination().plane()][
+                                    link.destination().x()][link.destination().y()];
 
                             if (originId == id) {
                                 originLinks.add(link);

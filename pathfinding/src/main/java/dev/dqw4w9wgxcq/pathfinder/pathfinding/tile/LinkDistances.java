@@ -19,8 +19,7 @@ public class LinkDistances {
     private final ComponentGrid componentGrid;
     private final ComponentGraph componentGraph;
 
-    private record CacheKey(Position position, boolean isOutbound) {
-    }
+    private record CacheKey(Position position, boolean isOutbound) {}
 
     private final Map<CacheKey, Map<Point, Integer>> cache = new ConcurrentHashMap<>();
 
@@ -38,7 +37,10 @@ public class LinkDistances {
     private Map<Point, Integer> internalFindDistances(Position position, boolean isOutbound) {
         var links = componentGraph.linksOfComponent(componentGrid.componentOf(position), isOutbound);
         if (links.isEmpty()) {
-            log.debug("no links found in component {} {}", componentGrid.componentOf(position), isOutbound ? "outbound" : "inbound");
+            log.debug(
+                    "no links found in component {} {}",
+                    componentGrid.componentOf(position),
+                    isOutbound ? "outbound" : "inbound");
             return Map.of();
         }
 

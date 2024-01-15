@@ -14,6 +14,7 @@ public enum WallDirection {
 
     @Getter
     private final int flag;
+
     @Getter
     private final int dx, dy;
 

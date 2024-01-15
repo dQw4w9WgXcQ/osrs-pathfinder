@@ -62,9 +62,9 @@ public class Util {
         return adjacent;
     }
 
-    //https://discord.com/channels/167513997694861313/167513997694861313/1051576900188909619
+    // https://discord.com/channels/167513997694861313/167513997694861313/1051576900188909619
     public static Direction getInteractDirection(int blockingMask) {
-        if (blockingMask > 0) {//idk if this is necessary
+        if (blockingMask > 0) { // idk if this is necessary
             if ((blockingMask & 0x8) == 0) {
                 return Direction.WEST;
             }

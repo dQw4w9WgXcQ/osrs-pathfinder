@@ -40,7 +40,7 @@ public class TileGridTest {
 
         log.debug("\n" + GridTestUtil.stringify(grid));
 
-        //diagonal movement disabled temporarily
+        // diagonal movement disabled temporarily
         assertFalse(grid.canTravelInDirection(X, Y, 1, 1));
         assertFalse(grid.canTravelInDirection(X + 1, Y + 1, -1, -1));
         assertTrue(grid.canTravelInDirection(X, Y, 1, 0));

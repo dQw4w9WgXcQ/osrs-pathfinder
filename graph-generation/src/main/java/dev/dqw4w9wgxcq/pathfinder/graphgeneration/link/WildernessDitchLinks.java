@@ -57,10 +57,12 @@ public class WildernessDitchLinks {
             links.add(new WildernessDitchLink(id++, south, north));
         }
 
-        //add the ditch near black knight's fortress https://i.imgur.com/dXqkXtq.png
-        var blackKnightsFortressDitch = new WildernessDitchLink(id++, new Position(2995, 3532, 0), new Position(2998, 3532, 0));
+        // add the ditch near black knight's fortress https://i.imgur.com/dXqkXtq.png
+        var blackKnightsFortressDitch =
+                new WildernessDitchLink(id++, new Position(2995, 3532, 0), new Position(2998, 3532, 0));
         links.add(blackKnightsFortressDitch);
-        links.add(new WildernessDitchLink(id++, blackKnightsFortressDitch.destination(), blackKnightsFortressDitch.origin()));
+        links.add(new WildernessDitchLink(
+                id++, blackKnightsFortressDitch.destination(), blackKnightsFortressDitch.origin()));
 
         return links;
     }

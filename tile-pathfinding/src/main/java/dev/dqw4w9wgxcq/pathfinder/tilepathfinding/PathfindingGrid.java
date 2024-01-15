@@ -31,7 +31,7 @@ public class PathfindingGrid {
     @Getter
     private final byte[][] grid;
 
-    //bfs
+    // bfs
     public List<Point> findPath(Point from, Point to) {
         if (from.equals(to)) {
             return List.of(to);

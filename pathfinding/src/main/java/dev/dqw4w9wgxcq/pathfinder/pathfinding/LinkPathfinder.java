@@ -29,9 +29,9 @@ class LinkPathfinder {
     /**
      * Dijkstra-like algorithm.  Edges to the end component are simulated to avoid modifying the graph.  (see comment below)
      */
-    @Nullable List<Link> findLinkPath(Position start, Position finish, Agent agent) {
-        record Node(Link link, int distance, boolean isEnd) {
-        }
+    @Nullable
+    List<Link> findLinkPath(Position start, Position finish, Agent agent) {
+        record Node(Link link, int distance, boolean isEnd) {}
 
         log.debug("link path from {} to {} for agent {}", start, finish, agent);
 
@@ -89,11 +89,15 @@ class LinkPathfinder {
                 return path;
             }
 
-            //simulate end component edges
+            // simulate end component edges
             if (componentGrid.componentOf(curr.link().destination()) == endComponent) {
                 log.debug("adding end link {}", curr);
-                queue.add(new Node(curr.link(), curr.distance() + endDistances.get(curr.link().destination().toPoint()), true));
-                //don't need linkDistances because finding an end node terminates the search
+                queue.add(new Node(
+                        curr.link(),
+                        curr.distance()
+                                + endDistances.get(curr.link().destination().toPoint()),
+                        true));
+                // don't need linkDistances because finding an end node terminates the search
             }
 
             var linkEdges = componentGraph.graph().get(curr.link());

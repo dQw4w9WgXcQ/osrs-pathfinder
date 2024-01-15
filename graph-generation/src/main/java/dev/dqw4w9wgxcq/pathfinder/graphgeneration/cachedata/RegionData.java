@@ -15,13 +15,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-//todo need to handle runelite returns empty locations list if no xteas for region
+// todo need to handle runelite returns empty locations list if no xteas for region
 @Slf4j
 public record RegionData(Collection<Region> regions, int highestRegionX, int highestRegionY) {
-    static RegionData load(Store store, XteaKeyManager xteaKeyManager) throws IOException, JsonIOException, JsonSyntaxException {
+    static RegionData load(Store store, XteaKeyManager xteaKeyManager)
+            throws IOException, JsonIOException, JsonSyntaxException {
         var regionLoader = new RegionLoader(store, xteaKeyManager);
 
-        regionLoader.loadRegions();//throws JsonIOException, JsonSyntaxException
+        regionLoader.loadRegions(); // throws JsonIOException, JsonSyntaxException
 
         var regions = regionLoader.getRegions();
 
@@ -29,13 +30,13 @@ public record RegionData(Collection<Region> regions, int highestRegionX, int hig
         var highestRegionX = regionLoader.getHighestX().getRegionX();
         var highestRegionY = regionLoader.getHighestY().getRegionY();
 
-        log.info("loaded {} regions, highestRegionX:{} highestRegionY:{}", regions.size(), highestRegionX, highestRegionY);
-
-        return new RegionData(
-                regions,
+        log.info(
+                "loaded {} regions, highestRegionX:{} highestRegionY:{}",
+                regions.size(),
                 highestRegionX,
-                highestRegionY
-        );
+                highestRegionY);
+
+        return new RegionData(regions, highestRegionX, highestRegionY);
     }
 
     /**
@@ -48,7 +49,9 @@ public record RegionData(Collection<Region> regions, int highestRegionX, int hig
             for (var location : region.getLocations()) {
                 var position = location.getPosition();
                 var z = position.getZ();
-                if ((region.getTileSetting(1, position.getX() - region.getBaseX(), position.getY() - region.getBaseY()) & 0x2) == 0x2) {
+                var tileSetting = region.getTileSetting(
+                        1, position.getX() - region.getBaseX(), position.getY() - region.getBaseY());
+                if ((tileSetting & 0x2) == 0x2) {
                     log.debug("location is 0x2: {}", location);
                     z--;
                 }
@@ -57,8 +60,7 @@ public record RegionData(Collection<Region> regions, int highestRegionX, int hig
                         location.getId(),
                         location.getType(),
                         location.getOrientation(),
-                        new Position(position.getX(), position.getY(), z)
-                );
+                        new Position(position.getX(), position.getY(), z));
 
                 if (z < 0) {
                     log.debug("0x2 location is below 0: {}", location);

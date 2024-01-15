@@ -13,9 +13,15 @@ public record SpecialLink(
         Position destination,
         int cost,
         List<Requirement> requirements,
-        Map<String, Object> extra
-) implements Link {
-    public SpecialLink(int id, Position origin, Position destination, int cost, List<Requirement> requirements, Map<String, Object> extra) {
+        Map<String, Object> extra)
+        implements Link {
+    public SpecialLink(
+            int id,
+            Position origin,
+            Position destination,
+            int cost,
+            List<Requirement> requirements,
+            Map<String, Object> extra) {
         this(Type.SPECIAL, id, origin, destination, cost, requirements, extra);
     }
 }

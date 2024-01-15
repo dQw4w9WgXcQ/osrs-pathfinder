@@ -13,7 +13,7 @@ public class GridTestUtil {
     }
 
     private static String stringify(String[][] planes) {
-        //the world is described as from bottom left not top left
+        // the world is described as from bottom left not top left
         var sb = new StringBuilder();
         for (var y = planes[0].length - 1; y >= 0; y--) {
             for (var strings : planes) {
@@ -24,7 +24,7 @@ public class GridTestUtil {
         return sb.toString();
     }
 
-    //if an int is -1, will be replaced with "-"
+    // if an int is -1, will be replaced with "-"
     private static String[][] toStrings(int[][] planes) {
         var strings = new String[planes.length][planes[0].length];
         for (var x = 0; x < planes.length; x++) {

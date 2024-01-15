@@ -17,7 +17,7 @@ public record ObjectData(Map<Integer, ObjectDefinition> definitions) {
 
         log.info("loaded {} object definitions", objectManager.getObjects().size());
 
-        //cant access the internal map, so have to reconstruct it
+        // cant access the internal map, so have to reconstruct it
         var definitionsCol = objectManager.getObjects();
         var definitions = new HashMap<Integer, ObjectDefinition>(definitionsCol.size());
         for (var definition : definitionsCol) {

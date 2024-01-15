@@ -31,11 +31,7 @@ public class SpecialLinks {
                 new Position(2515, 3161, 0),
                 10,
                 List.of(),
-                Map.of(
-                        OBJECT_ID, ObjectID.LOOSE_RAILING_2186,
-                        ACTION, "Squeeze-through"
-                )
-        );
+                Map.of(OBJECT_ID, ObjectID.LOOSE_RAILING_2186, ACTION, "Squeeze-through"));
         links.add(treeGnomeVillageLooseRailing);
         links.add(bidirection(id++, treeGnomeVillageLooseRailing));
 
@@ -45,11 +41,7 @@ public class SpecialLinks {
                 new Position(3268, 3227, 0),
                 10,
                 List.of(new ItemRequirement(true, ItemID.COINS_995, 10)),
-                Map.of(
-                        OBJECT_ID, ObjectID.GATE_44052,
-                        ACTION, "Pay-toll(10gp)"
-                )
-        );
+                Map.of(OBJECT_ID, ObjectID.GATE_44052, ACTION, "Pay-toll(10gp)"));
         links.add(tollGate);
         links.add(bidirection(id++, tollGate));
 
@@ -59,11 +51,7 @@ public class SpecialLinks {
                 new Position(3439, 3485, 0),
                 10,
                 List.of(new QuestRequirement(Quest.PRIEST_IN_PERIL)),
-                Map.of(
-                        OBJECT_ID, ObjectID.HOLY_BARRIER,
-                        ACTION, "Pass-through"
-                )
-        );
+                Map.of(OBJECT_ID, ObjectID.HOLY_BARRIER, ACTION, "Pass-through"));
         links.add(drezelHolyBarrier);
 
         log.info("found {} special links", links.size());
@@ -71,13 +59,6 @@ public class SpecialLinks {
     }
 
     public static SpecialLink bidirection(int id, SpecialLink link) {
-        return new SpecialLink(
-                id,
-                link.destination(),
-                link.origin(),
-                link.cost(),
-                link.requirements(),
-                link.extra()
-        );
+        return new SpecialLink(id, link.destination(), link.origin(), link.cost(), link.requirements(), link.extra());
     }
 }

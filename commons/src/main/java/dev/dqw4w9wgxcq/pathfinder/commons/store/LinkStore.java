@@ -28,7 +28,7 @@ public record LinkStore(Links links) {
         dir.mkdirs();
 
         try (var fos = new FileOutputStream(new File(dir, "links.zip"));
-             var zos = new ZipOutputStream(fos)) {
+                var zos = new ZipOutputStream(fos)) {
             zos.putNextEntry(new ZipEntry("links.json"));
             zos.write(GSON.toJson(links).getBytes());
         }

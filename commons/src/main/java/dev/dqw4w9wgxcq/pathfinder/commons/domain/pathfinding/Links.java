@@ -19,8 +19,7 @@ public record Links(
         List<ShipLink> shipLinks,
         List<WildernessDitchLink> wildernessDitchLinks,
         List<SpecialLink> specialLinks,
-        List<TeleportLink> teleportLinks
-) {
+        List<TeleportLink> teleportLinks) {
     public List<Link> all() {
         var out = new ArrayList<Link>();
         out.addAll(doorLinks);
@@ -34,15 +33,16 @@ public record Links(
     }
 
     public Link getLink(Link.Type type, int id) {
-        var link = switch (type) {
-            case DOOR -> doorLinks.get(id);
-            case STAIR -> stairLinks.get(id);
-            case DUNGEON -> dungeonLinks.get(id);
-            case SHIP -> shipLinks.get(id);
-            case WILDERNESS_DITCH -> wildernessDitchLinks.get(id);
-            case SPECIAL -> specialLinks.get(id);
-            case TELEPORT -> teleportLinks.get(id);
-        };
+        var link =
+                switch (type) {
+                    case DOOR -> doorLinks.get(id);
+                    case STAIR -> stairLinks.get(id);
+                    case DUNGEON -> dungeonLinks.get(id);
+                    case SHIP -> shipLinks.get(id);
+                    case WILDERNESS_DITCH -> wildernessDitchLinks.get(id);
+                    case SPECIAL -> specialLinks.get(id);
+                    case TELEPORT -> teleportLinks.get(id);
+                };
 
         assert link != null;
 

@@ -22,12 +22,10 @@ public class ConvertXteas {
             return;
         }
 
-        var gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .create();
+        var gson = new GsonBuilder().setPrettyPrinting().create();
 
-        List<XteaOpenRS2Format> keys = gson.fromJson(new FileReader(file), new TypeToken<List<XteaOpenRS2Format>>() {
-        }.getType());
+        List<XteaOpenRS2Format> keys =
+                gson.fromJson(new FileReader(file), new TypeToken<List<XteaOpenRS2Format>>() {}.getType());
 
         System.out.println("found " + keys.size() + " keys");
 
@@ -49,6 +47,5 @@ public class ConvertXteas {
     }
 
     @SuppressWarnings("unused")
-    private record XteaOpenRS2Format(int mapsquare, int[] key) {
-    }
+    private record XteaOpenRS2Format(int mapsquare, int[] key) {}
 }

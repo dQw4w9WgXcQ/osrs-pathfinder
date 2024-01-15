@@ -1,6 +1,6 @@
 package dev.dqw4w9wgxcq.pathfinder.commons.domain;
 
-//overridden equals/hashcode for performance
+// overridden equals/hashcode for performance
 public record Point(int x, int y) {
     @Override
     public boolean equals(Object obj) {

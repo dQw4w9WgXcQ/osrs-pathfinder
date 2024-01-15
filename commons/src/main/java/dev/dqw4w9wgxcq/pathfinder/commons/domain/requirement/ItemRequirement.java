@@ -17,7 +17,7 @@ public record ItemRequirement(Type type, boolean consumes, int id, int amount) i
         return items.getOrDefault(id, 0) >= amount;
     }
 
-    //todo find a way to not copy the entire item map?
+    // todo find a way to not copy the entire item map?
     public Agent affectAgent(Agent agent) {
         if (!consumes) return Requirement.super.affectAgent(agent);
 

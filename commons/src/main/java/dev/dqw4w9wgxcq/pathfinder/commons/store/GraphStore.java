@@ -33,7 +33,7 @@ public record GraphStore(int[][][] componentGrid, ComponentGraph componentGraph)
         dir.mkdirs();
 
         try (var fos = new FileOutputStream(new File(dir, "graph.zip"));
-             var zos = new ZipOutputStream(fos)) {
+                var zos = new ZipOutputStream(fos)) {
             log.info("writing componentgrid.dat");
             zos.putNextEntry(new ZipEntry("componentgrid.dat"));
             try (var oos = new ObjectOutputStream(zos)) {

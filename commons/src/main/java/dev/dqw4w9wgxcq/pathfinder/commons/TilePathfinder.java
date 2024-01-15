@@ -9,7 +9,8 @@ import java.util.Map;
 import java.util.Set;
 
 public interface TilePathfinder {
-    @Nullable List<Point> findPath(int plane, Point start, Point end);
+    @Nullable
+    List<Point> findPath(int plane, Point start, Point end);
 
     Map<Point, Integer> distances(Position from, Set<Point> tos);
 

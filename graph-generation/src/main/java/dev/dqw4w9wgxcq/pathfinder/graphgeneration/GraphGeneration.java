@@ -30,7 +30,11 @@ public class GraphGeneration {
     public static void main(String[] args) {
         var startTime = System.currentTimeMillis();
 
-        var cacheOpt = new Option("c", "cache", true, "Path to osrs cache dir that the game populates at C:\\Users\\user\\jagexcache\\oldschool\\LIVE\\  Defaults to ./cache");
+        var cacheOpt = new Option(
+                "c",
+                "cache",
+                true,
+                "Path to osrs cache dir that the game populates at C:\\Users\\user\\jagexcache\\oldschool\\LIVE\\  Defaults to ./cache");
         var xteasOpt = new Option("x", "xteas", true, "Path to xteas JSON file.  Defaults to ./xteas.json");
         var outOpt = new Option("o", "out", true, "Output directory.  Defaults to ./");
         var leafletOpt = new Option("l", "leaflet", false, "Generate leaflet images");

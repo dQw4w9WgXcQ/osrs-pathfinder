@@ -19,7 +19,7 @@ public class ContiguousComponentsTest {
         grid.markTile(1, 0, TileFlags.W_WALL);
         grid.markTile(0, 1, TileFlags.S_WALL);
 
-        var planes = new TileGrid[]{grid};
+        var planes = new TileGrid[] {grid};
 
         var s = GridTestUtil.stringify(planes[0]);
         log.debug("\n" + s);
@@ -52,7 +52,7 @@ public class ContiguousComponentsTest {
         var s = GridTestUtil.stringify(grid);
         log.debug("\n" + s);
 
-        var components = ContiguousComponents.create(new TileGrid[]{grid});
+        var components = ContiguousComponents.create(new TileGrid[] {grid});
 
         var s2 = GridTestUtil.stringify(components.planes()[0]);
         log.debug("\n" + s2);
@@ -71,7 +71,7 @@ public class ContiguousComponentsTest {
         grid.markObject(0, 1, 1, 1, true);
         grid.markObject(1, 0, 1, 1, false);
         grid.markObject(1, 1, 1, 1, true);
-        var components = ContiguousComponents.create(new TileGrid[]{grid});
+        var components = ContiguousComponents.create(new TileGrid[] {grid});
         var s = GridTestUtil.stringify(components.planes()[0]);
         log.debug("\n{}", s);
 
@@ -84,7 +84,7 @@ public class ContiguousComponentsTest {
         grid.markObject(0, 1, 1, 1, true);
         grid.markObject(1, 0, 1, 1, false);
         grid.markObject(1, 1, 1, 1, true);
-        var components = ContiguousComponents.create(new TileGrid[]{grid});
+        var components = ContiguousComponents.create(new TileGrid[] {grid});
         var s = GridTestUtil.stringify(components.planes()[0]);
         log.debug("\n{}", s);
 

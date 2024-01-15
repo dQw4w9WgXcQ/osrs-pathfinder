@@ -20,6 +20,7 @@ import java.util.Map;
 public class TileWorld {
     @Getter
     private final int sizeX, sizeY;
+
     @Getter
     private final TileGrid[] planes;
 
@@ -51,7 +52,8 @@ public class TileWorld {
             markFloorForRegion(tileWorld.planes, region);
         }
 
-        markObjectLocations(tileWorld.planes, objectLocations, cacheData.objectData().definitions());
+        markObjectLocations(
+                tileWorld.planes, objectLocations, cacheData.objectData().definitions());
 
         var time = (System.currentTimeMillis() - start) / 1000;
         log.info("TileWorld created in {}s", time);
@@ -80,7 +82,8 @@ public class TileWorld {
     }
 
     static void markFloorForRegion(TileGrid[] planes, Region region) {
-        log.debug("adding floor from region " + region.getRegionID() + " x" + region.getRegionX() + "y" + region.getRegionY());
+        log.debug("adding floor from region " + region.getRegionID() + " x" + region.getRegionX() + "y"
+                + region.getRegionY());
         var baseX = region.getBaseX();
         var baseY = region.getBaseY();
 
@@ -102,7 +105,8 @@ public class TileWorld {
         }
     }
 
-    static void markObjectLocations(TileGrid[] planes, List<Location> locations, Map<Integer, ObjectDefinition> definitions) {
+    static void markObjectLocations(
+            TileGrid[] planes, List<Location> locations, Map<Integer, ObjectDefinition> definitions) {
         log.debug("adding objects to planes");
 
         for (var location : locations) {
@@ -110,7 +114,7 @@ public class TileWorld {
         }
     }
 
-    //based off code from decompiled game client
+    // based off code from decompiled game client
     static void markObject(TileGrid grid, Location location, ObjectDefinition definition) {
         log.debug("adding object " + location);
 
@@ -123,7 +127,7 @@ public class TileWorld {
 
         var orientation = location.getOrientation();
 
-        //rotate according to the orientation
+        // rotate according to the orientation
         int sizeX;
         int sizeY;
         if (orientation == 1 || orientation == 3) {
@@ -137,23 +141,23 @@ public class TileWorld {
         var locationType = location.getType();
         var interactType = definition.getInteractType();
         switch (locationType) {
-            //wall objects
+                // wall objects
             case 0, 1, 2, 3 -> {
                 if (interactType != 0) {
                     grid.markWallObject(x, y, locationType, orientation);
                 }
             }
-            //wall decoration
+                // wall decoration
             case 4, 5, 6, 7, 8 -> {
-                //no collisions
+                // no collisions
             }
-            //game object
+                // game object
             case 9, 10, 11 -> {
                 if (interactType != 0) {
                     grid.markObject(x, y, sizeX, sizeY, false);
                 }
             }
-            //floor decoration
+                // floor decoration
             case 22 -> {
                 if (interactType == 1) {
                     grid.markObject(x, y, sizeX, sizeY, true);

@@ -17,8 +17,7 @@ import java.util.concurrent.Semaphore;
 
 @Slf4j
 public class TilePathfinderWrapper implements TilePathfinder {
-    private record PathCacheKey(int plane, Point start, Point end) {
-    }
+    private record PathCacheKey(int plane, Point start, Point end) {}
 
     private final TilePathfinder delegate;
     private final Semaphore pathSemaphore;

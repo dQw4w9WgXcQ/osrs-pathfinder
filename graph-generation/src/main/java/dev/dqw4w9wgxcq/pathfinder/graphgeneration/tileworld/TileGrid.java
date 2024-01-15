@@ -42,8 +42,7 @@ public class TileGrid {
 
         Preconditions.checkArgument(
                 x >= 0 && y >= 0 && x < width && y < height,
-                "expected: x <" + width + ", y <" + height + ", found: " + x + "," + y + " flags: " + flag
-        );
+                "expected: x <" + width + ", y <" + height + ", found: " + x + "," + y + " flags: " + flag);
 
         var updatedConfig = tiles[x][y] |= flag;
         log.debug("updated config: {}", TileFlags.describe(updatedConfig));
@@ -55,8 +54,7 @@ public class TileGrid {
 
         Preconditions.checkArgument(
                 x >= 0 && y >= 0 && x < width && y < height,
-                "expected: x <" + width + ", y <" + height + ", found: " + x + "," + y + " flags: " + flag
-        );
+                "expected: x <" + width + ", y <" + height + ", found: " + x + "," + y + " flags: " + flag);
 
         var updatedConfig = tiles[x][y] &= ~flag;
         log.debug("updated config: {}", TileFlags.describe(updatedConfig));
@@ -73,21 +71,19 @@ public class TileGrid {
         }
     }
 
-    //floor decoration/object distinction is never really used
+    // floor decoration/object distinction is never really used
     @VisibleForTesting
     public void markObject(int x, int y, int sizeX, int sizeY, boolean isFloorDecoration) {
         log.debug("marking game object at " + x + "," + y + " sizeX:" + sizeX + " sizeY:" + sizeY);
 
-        Preconditions.checkArgument(
-                sizeX >= 1 && sizeY >= 1,
-                "expected: sizeXY >=1, found: " + sizeX + "," + sizeY
-        );
+        Preconditions.checkArgument(sizeX >= 1 && sizeY >= 1, "expected: sizeXY >=1, found: " + sizeX + "," + sizeY);
 
         var flag = isFloorDecoration ? TileFlags.FLOOR_DECORATION : TileFlags.OBJECT;
 
         for (var i = x; i < x + sizeX; i++) {
             for (var j = y; j < y + sizeY; j++) {
-                //todo I think this can fail if an object size goes off the map, but haven't seen it yet (markTile will throw illegal args)
+                // todo I think this can fail if an object size goes off the map, but haven't seen it yet (markTile will
+                // throw illegal args)
                 markTile(i, j, flag);
             }
         }
@@ -98,14 +94,18 @@ public class TileGrid {
      * i.e. if a wall blocks movement west, then it will set flags on the west tile to block east
      */
     void markWallObject(int x, int y, int locationType, int orientation) {
-        log.debug("marking wall object at " + x + "," + y + " locationType:" + locationType + " orientation:" + orientation);
+        log.debug("marking wall object at " + x + "," + y + " locationType:" + locationType + " orientation:"
+                + orientation);
 
         Preconditions.checkArgument(
                 locationType >= 0 && locationType <= 3 && orientation >= 0 && orientation <= 3,
-                "expected: 3 >= locationType >= 0, 3 >= orientation >= 0, found: x:%d y:%d locationType:%d orientation:%d", x, y, locationType, orientation
-        );
+                "expected: 3 >= locationType >= 0, 3 >= orientation >= 0, found: x:%d y:%d locationType:%d orientation:%d",
+                x,
+                y,
+                locationType,
+                orientation);
 
-        //copy-pasted from decompiled client
+        // copy-pasted from decompiled client
         switch (locationType) {
             case 0 -> {
                 switch (orientation) {
@@ -128,7 +128,7 @@ public class TileGrid {
                 }
             }
             case 1, 3 -> {
-                //pillar
+                // pillar
                 switch (orientation) {
                     case 0 -> {
                         markTile(x, y, TileFlags.NW_WALL);
@@ -179,7 +179,8 @@ public class TileGrid {
         log.debug("canTravelInDirection x:{} y:{} dx:{} dy:{}", x, y, dx, dy);
 
         Preconditions.checkArgument(dx != 0 || dy != 0, "both 0 dx: " + dx + " dy: " + dy);
-        Preconditions.checkArgument(Math.abs(dx) <= 1 && Math.abs(dy) <= 1, "dx and dy must be 1 to -1, found dx: " + dx + " dy: " + dy);
+        Preconditions.checkArgument(
+                Math.abs(dx) <= 1 && Math.abs(dy) <= 1, "dx and dy must be 1 to -1, found dx: " + dx + " dy: " + dy);
 
         var config = tiles[x][y];
 
@@ -219,7 +220,8 @@ public class TileGrid {
             opposingYMask |= TileFlags.N_WALL;
         }
 
-        log.debug("check mask: {} desc: {} config desc: {}", mask, TileFlags.describe(mask), TileFlags.describe(config));
+        log.debug(
+                "check mask: {} desc: {} config desc: {}", mask, TileFlags.describe(mask), TileFlags.describe(config));
 
         if ((config & mask) != 0) {
             log.debug("wall collision detected");

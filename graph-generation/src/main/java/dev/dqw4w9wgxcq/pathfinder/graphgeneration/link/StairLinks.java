@@ -27,12 +27,14 @@ public class StairLinks {
     public static final String UP_ACTION = "Climb-up";
     public static final String DOWN_ACTION = "Climb-down";
     public static final Set<Integer> IGNORE_IDS = Set.of(
-            ObjectID.LADDER_16450, ObjectID.LADDER_16556,//goblin village ladder goes from plane 0 to 2
-            ObjectID.WOODEN_BEAMS,//ardy rooftop
-            ObjectID.CRATE_11632//draynor rooftop
-    );
+            ObjectID.LADDER_16450,
+            ObjectID.LADDER_16556, // goblin village ladder goes from plane 0 to 2
+            ObjectID.WOODEN_BEAMS, // ardy rooftop
+            ObjectID.CRATE_11632 // draynor rooftop
+            );
 
-    public static List<StairLink> find(CacheData cacheData, List<Location> objectLocations, ComponentGrid grid, TileWorld tileWorld) {
+    public static List<StairLink> find(
+            CacheData cacheData, List<Location> objectLocations, ComponentGrid grid, TileWorld tileWorld) {
         log.info("finding stair links");
 
         var definitions = cacheData.objectData().definitions();
@@ -40,9 +42,10 @@ public class StairLinks {
         var out = new ArrayList<StairLink>();
         var id = 0;
         for (var location : objectLocations) {
-//            if (location.getPosition().getZ() != 0 || location.getPosition().getX() != 3204 || location.getPosition().getY() != 3207) {//todo temp
-//                continue;
-//            }
+            //            if (location.getPosition().getZ() != 0 || location.getPosition().getX() != 3204 ||
+            // location.getPosition().getY() != 3207) {//todo temp
+            //                continue;
+            //            }
 
             var definition = Objects.requireNonNull(definitions.get(location.getId()));
 
@@ -87,7 +90,8 @@ public class StairLinks {
 
             Position origin = null;
             Position destination = null;
-            for (var adjacent : Util.findNotBlockedAdjacent(tileWorld, Util.fromRlPosition(location.getPosition()), sizeX, sizeY)) {
+            for (var adjacent :
+                    Util.findNotBlockedAdjacent(tileWorld, Util.fromRlPosition(location.getPosition()), sizeX, sizeY)) {
                 var testDestination = new Position(adjacent.x(), adjacent.y(), destinationPlane);
                 if (grid.componentOf(testDestination) != -1) {
                     origin = adjacent;
@@ -113,25 +117,31 @@ public class StairLinks {
         int id = location.getId();
         int locationType = location.getType();
         switch (locationType) {
-            //wall objects
+                // wall objects
             case 0, 1, 2, 3 -> {
                 log.debug("ignoring wall object {} {} at {}", definition.getName(), id, location);
                 return false;
             }
-            //wall decoration
+                // wall decoration
             case 4, 5, 6, 7, 8 -> {
                 log.debug("ignoring wall decoration {} {} at {}", definition.getName(), id, location);
                 return false;
             }
-            //game object
-            case 9, 10, 11,
-                    //floor decoration
-                    22 -> {
-            }
+                // game object
+            case 9,
+                    10,
+                    11,
+                    // floor decoration
+                    22 -> {}
             default -> {
                 if (locationType >= 12 && locationType <= 21) {
-                    //never happens for now
-                    log.info("ignoring unknown location type({}) {} {} at {}", locationType, definition.getName(), id, location);
+                    // never happens for now
+                    log.info(
+                            "ignoring unknown location type({}) {} {} at {}",
+                            locationType,
+                            definition.getName(),
+                            id,
+                            location);
                     return false;
                 } else {
                     throw new IllegalArgumentException("expect:  0 =< locationType <= 22, found:" + locationType);

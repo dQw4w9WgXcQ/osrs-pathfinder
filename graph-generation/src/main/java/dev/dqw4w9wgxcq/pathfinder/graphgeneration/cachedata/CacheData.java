@@ -21,7 +21,8 @@ public record CacheData(RegionData regionData, ObjectData objectData) {
      * @throws JsonIOException       Gson FS error reading xteas
      * @throws JsonSyntaxException   Gson says XTEAs malformed
      */
-    public static CacheData load(File cacheDir, File xteasJson) throws FileNotFoundException, IOException, JsonIOException, JsonSyntaxException {
+    public static CacheData load(File cacheDir, File xteasJson)
+            throws FileNotFoundException, IOException, JsonIOException, JsonSyntaxException {
         var store = new Store(cacheDir);
         store.load();
 

@@ -18,7 +18,7 @@ import java.util.List;
  */
 @Slf4j
 public record ContiguousComponents(int[][][] planes, List<Integer> sizes) {
-    //https://i.imgur.com/LfKa5hz.png
+    // https://i.imgur.com/LfKa5hz.png
     private static final int INVALID_REGION_X = 18;
     private static final int INVALID_REGION_Y = 39;
 
@@ -39,9 +39,14 @@ public record ContiguousComponents(int[][][] planes, List<Integer> sizes) {
             }
         }
 
-        //mark known invalid regions
+        // mark known invalid regions
         for (var z = 1; z < gridPlanes.length; z++) {
-            floodfill(planes[z], gridPlanes[z], INVALID_REGION_X * Constants.REGION_SIZE, INVALID_REGION_Y * Constants.REGION_SIZE, -2);
+            floodfill(
+                    planes[z],
+                    gridPlanes[z],
+                    INVALID_REGION_X * Constants.REGION_SIZE,
+                    INVALID_REGION_Y * Constants.REGION_SIZE,
+                    -2);
         }
 
         var id = 0;
@@ -73,13 +78,19 @@ public record ContiguousComponents(int[][][] planes, List<Integer> sizes) {
             }
         }
 
-        //mark invalid regions back to -1
+        // mark invalid regions back to -1
         for (var z = 1; z < gridPlanes.length; z++) {
-            floodfill(planes[z], gridPlanes[z], INVALID_REGION_X * Constants.REGION_SIZE, INVALID_REGION_Y * Constants.REGION_SIZE, -1);
+            floodfill(
+                    planes[z],
+                    gridPlanes[z],
+                    INVALID_REGION_X * Constants.REGION_SIZE,
+                    INVALID_REGION_Y * Constants.REGION_SIZE,
+                    -1);
         }
 
         var finishTime = System.currentTimeMillis();
-        log.info("Found {} components smallest:{} largest:{} average:{} total:{} in {}ms",
+        log.info(
+                "Found {} components smallest:{} largest:{} average:{} total:{} in {}ms",
                 sizes.size(),
                 sizes.stream().mapToInt(Integer::intValue).min().orElse(0),
                 sizes.stream().mapToInt(Integer::intValue).max().orElse(0),
@@ -89,7 +100,7 @@ public record ContiguousComponents(int[][][] planes, List<Integer> sizes) {
         return new ContiguousComponents(planes, sizes);
     }
 
-    //in place algo cuts mem usage by ~4gb
+    // in place algo cuts mem usage by ~4gb
     private static int floodfill(int[][] plane, TileGrid grid, int startX, int startY, int id) {
         var oldId = plane[startX][startY];
         Preconditions.checkState(oldId != id, "oldId{} == id{}", oldId, id);
@@ -98,7 +109,7 @@ public record ContiguousComponents(int[][][] planes, List<Integer> sizes) {
         var frontier = new ArrayDeque<Point>();
         frontier.add(new Point(startX, startY));
         var size = 1;
-        //dfs
+        // dfs
         while (!frontier.isEmpty()) {
             var edge = frontier.pop();
             for (var dx = -1; dx <= 1; dx++) {
@@ -107,7 +118,7 @@ public record ContiguousComponents(int[][][] planes, List<Integer> sizes) {
                         continue;
                     }
 
-                    if (dx != 0 && dy != 0) {//no diagonals
+                    if (dx != 0 && dy != 0) { // no diagonals
                         continue;
                     }
 
@@ -119,7 +130,9 @@ public record ContiguousComponents(int[][][] planes, List<Integer> sizes) {
                             frontier.push(new Point(x, y));
                             size++;
                         } else {
-                            assert plane[x][y] == id : "tile already assigned to another component at x:" + x + "y:" + y + ".  means canTravelInDirection is not bidirectional somewhere";
+                            assert plane[x][y] == id
+                                    : "tile already assigned to another component at x:" + x + "y:" + y
+                                            + ".  means canTravelInDirection is not bidirectional somewhere";
                         }
                     }
                 }

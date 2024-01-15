@@ -6,7 +6,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public sealed interface Link permits DoorLink, DungeonLink, ShipLink, SpecialLink, StairLink, TeleportLink, WildernessDitchLink {
+public sealed interface Link
+        permits DoorLink, DungeonLink, ShipLink, SpecialLink, StairLink, TeleportLink, WildernessDitchLink {
     Type type();
 
     /**
@@ -17,7 +18,8 @@ public sealed interface Link permits DoorLink, DungeonLink, ShipLink, SpecialLin
     /**
      * null if link is a teleport
      */
-    @Nullable Position origin();
+    @Nullable
+    Position origin();
 
     Position destination();
 

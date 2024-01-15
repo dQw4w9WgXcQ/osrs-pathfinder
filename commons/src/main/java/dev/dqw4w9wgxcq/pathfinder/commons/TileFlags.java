@@ -13,25 +13,25 @@ import java.util.Map;
  */
 @Slf4j
 public class TileFlags {
-    //wall
+    // wall
     public static final int NW_WALL = 1;
-    public static final int N_WALL = 1 << 1;//2
-    public static final int NE_WALL = 1 << 2;//4
-    public static final int E_WALL = 1 << 3;//8
-    public static final int SE_WALL = 1 << 4;//16
-    public static final int S_WALL = 1 << 5;//32
-    public static final int SW_WALL = 1 << 6;//64
-    public static final int W_WALL = 1 << 7;//128
+    public static final int N_WALL = 1 << 1; // 2
+    public static final int NE_WALL = 1 << 2; // 4
+    public static final int E_WALL = 1 << 3; // 8
+    public static final int SE_WALL = 1 << 4; // 16
+    public static final int S_WALL = 1 << 5; // 32
+    public static final int SW_WALL = 1 << 6; // 64
+    public static final int W_WALL = 1 << 7; // 128
 
-    //object
-    public static final int OBJECT = 1 << 8;//256
-    public static final int FLOOR_DECORATION = 1 << 18;//262144
-    public static final int FLOOR = 1 << 21;//2097152
-    public static final int ANY_FULL = OBJECT | FLOOR_DECORATION | FLOOR;//2359552
+    // object
+    public static final int OBJECT = 1 << 8; // 256
+    public static final int FLOOR_DECORATION = 1 << 18; // 262144
+    public static final int FLOOR = 1 << 21; // 2097152
+    public static final int ANY_FULL = OBJECT | FLOOR_DECORATION | FLOOR; // 2359552
 
-    //marker
-    //this flag is used in the game client to represent "valid" tiles in a loaded scene
-    public static final int HAVE_DATA = 1 << 24;//16777216
+    // marker
+    // this flag is used in the game client to represent "valid" tiles in a loaded scene
+    public static final int HAVE_DATA = 1 << 24; // 16777216
 
     public static int getOpposite(int wallFlag) {
         return switch (wallFlag) {
@@ -59,21 +59,19 @@ public class TileFlags {
             Map.entry(OBJECT, "o"),
             Map.entry(FLOOR_DECORATION, "d"),
             Map.entry(FLOOR, "f"),
-            Map.entry(HAVE_DATA, ".")
-    );
-
+            Map.entry(HAVE_DATA, "."));
 
     public static String describe(int flags) {
         return String.join("", getDescriptions(flags));
     }
 
-//    private static String getDescription(int flag) {
-//        var name = flagDescs.get(flag);
-//        if (name == null) {
-//            throw new IllegalArgumentException("not a flag: " + flag + " (" + Integer.toBinaryString(flag) + ")");
-//        }
-//        return name;
-//    }
+    //    private static String getDescription(int flag) {
+    //        var name = flagDescs.get(flag);
+    //        if (name == null) {
+    //            throw new IllegalArgumentException("not a flag: " + flag + " (" + Integer.toBinaryString(flag) + ")");
+    //        }
+    //        return name;
+    //    }
 
     private static List<String> getDescriptions(int flags) {
         if (flags == 0) {
@@ -97,8 +95,10 @@ public class TileFlags {
 
         var loaded = (flags & HAVE_DATA) == HAVE_DATA;
         if (!loaded) {
-            //tile can be not marked as have data but still have flags if an object goes off the edge of a region into an unloaded region
-            log.debug("found tile without HAVE_DATA flag, but has other flags: " + flags + " (" + Integer.toBinaryString(flags) + ")");
+            // tile can be not marked as have data but still have flags if an object goes off the edge of a region into
+            // an unloaded region
+            log.debug("found tile without HAVE_DATA flag, but has other flags: " + flags + " ("
+                    + Integer.toBinaryString(flags) + ")");
 
             list.add("x");
         }
