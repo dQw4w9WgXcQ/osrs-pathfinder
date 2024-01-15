@@ -18,6 +18,10 @@ import java.util.List;
  */
 @Slf4j
 public record ContiguousComponents(int[][][] planes, List<Integer> sizes) {
+    //https://i.imgur.com/LfKa5hz.png
+    private static final int INVALID_REGION_X = 18;
+    private static final int INVALID_REGION_Y = 39;
+
     public int count() {
         return sizes.size();
     }
@@ -36,11 +40,8 @@ public record ContiguousComponents(int[][][] planes, List<Integer> sizes) {
         }
 
         //mark known invalid regions
-        //https://i.imgur.com/LfKa5hz.png
-        var X = 18;
-        var Y = 39;
         for (var z = 1; z < gridPlanes.length; z++) {
-            floodfill(planes[z], gridPlanes[z], X * Constants.REGION_SIZE, Y * Constants.REGION_SIZE, -2);
+            floodfill(planes[z], gridPlanes[z], INVALID_REGION_X * Constants.REGION_SIZE, INVALID_REGION_Y * Constants.REGION_SIZE, -2);
         }
 
         var id = 0;
@@ -74,7 +75,7 @@ public record ContiguousComponents(int[][][] planes, List<Integer> sizes) {
 
         //mark invalid regions back to -1
         for (var z = 1; z < gridPlanes.length; z++) {
-            floodfill(planes[z], gridPlanes[z], X * Constants.REGION_SIZE, Y * Constants.REGION_SIZE, -1);
+            floodfill(planes[z], gridPlanes[z], INVALID_REGION_X * Constants.REGION_SIZE, INVALID_REGION_Y * Constants.REGION_SIZE, -1);
         }
 
         var finishTime = System.currentTimeMillis();

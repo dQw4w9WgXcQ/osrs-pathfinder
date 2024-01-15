@@ -3,12 +3,8 @@ package dev.dqw4w9wgxcq.pathfinder.commons.store;
 import dev.dqw4w9wgxcq.pathfinder.commons.Constants;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.util.Arrays;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -61,5 +57,31 @@ public record GridStore(byte[][][] grid) {
         }
 
         return new GridStore(grid);
+    }
+
+    public static void main(String[] args) throws IOException {
+        var dir = new File(new File(System.getProperty("user.home"), "Desktop"), "asdf");
+
+        var grid = new byte[Constants.PLANES_SIZE][10][15];
+
+        grid[0][0][0] = 1;
+        grid[0][0][1] = 3;
+        grid[0][0][2] = 5;
+        grid[1][3][3] = 7;
+        grid[0][3][4] = (byte) (1 << 7);
+        grid[0][9][14] = 11;
+
+        new GridStore(grid).save(dir);
+
+        var loaded = GridStore.load(new File(dir, "grid.zip"));
+
+        System.out.println(loaded.grid[0][0][0]);
+        System.out.println(loaded.grid[0][0][1]);
+        System.out.println(loaded.grid[0][0][2]);
+        System.out.println(loaded.grid[1][3][3]);
+        System.out.println(loaded.grid[0][3][4]);
+        System.out.println(loaded.grid[0][9][14]);
+
+        System.out.println(Arrays.deepToString(loaded.grid()));
     }
 }
