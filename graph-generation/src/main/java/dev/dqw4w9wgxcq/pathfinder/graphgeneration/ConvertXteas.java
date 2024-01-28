@@ -15,9 +15,9 @@ import java.util.List;
 @Slf4j
 public class ConvertXteas {
     public static void main(String[] args) throws Exception {
-        var file = new File("xteasopenrs2format.json");
+        var file = new File("xteasopenrs2.json");
         if (!file.exists()) {
-            System.err.println("xteasopenrs2format.json does not exist");
+            System.err.println("xteasopenrs2.json does not exist");
             System.exit(1);
             return;
         }

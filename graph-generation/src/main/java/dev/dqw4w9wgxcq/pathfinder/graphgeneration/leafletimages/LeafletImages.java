@@ -12,7 +12,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.RasterFormatException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -46,80 +45,67 @@ public class LeafletImages {
 
         for (var plane = 0; plane < Constants.PLANES_SIZE; plane++) {
             var componentsImage = generateFullComponentsImage(false, plane, componentGrid);
-            writeLeafletImages(plane, new File(outDir, "component"), componentsImage, 1);
+            writeImages(plane, new File(outDir, "component"), componentsImage, 1);
         }
 
         for (var plane = 0; plane < Constants.PLANES_SIZE; plane++) {
             var blockedImage = generateFullComponentsImage(true, plane, componentGrid);
-            writeLeafletImages(plane, new File(outDir, "blocked"), blockedImage, 1);
+            writeImages(plane, new File(outDir, "blocked"), blockedImage, 1);
         }
 
-        //        for (var plane = 0; plane < TileWorld.PLANES_SIZE; plane++) {
+        //        for (var plane = 0; plane < Constants.PLANES_SIZE; plane++) {
         //            var mapImage = generateFullMapImage(plane, cacheDir, xteasJson);
-        //            writeLeafletImages(new File(outDir, "map"), mapImage, 4);
+        //            writeImages(plane, new File(outDir, "map"), mapImage, 4);
         //        }
     }
 
     // returns null if image is would be completely transparent
-    @Nullable
-    private static Image generateLeafletImage(BufferedImage fullImage, int x, int y, int scale) {
-        log.debug("Generating leaflet image for x={}, y={}, scale={}", x, y, scale);
-        var subimage = fullImage.getSubimage(x, y, SIZE * scale, SIZE * scale);
+    private static @Nullable Image generateLeafletImage(BufferedImage fullImage, int x, int y, int tilePxSize) {
+        var invertY = fullImage.getHeight() - y - SIZE * tilePxSize;
+        log.debug("Generating leaflet image for x={}, y={} (invertY={}), tilePxSize={}", x, y, invertY, tilePxSize);
 
-        // check if subimage is completely transparent
-        var isTransparent = true;
-        for (var subX = 0; subX < subimage.getWidth(); subX++) {
-            for (var subY = 0; subY < subimage.getHeight(); subY++) {
-                var rgb = subimage.getRGB(subX, subY);
-                if (rgb != 0) {
-                    isTransparent = false;
-                    break;
-                }
-            }
-        }
-        if (isTransparent) {
-            return null;
-        }
+        var subImg = fullImage.getSubimage(x, invertY, SIZE * tilePxSize, SIZE * tilePxSize);
 
-        return subimage.getScaledInstance(SIZE, SIZE, Image.SCALE_SMOOTH);
+        if (isImageBlank(subImg)) return null;
+
+        return subImg.getScaledInstance(SIZE, SIZE, Image.SCALE_SMOOTH);
     }
 
-    private static void writeLeafletImages(int plane, File dir, BufferedImage fullImage, int scale) throws IOException {
+    private static void writeImages(int plane, File dir, BufferedImage fullImg, int tilePxSize) throws IOException {
         log.debug(
-                "Writing leaflet images to dir:{}, scale:{} | fullImage width:{}, height:{}",
+                "Writing leaflet images to dir:{}, tilePxSize:{} | fullImage width:{}, height:{}",
                 dir,
-                scale,
-                fullImage.getWidth(),
-                fullImage.getHeight());
+                tilePxSize,
+                fullImg.getWidth(),
+                fullImg.getHeight());
 
         //noinspection ResultOfMethodCallIgnored
         dir.mkdirs();
 
-        ImageIO.write(fullImage, "png", new File(dir, "plane" + plane + ".png"));
+        // write full image
+        ImageIO.write(fullImg, "png", new File(dir, plane + "-full.png"));
 
-        var maxZoomD = Math.log(scale) / Math.log(2); // java doesn't have log2
-        Preconditions.checkArgument(maxZoomD % 1 == 0, "scale must be a power of 2");
+        var maxZoomD = Math.log(tilePxSize) / Math.log(2); // java doesn't have log2
+        Preconditions.checkArgument(maxZoomD % 1 == 0, "tilePxSize must be a power of 2");
         var maxZoom = (int) maxZoomD;
 
         for (var zoom = MIN_ZOOM; zoom <= maxZoom; zoom++) {
             if (zoom != maxZoom) continue; // todo temp disabled all but max zoom
 
-            for (var x = 0; x < fullImage.getWidth(); x += SIZE * scale) {
-                for (var y = 0; y < fullImage.getHeight(); y += SIZE * scale) {
-                    Image image;
-                    try {
-                        image = generateLeafletImage(fullImage, x, y, scale);
-                    } catch (RasterFormatException e) { // todo fix this
-                        log.warn("cba rn, x:{} y:{} scale:{}", x, y, scale);
-                        //                        log.debug("RasterFormatException", e);
-                        continue;
-                    }
+            int size = SIZE * tilePxSize;
 
-                    if (image == null) continue;
+            var width = fullImg.getWidth() / size;
+            var height = fullImg.getHeight() / size;
+            for (var x = 0; x < width; x++) {
+                for (var y = 0; y < height; y++) {
+                    var fileName = String.format("%d-%d-%d.png", plane, x, y);
 
-                    var fileName = String.format("%d-%d-%d.png", plane, x / (SIZE * scale), y / (SIZE * scale));
+                    var img = generateLeafletImage(fullImg, x * size, y * size, tilePxSize);
+
+                    if (img == null) continue; // image is blank
+
                     var file = new File(dir, fileName);
-                    ImageIO.write(toBufferedImage(image), "png", file);
+                    ImageIO.write(toBufferedImage(img), "png", file);
                 }
             }
         }
@@ -170,14 +156,16 @@ public class LeafletImages {
             xteaKeyManager.loadKeys(is);
         }
 
+        MapImageDumper mapImageDumper;
         try (var store = new Store(cacheDir)) {
             store.load();
-            var mapImageDumper = new MapImageDumper(store, xteaKeyManager);
+            mapImageDumper = new MapImageDumper(store, xteaKeyManager);
             mapImageDumper.setRenderIcons(false);
             mapImageDumper.setTransparency(true);
             mapImageDumper.load();
-            return mapImageDumper.drawMap(plane);
         }
+
+        return mapImageDumper.drawMap(plane);
     }
 
     private static int getColor(int id) {
@@ -191,7 +179,7 @@ public class LeafletImages {
      * @return The converted BufferedImage
      */
     // https://stackoverflow.com/questions/13605248/java-converting-image-to-bufferedimage
-    public static BufferedImage toBufferedImage(Image img) {
+    private static BufferedImage toBufferedImage(Image img) {
         if (img instanceof BufferedImage) {
             return (BufferedImage) img;
         }
@@ -206,5 +194,28 @@ public class LeafletImages {
 
         // Return the buffered image
         return bimage;
+    }
+
+    private static boolean isImageBlank(BufferedImage img) {
+        for (var subX = 0; subX < img.getWidth(); subX++) {
+            for (var subY = 0; subY < img.getHeight(); subY++) {
+                var rgb = img.getRGB(subX, subY);
+                if (rgb != 0) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public static void main(String[] args) throws IOException {
+        var desktop = new File(System.getProperty("user.home"), "Desktop");
+        var fullImgFile = new File(desktop, "0-full.png");
+        var outDir = new File(desktop, "asdf");
+
+        var fullImg = ImageIO.read(fullImgFile);
+
+        writeImages(0, outDir, fullImg, 1);
     }
 }
