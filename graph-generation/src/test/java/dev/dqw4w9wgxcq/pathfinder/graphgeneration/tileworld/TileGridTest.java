@@ -34,17 +34,56 @@ public class TileGridTest {
     }
 
     @Test
+    void opposingWallFlag() {
+        var grid = createGrid();
+
+        grid.markTile(X + 1, Y, TileFlags.W_WALL);
+
+        log.debug("\n" + GridTestUtil.stringify(grid));
+        assertFalse(grid.canTravelInDirection(X, Y, 1, 0));
+    }
+
+    @Test
     void diagonalWallFlag() {
         var grid = createGrid();
         grid.markTile(X, Y, TileFlags.NE_WALL);
 
         log.debug("\n" + GridTestUtil.stringify(grid));
 
-        // diagonal movement disabled temporarily
         assertFalse(grid.canTravelInDirection(X, Y, 1, 1));
-        assertFalse(grid.canTravelInDirection(X + 1, Y + 1, -1, -1));
         assertTrue(grid.canTravelInDirection(X, Y, 1, 0));
         assertTrue(grid.canTravelInDirection(X, Y, 0, 1));
+    }
+
+    @Test
+    void opposingDiagonalWallFlag() {
+        var grid = createGrid();
+        grid.markTile(X + 1, Y + 1, TileFlags.SW_WALL);
+
+        log.debug("\n" + GridTestUtil.stringify(grid));
+        assertFalse(grid.canTravelInDirection(X, Y, 1, 1));
+        assertTrue(grid.canTravelInDirection(X, Y, 1, 0));
+        assertTrue(grid.canTravelInDirection(X, Y, 0, 1));
+    }
+
+    @Test
+    void diagonalWithAdjacentWallFlag() {
+        var grid = createGrid();
+        grid.markTile(X, Y, TileFlags.N_WALL);
+
+        log.debug("\n" + GridTestUtil.stringify(grid));
+
+        assertFalse(grid.canTravelInDirection(X, Y, 1, 1));
+    }
+
+    @Test
+    void diagonalWithOpposingAdjacentWallFlag() {
+        var grid = createGrid();
+        grid.markTile(X + 1, Y + 1, TileFlags.S_WALL);
+
+        log.debug("\n" + GridTestUtil.stringify(grid));
+
+        assertFalse(grid.canTravelInDirection(X, Y, 1, 1));
     }
 
     @Test
@@ -56,6 +95,7 @@ public class TileGridTest {
         log.debug("\n" + GridTestUtil.stringify(grid));
 
         assertFalse(grid.canTravelInDirection(X - 1, Y, 1, 0));
+        assertFalse(grid.canTravelInDirection(X, Y, 1, 0));
     }
 
     TileGrid createGrid() {
