@@ -27,5 +27,7 @@ class TilePathfinderWrapperTest {
         assertEquals(
                 List.of(new Point(0, 0), new Point(2, 0), new Point(4, 2), new Point(5, 2)),
                 TilePathfinderWrapper.toMinifiedPath(path3));
+
+        assertEquals(List.of(), TilePathfinderWrapper.toMinifiedPath(List.of()));
     }
 }

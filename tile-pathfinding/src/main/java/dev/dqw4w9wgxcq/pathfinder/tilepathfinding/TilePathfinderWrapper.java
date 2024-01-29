@@ -81,6 +81,8 @@ public class TilePathfinderWrapper implements TilePathfinder {
     }
 
     public static List<Point> toMinifiedPath(List<Point> path) {
+        if (path.isEmpty()) return List.of();
+
         var minified = new ArrayList<Point>();
         Point prevPrev = null;
         Point prev = null;
