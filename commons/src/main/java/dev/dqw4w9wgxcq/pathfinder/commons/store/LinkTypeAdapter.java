@@ -33,9 +33,7 @@ class LinkTypeAdapter extends TypeAdapter<Link> {
 
     @Override
     public Link read(JsonReader reader) throws IOException {
-        if (links == null) {
-            throw new IllegalStateException("links is null, cannot read");
-        }
+        if (links == null) throw new IllegalStateException("links is null, cannot read");
 
         reader.beginObject();
         Integer id = null;
@@ -54,8 +52,8 @@ class LinkTypeAdapter extends TypeAdapter<Link> {
         }
         reader.endObject();
 
-        assert id != null;
-        assert type != null;
+        if (id == null) throw new IllegalStateException("id is null");
+        if (type == null) throw new IllegalStateException("type is null for id " + id);
 
         return links.getLink(type, id);
     }
