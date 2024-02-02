@@ -2,7 +2,7 @@ package dev.dqw4w9wgxcq.pathfinder.commons.domain.link;
 
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Position;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.requirement.Requirement;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 

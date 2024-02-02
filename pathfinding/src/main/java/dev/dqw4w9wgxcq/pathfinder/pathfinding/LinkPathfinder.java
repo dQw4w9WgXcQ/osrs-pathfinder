@@ -8,7 +8,7 @@ import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.ComponentGrid;
 import dev.dqw4w9wgxcq.pathfinder.pathfinding.tile.LinkDistances;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -23,6 +23,7 @@ subprojects {
 
         implementation("org.slf4j:slf4j-api:${Versions.slf4j}")
         implementation("org.jetbrains:annotations:23.0.0")
+        implementation("org.jspecify:jspecify:0.3.0")
         compileOnly("org.projectlombok:lombok:$lombok")
         annotationProcessor("org.projectlombok:lombok:$lombok")
 

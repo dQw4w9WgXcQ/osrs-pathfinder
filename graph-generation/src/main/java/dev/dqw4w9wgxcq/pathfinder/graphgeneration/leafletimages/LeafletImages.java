@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.cache.MapImageDumper;
 import net.runelite.cache.fs.Store;
 import net.runelite.cache.util.XteaKeyManager;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

@@ -3,7 +3,7 @@ package dev.dqw4w9wgxcq.pathfinder.commons.domain;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.requirement.Requirement;
 import lombok.With;
 import net.runelite.api.Quest;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
