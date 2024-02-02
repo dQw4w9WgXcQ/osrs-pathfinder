@@ -16,7 +16,7 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 @Slf4j
-public record LinkStore(Links links) {
+public record LinkStore(StoreMeta meta, Links links) {
     private static final Gson GSON = new GsonBuilder()
             .registerTypeHierarchyAdapter(Requirement.class, new RequirementTypeAdapter())
             .create();
@@ -29,6 +29,11 @@ public record LinkStore(Links links) {
 
         try (var fos = new FileOutputStream(new File(dir, "links.zip"));
                 var zos = new ZipOutputStream(fos)) {
+            log.debug("writing meta.json");
+            zos.putNextEntry(new ZipEntry("meta.json"));
+            zos.write(new Gson().toJson(meta).getBytes());
+
+            log.debug("writing links.json");
             zos.putNextEntry(new ZipEntry("links.json"));
             zos.write(GSON.toJson(links).getBytes());
         }
@@ -38,12 +43,18 @@ public record LinkStore(Links links) {
     public static LinkStore load(File file) throws IOException {
         log.info("loading links from {}", file);
 
+        StoreMeta meta;
         Links links;
         try (var zis = new ZipInputStream(new FileInputStream(file))) {
+            log.debug("reading meta.json");
+            zis.getNextEntry();
+            meta = GSON.fromJson(new InputStreamReader(zis), StoreMeta.class);
+
+            log.debug("reading links.json");
             zis.getNextEntry();
             links = GSON.fromJson(new InputStreamReader(zis), Links.class);
         }
 
-        return new LinkStore(links);
+        return new LinkStore(meta, links);
     }
 }

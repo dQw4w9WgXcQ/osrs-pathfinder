@@ -1,5 +1,6 @@
 package dev.dqw4w9wgxcq.pathfinder.commons.store;
 
+import com.google.gson.Gson;
 import dev.dqw4w9wgxcq.pathfinder.commons.Constants;
 import lombok.extern.slf4j.Slf4j;
 
@@ -9,13 +10,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 @Slf4j
-public record GridStore(byte[][][] grid) {
+public record GridStore(StoreMeta meta, byte[][][] grid) {
     public void save(File dir) throws IOException {
         log.info("saving grid to {}", dir);
 
@@ -24,6 +26,10 @@ public record GridStore(byte[][][] grid) {
 
         try (var fos = new FileOutputStream(new File(dir, "grid.zip"));
                 var zos = new ZipOutputStream(fos)) {
+
+            log.debug("writing meta.json");
+            zos.putNextEntry(new ZipEntry("meta.json"));
+            zos.write(new Gson().toJson(meta).getBytes());
 
             log.debug("writing grid.dat");
             zos.putNextEntry(new ZipEntry("grid.dat"));
@@ -43,9 +49,14 @@ public record GridStore(byte[][][] grid) {
     public static GridStore load(File file) throws IOException {
         log.info("loading grid from {}", file);
 
+        StoreMeta meta;
         byte[][][] grid;
         try (var is = new FileInputStream(file);
                 var zis = new ZipInputStream(is)) {
+            log.debug("reading meta.json");
+            zis.getNextEntry();
+            meta = new Gson().fromJson(new InputStreamReader(zis), StoreMeta.class);
+
             log.debug("reading grid.dat");
             zis.getNextEntry();
             try (var dis = new DataInputStream(zis)) {
@@ -61,7 +72,7 @@ public record GridStore(byte[][][] grid) {
             }
         }
 
-        return new GridStore(grid);
+        return new GridStore(meta, grid);
     }
 
     public static void main(String[] args) throws IOException {
@@ -76,7 +87,7 @@ public record GridStore(byte[][][] grid) {
         grid[0][3][4] = (byte) (1 << 7);
         grid[0][9][14] = 11;
 
-        new GridStore(grid).save(dir);
+        new GridStore(new StoreMeta("v", "d"), grid).save(dir);
 
         var loaded = GridStore.load(new File(dir, "grid.zip"));
 
@@ -88,5 +99,7 @@ public record GridStore(byte[][][] grid) {
         System.out.println(loaded.grid[0][9][14]);
 
         System.out.println(Arrays.deepToString(loaded.grid()));
+
+        System.out.println(loaded.meta());
     }
 }

@@ -6,6 +6,7 @@ import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.ComponentGrid;
 import dev.dqw4w9wgxcq.pathfinder.commons.store.GraphStore;
 import dev.dqw4w9wgxcq.pathfinder.commons.store.GridStore;
 import dev.dqw4w9wgxcq.pathfinder.commons.store.LinkStore;
+import dev.dqw4w9wgxcq.pathfinder.commons.store.StoreMeta;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.component.ContiguousComponents;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.component.CreateComponentGraph;
@@ -30,6 +31,7 @@ public class GraphGeneration {
     public static void main(String[] args) {
         var startTime = System.currentTimeMillis();
 
+        var cacheMeta = new Option("m", "cache-meta", true, "cache metadata string, defaults to null");
         var cacheOpt = new Option(
                 "c",
                 "cache",
@@ -41,6 +43,7 @@ public class GraphGeneration {
         var skipGraphOpt = new Option("s", "skip-graph", false, "Skip graph output (only links will be written)");
 
         var options = new Options();
+        options.addOption(cacheMeta);
         options.addOption(cacheOpt);
         options.addOption(xteasOpt);
         options.addOption(outOpt);
@@ -56,6 +59,12 @@ public class GraphGeneration {
             System.exit(1);
             return;
         }
+
+        var cacheMetaStr = cmd.getOptionValue(cacheMeta, null);
+        if (cacheMetaStr == null) {
+            log.warn("cacheMeta is null");
+        }
+        var storeMeta = new StoreMeta(null, cacheMetaStr);
 
         var cacheDir = new File(cmd.getOptionValue(cacheOpt, "cache"));
         if (!cacheDir.exists()) {
@@ -117,7 +126,7 @@ public class GraphGeneration {
         }
 
         var links = FindLinks.find(cacheData, objectLocations, componentGrid, tileWorld);
-        var linkStore = new LinkStore(links);
+        var linkStore = new LinkStore(storeMeta, links);
         try {
             linkStore.save(outDir);
         } catch (IOException e) {
@@ -133,7 +142,7 @@ public class GraphGeneration {
         }
 
         var tilePathfinder = tileWorld.toPathfinder(contiguousComponents.planes());
-        var gridStore = new GridStore(tilePathfinder.grid());
+        var gridStore = new GridStore(storeMeta, tilePathfinder.grid());
         try {
             gridStore.save(outDir);
         } catch (IOException e) {
@@ -146,7 +155,7 @@ public class GraphGeneration {
         var linkedComponents = LinkedComponents.create(contiguousComponents, links);
         var componentGraph = CreateComponentGraph.create(linkedComponents, tilePathfinder);
 
-        var graphStore = new GraphStore(contiguousComponents.planes(), componentGraph);
+        var graphStore = new GraphStore(storeMeta, contiguousComponents.planes(), componentGraph);
         try {
             graphStore.save(outDir);
         } catch (IOException e) {

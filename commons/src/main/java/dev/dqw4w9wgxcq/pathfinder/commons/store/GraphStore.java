@@ -20,7 +20,7 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 @Slf4j
-public record GraphStore(int[][][] componentGrid, ComponentGraph componentGraph) {
+public record GraphStore(StoreMeta meta, int[][][] componentGrid, ComponentGraph componentGraph) {
     private static final Gson saveGson = new GsonBuilder()
             .enableComplexMapKeySerialization()
             .registerTypeHierarchyAdapter(Link.class, new LinkTypeAdapter(null))
@@ -34,6 +34,10 @@ public record GraphStore(int[][][] componentGrid, ComponentGraph componentGraph)
 
         try (var fos = new FileOutputStream(new File(dir, "graph.zip"));
                 var zos = new ZipOutputStream(fos)) {
+            log.info("writing meta.json");
+            zos.putNextEntry(new ZipEntry("meta.json"));
+            zos.write(saveGson.toJson(meta).getBytes());
+
             log.info("writing componentgrid.dat");
             zos.putNextEntry(new ZipEntry("componentgrid.dat"));
             try (var oos = new ObjectOutputStream(zos)) {
@@ -51,14 +55,17 @@ public record GraphStore(int[][][] componentGrid, ComponentGraph componentGraph)
     public static GraphStore load(File file, Links links) throws IOException {
         log.info("loading graph from {}", file);
 
-        int[][][] componentGrid;
-        ComponentGraph componentGraph;
-
         var loadGson = new GsonBuilder()
                 .registerTypeHierarchyAdapter(Link.class, new LinkTypeAdapter(links))
                 .create();
 
+        StoreMeta meta;
+        int[][][] componentGrid;
+        ComponentGraph componentGraph;
         try (var zis = new ZipInputStream(new FileInputStream(file))) {
+            zis.getNextEntry();
+            meta = loadGson.fromJson(new InputStreamReader(zis), StoreMeta.class);
+
             zis.getNextEntry();
             try (var ois = new ObjectInputStream(zis)) {
                 componentGrid = (int[][][]) ois.readObject();
@@ -68,6 +75,6 @@ public record GraphStore(int[][][] componentGrid, ComponentGraph componentGraph)
             }
         }
 
-        return new GraphStore(componentGrid, componentGraph);
+        return new GraphStore(meta, componentGrid, componentGraph);
     }
 }
