@@ -1,6 +1,6 @@
 allprojects {
     group = "dev.dqw4w9wgxcq.pathfinder"
-    version = "1.0.0"
+    version = "1"
 }
 
 plugins {
