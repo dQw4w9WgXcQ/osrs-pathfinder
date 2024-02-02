@@ -8,7 +8,7 @@ import java.util.List;
 public record DungeonLink(Type type, int id, Position origin, Position destination, int objectId, String action)
         implements Link {
     public DungeonLink(int id, Position origin, Position destination, int objectId, String action) {
-        this(Type.DOOR, id, origin, destination, objectId, action);
+        this(Type.DUNGEON, id, origin, destination, objectId, action);
     }
 
     @Override

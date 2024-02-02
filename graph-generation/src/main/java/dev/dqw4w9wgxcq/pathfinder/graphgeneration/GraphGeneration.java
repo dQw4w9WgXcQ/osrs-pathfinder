@@ -31,7 +31,7 @@ public class GraphGeneration {
     public static void main(String[] args) {
         var startTime = System.currentTimeMillis();
 
-        var cacheMeta = new Option("m", "cache-meta", true, "cache metadata string, defaults to null");
+        var cacheMetaOpt = new Option("m", "cache-meta", true, "cache metadata string, defaults to null");
         var cacheOpt = new Option(
                 "c",
                 "cache",
@@ -43,7 +43,7 @@ public class GraphGeneration {
         var skipGraphOpt = new Option("s", "skip-graph", false, "Skip graph output (only links will be written)");
 
         var options = new Options();
-        options.addOption(cacheMeta);
+        options.addOption(cacheMetaOpt);
         options.addOption(cacheOpt);
         options.addOption(xteasOpt);
         options.addOption(outOpt);
@@ -60,11 +60,13 @@ public class GraphGeneration {
             return;
         }
 
-        var cacheMetaStr = cmd.getOptionValue(cacheMeta, null);
-        if (cacheMetaStr == null) {
+        var cacheMeta = cmd.getOptionValue(cacheMetaOpt, null);
+        if (cacheMeta == null) {
             log.warn("cacheMeta is null");
+        } else {
+            log.info("cacheMeta: {}", cacheMeta);
         }
-        var storeMeta = new StoreMeta(null, cacheMetaStr);
+        var storeMeta = new StoreMeta(null, cacheMeta);
 
         var cacheDir = new File(cmd.getOptionValue(cacheOpt, "cache"));
         if (!cacheDir.exists()) {

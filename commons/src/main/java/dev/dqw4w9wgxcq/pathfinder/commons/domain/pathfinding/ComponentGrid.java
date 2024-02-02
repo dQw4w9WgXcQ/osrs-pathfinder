@@ -4,7 +4,9 @@ import dev.dqw4w9wgxcq.pathfinder.commons.domain.Position;
 
 public record ComponentGrid(int[][][] planes) {
     public int componentOf(Position position) {
-        return planes[position.plane()][position.x()][position.y()];
+        var componentId = planes[position.plane()][position.x()][position.y()];
+        if (componentId < -1) throw new IllegalStateException("Component id is < -1 " + componentId);
+        return componentId;
     }
 
     public boolean isBlocked(Position position) {

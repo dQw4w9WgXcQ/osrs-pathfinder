@@ -57,6 +57,20 @@ public class TileWorld {
 
         var time = (System.currentTimeMillis() - start) / 1000;
         log.info("TileWorld created in {}s", time);
+        //
+        //        System.out.println("AAAAAAAAA");
+        //        TileGrid plane = tileWorld.planes[0];
+        //        int x = 3192;
+        //        int y = 3198;
+        //        System.out.println(plane.canTravelInDirection(x, y, 1, 1));
+        //        System.out.println(plane.canTravelInDirection(x + 1, y + 1, -1, -1));
+        //
+        //        System.out.println(TileFlags.describe(plane.getConfig(x, y)));
+        //        System.out.println(TileFlags.describe(plane.getConfig(x + 1, y + 1)));
+        //        System.out.println(TileFlags.describe(plane.getConfig(3195, 3198)));
+        //        System.out.println(TileFlags.describe(plane.getConfig(3195, 3197)));
+        //
+        //        System.exit(42069);
 
         return tileWorld;
     }

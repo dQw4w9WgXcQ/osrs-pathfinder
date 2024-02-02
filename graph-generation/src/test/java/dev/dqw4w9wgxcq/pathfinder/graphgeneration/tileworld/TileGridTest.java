@@ -87,6 +87,46 @@ public class TileGridTest {
     }
 
     @Test
+    void nonBlockingWallFlag() {
+        var grid = createGrid();
+        grid.markTile(X, Y, TileFlags.N_WALL);
+
+        log.debug("\n" + GridTestUtil.stringify(grid));
+
+        assertTrue(grid.canTravelInDirection(X, Y, 1, 0));
+    }
+
+    @Test
+    void nonBlockingOpposingWallFlag() {
+        var grid = createGrid();
+        grid.markTile(X + 1, Y, TileFlags.S_WALL);
+
+        log.debug("\n" + GridTestUtil.stringify(grid));
+
+        assertTrue(grid.canTravelInDirection(X, Y, 1, 0));
+    }
+
+    @Test
+    void nonBlockingDiagonalWallFlag() {
+        var grid = createGrid();
+        grid.markTile(X, Y, TileFlags.SE_WALL);
+
+        log.debug("\n" + GridTestUtil.stringify(grid));
+
+        assertTrue(grid.canTravelInDirection(X, Y, 1, 1));
+    }
+
+    @Test
+    void nonBlockingOpposingDiagonalWallFlag() {
+        var grid = createGrid();
+        grid.markTile(X + 1, Y + 1, TileFlags.SE_WALL);
+
+        log.debug("\n" + GridTestUtil.stringify(grid));
+
+        assertTrue(grid.canTravelInDirection(X, Y, 1, 1));
+    }
+
+    @Test
     void objectFlag() {
         var grid = createGrid();
 

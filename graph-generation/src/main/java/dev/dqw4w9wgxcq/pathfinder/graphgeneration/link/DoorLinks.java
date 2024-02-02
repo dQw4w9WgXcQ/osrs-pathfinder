@@ -61,6 +61,15 @@ public class DoorLinks {
                 continue;
             }
 
+            if (componentGrid.componentOf(origin) < 0 || componentGrid.componentOf(destination) < 0) {
+                System.out.println("AAAAAAAAAAAAAAAAAAAAAAA");
+                System.out.println(componentGrid.componentOf(origin));
+                System.out.println(componentGrid.componentOf(destination));
+                System.out.println(origin);
+                System.out.println(destination);
+                System.exit(42069);
+            }
+
             var link = new DoorLink(id++, origin, destination, location.getId());
             log.debug("new door link {}", link);
             links.add(link);

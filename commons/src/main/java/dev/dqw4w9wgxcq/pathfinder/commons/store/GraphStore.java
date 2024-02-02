@@ -34,16 +34,16 @@ public record GraphStore(StoreMeta meta, int[][][] componentGrid, ComponentGraph
 
         try (var fos = new FileOutputStream(new File(dir, "graph.zip"));
                 var zos = new ZipOutputStream(fos)) {
-            log.info("writing meta.json");
+            log.debug("writing meta.json");
             zos.putNextEntry(new ZipEntry("meta.json"));
             zos.write(saveGson.toJson(meta).getBytes());
 
-            log.info("writing componentgrid.dat");
+            log.debug("writing componentgrid.dat");
             zos.putNextEntry(new ZipEntry("componentgrid.dat"));
             try (var oos = new ObjectOutputStream(zos)) {
                 oos.writeObject(componentGrid);
 
-                log.info("writing componentgraph.json");
+                log.debug("writing componentgraph.json");
                 zos.putNextEntry(new ZipEntry("componentgraph.json"));
                 zos.write(saveGson.toJson(componentGraph).getBytes());
             }
@@ -63,13 +63,16 @@ public record GraphStore(StoreMeta meta, int[][][] componentGrid, ComponentGraph
         int[][][] componentGrid;
         ComponentGraph componentGraph;
         try (var zis = new ZipInputStream(new FileInputStream(file))) {
+            log.debug("reading meta.json");
             zis.getNextEntry();
             meta = loadGson.fromJson(new InputStreamReader(zis), StoreMeta.class);
 
+            log.debug("reading componentgrid.dat");
             zis.getNextEntry();
             try (var ois = new ObjectInputStream(zis)) {
                 componentGrid = (int[][][]) ois.readObject();
 
+                log.debug("reading componentgraph.json");
                 zis.getNextEntry();
                 componentGraph = loadGson.fromJson(new InputStreamReader(zis), ComponentGraph.class);
             }

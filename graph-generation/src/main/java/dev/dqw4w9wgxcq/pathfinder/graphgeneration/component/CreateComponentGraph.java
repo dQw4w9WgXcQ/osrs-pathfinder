@@ -1,7 +1,6 @@
 package dev.dqw4w9wgxcq.pathfinder.graphgeneration.component;
 
 import dev.dqw4w9wgxcq.pathfinder.commons.TilePathfinder;
-import dev.dqw4w9wgxcq.pathfinder.commons.domain.Point;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Position;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.Link;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.ComponentGraph;
@@ -11,13 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
 public class CreateComponentGraph {
-    private static final boolean ESTIMATE_DISTANCES = false; // to speed up graph generation during development
-
     public static ComponentGraph create(LinkedComponents linkedComponents, TilePathfinder tilePathfinder) {
         log.info(
                 "Creating component graph, linkedComponents size:{}",
@@ -30,20 +26,17 @@ public class CreateComponentGraph {
         var components = linkedComponents.linkedComponents();
         for (var component : components) {
             if (count % 10_000 == 0 && count != 0) {
-                log.info("component {}", count);
+                log.info("component {}...", count);
             }
 
             var startTime = System.currentTimeMillis();
             for (var inboundLink : component.inboundLinks()) {
-                Map<Point, Integer> distances;
-                if (!ESTIMATE_DISTANCES) {
-                    distances = tilePathfinder.distances(
-                            inboundLink.destination(),
-                            component.outboundLinks().stream()
-                                    .map(Link::origin)
-                                    .map(Position::toPoint)
-                                    .collect(Collectors.toSet()));
-                }
+                var distances = tilePathfinder.distances(
+                        inboundLink.destination(),
+                        component.outboundLinks().stream()
+                                .map(Link::origin)
+                                .map(Position::toPoint)
+                                .collect(Collectors.toSet()));
 
                 for (var outboundLink : component.outboundLinks()) {
                     if (inboundLink == outboundLink) {
@@ -53,11 +46,7 @@ public class CreateComponentGraph {
                     }
 
                     log.debug("Adding edge from {} to {}", inboundLink, outboundLink);
-                    var distance = ESTIMATE_DISTANCES
-                            ? chebyshev(
-                                    inboundLink.destination().toPoint(),
-                                    outboundLink.origin().toPoint())
-                            : distances.get(outboundLink.origin().toPoint());
+                    var distance = distances.get(outboundLink.origin().toPoint());
                     var cost = outboundLink.cost() + distance;
 
                     var edge = new LinkEdge(outboundLink, cost);
@@ -82,9 +71,5 @@ public class CreateComponentGraph {
 
         log.info(count + " edges " + skippedCount + " links skipped");
         return new ComponentGraph(graph, outboundLinks, inboundLinks);
-    }
-
-    private static int chebyshev(Point from, Point to) {
-        return Math.max(Math.abs(from.x() - to.x()), Math.abs(from.y() - to.y()));
     }
 }

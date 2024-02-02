@@ -191,6 +191,7 @@ public class TileGrid {
         if (dx == 1) {
             mask |= TileFlags.E_WALL;
             opposingXMask |= TileFlags.W_WALL;
+            opposingXYMask |= TileFlags.W_WALL;
 
             if (dy == 1) {
                 mask |= TileFlags.NE_WALL;
@@ -202,6 +203,7 @@ public class TileGrid {
         } else if (dx == -1) {
             mask |= TileFlags.W_WALL;
             opposingXMask |= TileFlags.E_WALL;
+            opposingXYMask |= TileFlags.E_WALL;
 
             if (dy == 1) {
                 mask |= TileFlags.NW_WALL;
@@ -215,9 +217,11 @@ public class TileGrid {
         if (dy == 1) {
             mask |= TileFlags.N_WALL;
             opposingYMask |= TileFlags.S_WALL;
+            opposingXYMask |= TileFlags.S_WALL;
         } else if (dy == -1) {
             mask |= TileFlags.S_WALL;
             opposingYMask |= TileFlags.N_WALL;
+            opposingXYMask |= TileFlags.N_WALL;
         }
 
         log.debug(
