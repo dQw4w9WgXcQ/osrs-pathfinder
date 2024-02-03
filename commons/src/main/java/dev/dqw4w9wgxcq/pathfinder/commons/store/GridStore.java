@@ -11,6 +11,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -87,7 +88,7 @@ public record GridStore(StoreMeta meta, byte[][][] grid) {
         grid[0][3][4] = (byte) (1 << 7);
         grid[0][9][14] = 11;
 
-        new GridStore(new StoreMeta("v", "d"), grid).save(dir);
+        new GridStore(new StoreMeta("v", Instant.now(), "d"), grid).save(dir);
 
         var loaded = GridStore.load(new File(dir, "grid.zip"));
 

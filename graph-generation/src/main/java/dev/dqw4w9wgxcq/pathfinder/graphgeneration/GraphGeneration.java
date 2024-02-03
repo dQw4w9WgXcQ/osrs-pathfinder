@@ -25,27 +25,27 @@ import org.apache.commons.cli.ParseException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 
 @Slf4j
 public class GraphGeneration {
     public static void main(String[] args) {
         var startTime = System.currentTimeMillis();
 
-        var cacheMetaOpt = new Option("m", "cache-meta", true, "cache metadata string, defaults to null");
-        var cacheOpt = new Option(
-                "c",
-                "cache",
+        var cacheMetaOpt = new Option(
+                "m",
+                "cache-meta",
                 true,
-                "Path to osrs cache dir that the game populates at C:\\Users\\user\\jagexcache\\oldschool\\LIVE\\  Defaults to ./cache");
-        var xteasOpt = new Option("x", "xteas", true, "Path to xteas JSON file.  Defaults to ./xteas.json");
-        var outOpt = new Option("o", "out", true, "Output directory.  Defaults to ./");
+                "Metadata string describing the cache that will be included in each output .zip.  Defaults to null");
+        var inOpt = new Option("i", "in", true, "Input directory.  Expects cache/ and xteas.json  Defaults to ./");
+        var outOpt = new Option("o", "out", true, "Output path.  Defaults to ./");
         var leafletOpt = new Option("l", "leaflet", false, "Generate leaflet images");
         var skipGraphOpt = new Option("s", "skip-graph", false, "Skip graph output (only links will be written)");
 
         var options = new Options();
         options.addOption(cacheMetaOpt);
-        options.addOption(cacheOpt);
-        options.addOption(xteasOpt);
+        options.addOption(inOpt);
         options.addOption(outOpt);
         options.addOption(leafletOpt);
         options.addOption(skipGraphOpt);
@@ -66,16 +66,23 @@ public class GraphGeneration {
         } else {
             log.info("cacheMeta: {}", cacheMeta);
         }
-        var storeMeta = new StoreMeta(null, cacheMeta);
+        var storeMeta = new StoreMeta(null, Instant.ofEpochMilli(startTime), cacheMeta);
 
-        var cacheDir = new File(cmd.getOptionValue(cacheOpt, "cache"));
+        var inputDir = new File(cmd.getOptionValue(inOpt, "."));
+        if (!inputDir.exists()) {
+            System.err.println("Input dir does not exist");
+            System.exit(1);
+            return;
+        }
+
+        var cacheDir = new File(inputDir, "cache");
         if (!cacheDir.exists()) {
             System.err.println("Cache dir does not exist");
             System.exit(1);
             return;
         }
 
-        var xteasFile = new File(cmd.getOptionValue(xteasOpt, "xteas.json"));
+        var xteasFile = new File(inputDir, "xteas.json");
         if (!xteasFile.exists()) {
             System.err.println("Xteas file does not exist");
             System.exit(1);
@@ -90,22 +97,22 @@ public class GraphGeneration {
         try {
             cacheData = CacheData.load(cacheDir, xteasFile);
         } catch (FileNotFoundException e) {
-            log.debug("cache dir missing expected content", e);
+            log.error("cache dir missing expected content", e);
             System.err.println("cache dir missing expected content");
             System.exit(1);
             return;
         } catch (IOException e) {
-            log.debug("reading cache data failed", e);
+            log.error("reading cache data failed", e);
             System.err.println("reading cache data failed");
             System.exit(1);
             return;
         } catch (JsonIOException e) {
-            log.debug("reading xtea failed", e);
+            log.error("reading xtea failed", e);
             System.err.println("reading xtea failed");
             System.exit(1);
             return;
         } catch (JsonSyntaxException e) {
-            log.debug("xteas json malformed", e);
+            log.error("xteas json malformed", e);
             System.err.println("xteas json malformed");
             System.exit(1);
             return;
@@ -120,7 +127,7 @@ public class GraphGeneration {
             try {
                 LeafletImages.write(new File(outDir, "leaflet"), cacheDir, xteasFile, componentGrid);
             } catch (IOException e) {
-                log.debug("writing leaflet images failed", e);
+                log.error("writing leaflet images failed", e);
                 System.err.println("writing leaflet images failed");
                 System.exit(1);
                 return;
@@ -132,7 +139,7 @@ public class GraphGeneration {
         try {
             linkStore.save(outDir);
         } catch (IOException e) {
-            log.debug("writing links failed", e);
+            log.error("writing links failed", e);
             System.err.println("writing links failed");
             System.exit(1);
             return;
@@ -148,7 +155,7 @@ public class GraphGeneration {
         try {
             gridStore.save(outDir);
         } catch (IOException e) {
-            log.debug("writing grid failed", e);
+            log.error("writing grid failed", e);
             System.err.println("writing grid failed");
             System.exit(1);
             return;
@@ -161,13 +168,13 @@ public class GraphGeneration {
         try {
             graphStore.save(outDir);
         } catch (IOException e) {
-            log.debug("writing graph failed", e);
+            log.error("writing graph failed", e);
             System.err.println("writing graph failed");
             System.exit(1);
             return;
         }
 
-        var time = (System.currentTimeMillis() - startTime) / 1000;
-        log.info("finished in {}s", time);
+        var duration = Duration.ofMillis(System.currentTimeMillis() - startTime);
+        log.info("finished in {}s", duration);
     }
 }
