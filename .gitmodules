@@ -1,0 +1,9 @@
+[submodule "osrs-pathfinder-service-2"]
+	path = osrs-pathfinder-service-2
+	url = https://github.com/dQw4w9WgXcQ/osrs-pathfinder-service-2.git
+[submodule "osrs-pathfinder-tile"]
+	path = osrs-pathfinder-tile
+	url = https://github.com/dQw4w9WgXcQ/osrs-pathfinder-tile.git
+[submodule "osrs-pathfinder-site"]
+	path = osrs-pathfinder-site
+	url = https://github.com/dQw4w9WgXcQ/osrs-pathfinder-site.git

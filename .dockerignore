@@ -1,0 +1,9 @@
+Dockerfile
+
+osrs-pathfinder/.gradle/
+osrs-pathfinder/**/build/
+!osrs-pathfinder/gradle/wrapper/gradle-wrapper.jar
+!osrs-pathfinder/**/src/main/**/build/
+!osrs-pathfinder/**/src/test/**/build/
+
+.DS_STORE
