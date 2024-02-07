@@ -13,9 +13,9 @@ Demonstrated at [osrspathfinder.github.io](https://osrspathfinder.github.io/).
 ## Project Layout
 
 - [osrs-pathfinder (library)](osrs-pathfinder/) - Graph generation and pathfinding library.  
-- [osrs-pathfinder-service-2](osrs-pathfinder-service-2/) - REST service.  (depends on osrs-pathfinder)
-- [osrs-pathfinder-tile](osrs-pathfinder-tile/) - Tile pathfinding was rewritten in Rust and separated out into its own REST service.  The main service calls the tile service.  (it is not exposed publically to the web)
-- [osrs-pathfinder-site](osrs-pathfinder-website/) - Website made with Leaflet.js that visualizes paths from the REST service.  
+- [osrs-pathfinder-service-2](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-service-2) - REST service.  (depends on osrs-pathfinder)
+- [osrs-pathfinder-tile](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-tile) - Tile pathfinding was rewritten in Rust and separated out into its own REST service.  The main service calls the tile service.  (it is not exposed publically to the web)
+- [osrs-pathfinder-site](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-site) - Website made with Leaflet.js that visualizes paths from the REST service.  
 
 ## The Pathfinding Algorithm
 
