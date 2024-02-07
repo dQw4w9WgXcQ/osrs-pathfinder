@@ -1,8 +1,8 @@
 # OSRS Pathfinder
 
-A pathfinding service that helps bots navigate around Old School Runescape.
+OSRS Pathfinder is a service that helps bots navigate around Old School Runescape.
 
-Generates a pathfinding graph from data extracted from the game's cache files.
+It generates a pathfinding graph from data extracted from the game's cache files.
 
 Handles doors, stairs, ships, dungeons, teleports, and other links.
 
@@ -10,38 +10,30 @@ Demonstrated at [osrspathfinder.github.io](https://osrspathfinder.github.io/).
 
 [![website](https://i.imgur.com/sk5XPSt.png)](https://osrspathfinder.github.io/)
 
-### Related repos:
-
-REST service: [github.com/dQw4w9WgXcQ/osrs-pathfinder-service-2](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-service-2)
-
-Leaflet visualization website: [github.com/dQw4w9WgXcQ/osrs-pathfinder-site](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-site)
-
-Rust A* tile pathfinder: [github.com/dQw4w9WgXcQ/osrs-pathfinder-tile](https://github.com/dQw4w9WgXcQ/osrs-pathfinder-tile)
-
 ## Project Layout
 
-- [graph-generation](osrs-pathfinder/graph-generation/src/main/java/dev/dqw4w9wgxcq/pathfinder/graphgeneration) - Generates the graph from data extracted from the game's cache files and serializes it for later use.
-- [pathfinding](osrs-pathfinder/pathfinding/src/main/java/dev/dqw4w9wgxcq/pathfinder) - Consumes the generated graph and finds paths with a hierarchical dijkstra/A* algorithm. This package is used by the REST service.
+- [osrs-pathfinder (library)](osrs-pathfinder/) - Graph generation and pathfinding library.  
+- [osrs-pathfinder-service-2](osrs-pathfinder-service-2/) - REST service.  (depends on osrs-pathfinder)
+- [osrs-pathfinder-tile](osrs-pathfinder-tile/) - Tile pathfinding was rewritten in Rust and separated out into its own REST service.  The main service calls the tile service.  (it is not exposed publically to the web)
+- [osrs-pathfinder-site](osrs-pathfinder-website/) - Website made with Leaflet.js that visualizes paths from the REST service.  
 
 ## The Pathfinding Algorithm
 
-Pathfinding is done in two stages. First, a link path is found using Dijkstra's. Then, tile paths are found connecting links using A*.
+The pathfinder needs to handle links (weighted edges) such as doors, stairs, ships, and teleports.  However, the majority of pathfinding is done on individual tiles, for which Dijkstra's is inefficient.  The pathfinder uses a two stage design to handle this.
 
-In the image below, cyan lines represent the link path, while blue lines represent the tile path. The colored areas represent "components", which are islands of contiguous tiles connected by links.
+To find a path, the link path is first found using Dijkstra's. Then, tile paths connecting the links are found using A*.  
 
-Links are doors, stairs, ships, and other shortcuts. During graph generation, Distances between links (through components) are calculated to create the weighted Dijkstra's graph. An edge is added from each link to all other links in the same component.
-
-This design was chosen for performance, caching, and replication.
+In the image below, cyan lines represent links while blue lines represent the tile path. The colored areas represent "components", which are islands of contiguous tiles connected by links.
 
 ![](https://i.imgur.com/MaD51oN.png)
 
-### Details
+This design was chosen for performance, caching, and replication.  
 
-Since A* uses a heuristic, it can only be used on tiles after the link path is found. Additionally, while A* is fast in the average case, it's inefficient in the worst case. By finding the link path, we can guarantee a valid path exists and will never hit the worst case.
+During graph generation, distances from every link to every other link in its component are calculated to create the weighted Dijkstra's graph.  However, at runtime, distances from the start/end tile to all links in the start/end component need to be calculated for each request. Distances take up very little space and are cached in memory without eviction.
 
-The majority of resource usage is in finding the tile path. The two stage design allows tile paths to be cached. The tile pathfinder was also rewritten in Rust and separated out into its own service, which can be replicated independently.
+Since A* uses a heuristic, it can't be used on a weighted graph. Additionally, while A* is fast in the average case, it's very inefficient in the worst case. By finding the link path, we can guarantee a valid path exists and will never hit the worst case.  
 
-Although distances between links are calculated during graph generation, distances from the start/end tile to all links in the start/end component need to be calculated for each request. Finding distances to all links in a component is O(N), but N can be in the millions. Still, this isn't a performance issue for valid paths. Additionally, distances take up very little space and are cached in process memory without eviction.
+The majority of resource usage is in finding the tile path. Tile pathfinding was rewritten in Rust and separated out into its own service, which can be replicated independently.  The two stage design allows tile paths to be cached independently of the link path. The link path can vary between calls because users may have different item/quest unlocks and therefore can't be cached.  
 
 ## Types of Links
 
