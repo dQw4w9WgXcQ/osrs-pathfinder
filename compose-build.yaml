@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  maven-local-published:
+    build:
+      context: .
+  service:
+    depends_on:
+      maven-local-published:
+        condition: service_completed_successfully
+    build:
+      context: osrs-pathfinder-service-2
+  tile-service:
+    build:
+      context: osrs-pathfinder-tile
