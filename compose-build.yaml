@@ -5,11 +5,13 @@ services:
     build:
       context: .
   service:
+    image: "dqw4w9wgxcq/osrs-pathfinder-service"
     depends_on:
       maven-local-published:
         condition: service_completed_successfully
     build:
       context: osrs-pathfinder-service-2
   tile-service:
+    image: "dqw4w9wgxcq/osrs-pathfinder-tile-service"
     build:
       context: osrs-pathfinder-tile
