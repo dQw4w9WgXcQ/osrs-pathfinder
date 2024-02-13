@@ -14,6 +14,11 @@ public record Point(int x, int y) {
         return pack();
     }
 
+    @Override
+    public String toString() {
+        return "(" + x + ", " + y + ")";
+    }
+
     public int pack() {
         return pack(x, y);
     }
