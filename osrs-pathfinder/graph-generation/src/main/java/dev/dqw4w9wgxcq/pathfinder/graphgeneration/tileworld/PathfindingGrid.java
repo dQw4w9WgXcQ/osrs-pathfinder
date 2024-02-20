@@ -1,4 +1,4 @@
-package dev.dqw4w9wgxcq.pathfinder.graphgeneration.tilepathfinder;
+package dev.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld;
 
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Point;
 import lombok.Getter;

@@ -1,6 +1,5 @@
 package dev.dqw4w9wgxcq.pathfinder.pathfinder;
 
-import dev.dqw4w9wgxcq.pathfinder.commons.TilePathfinder;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Agent;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Point;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Position;
@@ -32,21 +31,16 @@ public class Pathfinder {
     private final ExecutorService asyncExe = Executors.newCachedThreadPool();
     private final LinkPathfinder linkPathfinder;
 
-    public Pathfinder(
-            ComponentGrid componentGrid,
-            ComponentGraph componentGraph,
-            LinkDistances linkDistances,
-            TilePathfinder tilePathfinder) {
+    Pathfinder(ComponentGrid componentGrid, ComponentGraph componentGraph, TilePathfinder tilePathfinder) {
         this.componentGrid = componentGrid;
         this.tilePathfinder = tilePathfinder;
+        var linkDistances = new LinkDistances(tilePathfinder, componentGrid, componentGraph);
         this.linkPathfinder = new LinkPathfinder(componentGrid, componentGraph, linkDistances, asyncExe);
     }
 
     @SuppressWarnings("unused")
-    public static Pathfinder create(GraphStore graphStore, TilePathfinder tilePathfinder) {
-        var componentGrid = new ComponentGrid(graphStore.componentGrid());
-        var linkDistances = new LinkDistances(tilePathfinder, componentGrid, graphStore.componentGraph());
-        return new Pathfinder(componentGrid, graphStore.componentGraph(), linkDistances, tilePathfinder);
+    public Pathfinder(GraphStore graphStore, TilePathfinder tilePathfinder) {
+        this(new ComponentGrid(graphStore.componentGrid()), graphStore.componentGraph(), tilePathfinder);
     }
 
     @SuppressWarnings("unused")

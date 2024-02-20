@@ -3,8 +3,6 @@ package dev.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld;
 import dev.dqw4w9wgxcq.pathfinder.commons.Constants;
 import dev.dqw4w9wgxcq.pathfinder.commons.TileFlags;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.cachedata.CacheData;
-import dev.dqw4w9wgxcq.pathfinder.graphgeneration.tilepathfinder.PathfindingGrid;
-import dev.dqw4w9wgxcq.pathfinder.graphgeneration.tilepathfinder.TilePathfinderImpl;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.cache.definitions.ObjectDefinition;
@@ -57,25 +55,10 @@ public class TileWorld {
 
         var time = (System.currentTimeMillis() - start) / 1000;
         log.info("TileWorld created in {}s", time);
-        //
-        //        System.out.println("AAAAAAAAA");
-        //        TileGrid plane = tileWorld.planes[0];
-        //        int x = 3192;
-        //        int y = 3198;
-        //        System.out.println(plane.canTravelInDirection(x, y, 1, 1));
-        //        System.out.println(plane.canTravelInDirection(x + 1, y + 1, -1, -1));
-        //
-        //        System.out.println(TileFlags.describe(plane.getConfig(x, y)));
-        //        System.out.println(TileFlags.describe(plane.getConfig(x + 1, y + 1)));
-        //        System.out.println(TileFlags.describe(plane.getConfig(3195, 3198)));
-        //        System.out.println(TileFlags.describe(plane.getConfig(3195, 3197)));
-        //
-        //        System.exit(42069);
-
         return tileWorld;
     }
 
-    public TilePathfinderImpl toPathfinder(int[][][] componentIds) {
+    public LocalTilePathfinder toPathfinder(int[][][] componentIds) {
         log.info("Converting to TilePathfinder");
         var start = System.currentTimeMillis();
         var list = new ArrayList<PathfindingGrid>();
@@ -86,7 +69,7 @@ public class TileWorld {
         var planes = list.toArray(new PathfindingGrid[0]);
         var time = (System.currentTimeMillis() - start) / 1000;
         log.info("TilePathfinder converted in {}s", time);
-        return new TilePathfinderImpl(planes);
+        return new LocalTilePathfinder(planes);
     }
 
     static void markRegionValid(TileGrid[] planes, Region region) {

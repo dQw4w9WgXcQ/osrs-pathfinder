@@ -28,8 +28,7 @@ class LinkPathfinder {
     /**
      * Dijkstra-like algorithm.  Edges to the end component are simulated to avoid modifying the graph.  (see comment below)
      */
-    @Nullable
-    List<Link> findLinkPath(Position start, Position finish, Agent agent) {
+    public @Nullable List<Link> findLinkPath(Position start, Position finish, Agent agent) {
         record Node(Link link, int distance, boolean isEnd) {}
 
         log.debug("link path from {} to {} for agent {}", start, finish, agent);

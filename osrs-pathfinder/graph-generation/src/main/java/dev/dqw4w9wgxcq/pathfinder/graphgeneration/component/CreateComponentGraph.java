@@ -1,10 +1,10 @@
 package dev.dqw4w9wgxcq.pathfinder.graphgeneration.component;
 
-import dev.dqw4w9wgxcq.pathfinder.commons.TilePathfinder;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Position;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.link.Link;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.ComponentGraph;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.LinkEdge;
+import dev.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.LocalTilePathfinder;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class CreateComponentGraph {
-    public static ComponentGraph create(LinkedComponents linkedComponents, TilePathfinder tilePathfinder) {
+    public static ComponentGraph create(LinkedComponents linkedComponents, LocalTilePathfinder tilePathfinder) {
         log.info(
                 "Creating component graph, linkedComponents size:{}",
                 linkedComponents.linkedComponents().size());

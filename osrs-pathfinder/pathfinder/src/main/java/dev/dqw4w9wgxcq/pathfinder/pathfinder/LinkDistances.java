@@ -1,6 +1,5 @@
 package dev.dqw4w9wgxcq.pathfinder.pathfinder;
 
-import dev.dqw4w9wgxcq.pathfinder.commons.TilePathfinder;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Point;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Position;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.ComponentGraph;
@@ -14,7 +13,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Slf4j
-public class LinkDistances {
+class LinkDistances {
     private final TilePathfinder tilePathfinder;
     private final ComponentGrid componentGrid;
     private final ComponentGraph componentGraph;
@@ -24,12 +23,12 @@ public class LinkDistances {
     private final Map<CacheKey, Map<Point, Integer>> cache = new ConcurrentHashMap<>();
 
     public Map<Point, Integer> findDistances(Position position, boolean isOutbound) {
-        if (!tilePathfinder.isRemote()) {
-            return cache.computeIfAbsent(new CacheKey(position, isOutbound), k -> {
-                log.debug("cache miss {} {}", k.position(), k.isOutbound() ? "outbound" : "inbound");
-                return internalFindDistances(k.position(), k.isOutbound());
-            });
-        }
+        //        if (!tilePathfinder.isRemote()) {
+        //            return cache.computeIfAbsent(new CacheKey(position, isOutbound), k -> {
+        //                log.debug("cache miss {} {}", k.position(), k.isOutbound() ? "outbound" : "inbound");
+        //                return internalFindDistances(k.position(), k.isOutbound());
+        //            });
+        //        }
 
         return internalFindDistances(position, isOutbound);
     }

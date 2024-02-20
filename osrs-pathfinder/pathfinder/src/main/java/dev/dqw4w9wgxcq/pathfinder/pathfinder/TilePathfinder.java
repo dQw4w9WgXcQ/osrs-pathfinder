@@ -1,4 +1,4 @@
-package dev.dqw4w9wgxcq.pathfinder.commons;
+package dev.dqw4w9wgxcq.pathfinder.pathfinder;
 
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Point;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Position;
@@ -13,6 +13,4 @@ public interface TilePathfinder {
     List<Point> findPath(int plane, Point start, Point end);
 
     Map<Point, Integer> distances(Position from, Set<Point> tos);
-
-    boolean isRemote();
 }

@@ -1,6 +1,5 @@
-package dev.dqw4w9wgxcq.pathfinder.graphgeneration.tilepathfinder;
+package dev.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld;
 
-import dev.dqw4w9wgxcq.pathfinder.commons.TilePathfinder;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Point;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Position;
 import lombok.RequiredArgsConstructor;
@@ -11,26 +10,19 @@ import java.util.Map;
 import java.util.Set;
 
 @RequiredArgsConstructor
-public class TilePathfinderImpl implements TilePathfinder {
+public class LocalTilePathfinder {
     private final PathfindingGrid[] planes;
 
     @SuppressWarnings("unused")
-    public static TilePathfinderImpl create(byte[][][] planes) {
-        return new TilePathfinderImpl(
+    public static LocalTilePathfinder create(byte[][][] planes) {
+        return new LocalTilePathfinder(
                 Arrays.stream(planes).map(PathfindingGrid::new).toArray(PathfindingGrid[]::new));
     }
 
-    @Override
-    public boolean isRemote() {
-        return false;
-    }
-
-    @Override
     public List<Point> findPath(int plane, Point start, Point end) {
         return planes[plane].findPath(start, end);
     }
 
-    @Override
     public Map<Point, Integer> distances(Position from, Set<Point> tos) {
         return planes[from.plane()].distances(from.toPoint(), tos);
     }
