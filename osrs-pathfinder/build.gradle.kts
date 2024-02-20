@@ -19,7 +19,7 @@ subprojects {
     }
 
     dependencies {
-        val lombok = "1.18.24"
+        val lombok = "1.18.30"
 
         implementation("org.slf4j:slf4j-api:${Versions.slf4j}")
         implementation("org.jetbrains:annotations:23.0.0")

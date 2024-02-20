@@ -1,7 +1,7 @@
 package dev.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld;
 
 import dev.dqw4w9wgxcq.pathfinder.commons.TileFlags;
-import dev.dqw4w9wgxcq.pathfinder.tilepathfinding.PathfindingGrid;
+import dev.dqw4w9wgxcq.pathfinder.graphgeneration.tilepathfinder.PathfindingGrid;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 

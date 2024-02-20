@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import dev.dqw4w9wgxcq.pathfinder.commons.Constants;
 import dev.dqw4w9wgxcq.pathfinder.commons.TileFlags;
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.pathfinding.ComponentGrid;
-import dev.dqw4w9wgxcq.pathfinder.tilepathfinding.PathfindingGrid;
+import dev.dqw4w9wgxcq.pathfinder.graphgeneration.tilepathfinder.PathfindingGrid;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.VisibleForTesting;
