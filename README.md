@@ -1,10 +1,9 @@
 # OSRS Pathfinder
 
-OSRS Pathfinder is a service that helps bots navigate around Old School Runescape.
+OSRS Pathfinder is a REST service that serves shortest paths between two locations in Old School Runescape.  Handles doors, stairs, ships, dungeons, teleports, and other links.
 
-It generates a pathfinding graph from data extracted from the game's cache files.
+The pathfinding graph is generated from data extracted from the game's cache files.
 
-Handles doors, stairs, ships, dungeons, teleports, and other links.
 
 Demonstrated at [osrspathfinder.github.io](https://osrspathfinder.github.io/).
 
