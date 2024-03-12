@@ -14,6 +14,7 @@ import dev.dqw4w9wgxcq.pathfinder.commons.store.GraphStore;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.Nullable;
 
+import java.net.URL;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -24,29 +25,33 @@ import java.util.concurrent.Future;
 import java.util.function.Supplier;
 
 @Slf4j
+@SuppressWarnings("unused")
 public class Pathfinder {
     private final ComponentGrid componentGrid;
-    private final TilePathfinder tilePathfinder;
+    private final RemoteTilePathfinder remoteTilePathfinder;
 
-    private final ExecutorService asyncExe = Executors.newCachedThreadPool();
+    private final ExecutorService exe = Executors.newCachedThreadPool();
     private final LinkPathfinder linkPathfinder;
 
-    Pathfinder(ComponentGrid componentGrid, ComponentGraph componentGraph, TilePathfinder tilePathfinder) {
+    Pathfinder(ComponentGrid componentGrid, ComponentGraph componentGraph, RemoteTilePathfinder remoteTilePathfinder) {
         this.componentGrid = componentGrid;
-        this.tilePathfinder = tilePathfinder;
-        var linkDistances = new LinkDistances(tilePathfinder, componentGrid, componentGraph);
-        this.linkPathfinder = new LinkPathfinder(componentGrid, componentGraph, linkDistances, asyncExe);
+        this.remoteTilePathfinder = remoteTilePathfinder;
+        var linkDistances = new LinkDistances(remoteTilePathfinder, componentGrid, componentGraph);
+        this.linkPathfinder = new LinkPathfinder(componentGrid, componentGraph, linkDistances, exe);
     }
 
-    @SuppressWarnings("unused")
-    public Pathfinder(GraphStore graphStore, TilePathfinder tilePathfinder) {
-        this(new ComponentGrid(graphStore.componentGrid()), graphStore.componentGraph(), tilePathfinder);
+    Pathfinder(GraphStore graphStore, RemoteTilePathfinder remoteTilePathfinder) {
+        this(new ComponentGrid(graphStore.componentGrid()), graphStore.componentGraph(), remoteTilePathfinder);
     }
 
-    @SuppressWarnings("unused")
-    public PathfinderResult findPath(Position start, Position finish, Agent agent) {
-        var startFuture = asyncExe.submit(() -> closestIfBlocked(start));
-        var finishFuture = asyncExe.submit(() -> closestIfBlocked(finish));
+    public Pathfinder(GraphStore graphStore, String tilePathfinderAddress, String redisHost, int redisPort) {
+        this(graphStore, new RemoteTilePathfinder(tilePathfinderAddress, redisHost, redisPort));
+    }
+
+    public PathfinderResult findPath(Position start, Position finish, Agent agent, Algo algo)
+            throws PathfinderException {
+        var startFuture = exe.submit(() -> closestIfBlocked(start));
+        var finishFuture = exe.submit(() -> closestIfBlocked(finish));
 
         var fixedStart = Util.await(startFuture);
         var fixedFinish = Util.await(finishFuture);
@@ -62,7 +67,7 @@ public class Pathfinder {
             return new PathfinderResult.Unreachable(fixedStart, fixedFinish);
         }
 
-        var steps = toSteps(linkPath, fixedStart, fixedFinish);
+        var steps = toSteps(linkPath, fixedStart, fixedFinish, algo);
 
         return new PathfinderResult.Success(fixedStart, fixedFinish, steps);
     }
@@ -70,21 +75,21 @@ public class Pathfinder {
     /**
      * Finds tile paths between links and combines them into a list of path steps.
      */
-    private List<Step> toSteps(List<Link> linkPath, Position start, Position finish) {
+    private List<Step> toSteps(List<Link> linkPath, Position start, Position finish, Algo algo) {
         var startTime = System.currentTimeMillis();
 
         var curr = start;
         var steps = new ArrayList<Supplier<Step>>();
         for (var link : linkPath) {
-            var pathFuture =
-                    findPathAsync(curr.plane(), curr.toPoint(), link.origin().toPoint());
+            var pathResultFuture =
+                    findPathAsync(curr.plane(), curr.toPoint(), link.origin().toPoint(), algo);
             final var finalCurr = curr;
-            steps.add(() -> awaitPath(finalCurr.plane(), pathFuture));
+            steps.add(() -> awaitPath(finalCurr.plane(), pathResultFuture));
             steps.add(() -> new LinkStep(link));
             curr = link.destination();
         }
 
-        var pathFuture = findPathAsync(curr.plane(), curr.toPoint(), finish.toPoint());
+        var pathFuture = findPathAsync(curr.plane(), curr.toPoint(), finish.toPoint(), algo);
         final var finalCurr1 = curr;
         steps.add(() -> awaitPath(finalCurr1.plane(), pathFuture));
 
@@ -94,12 +99,13 @@ public class Pathfinder {
         return steps.stream().map(Supplier::get).toList();
     }
 
-    private Future<List<Point>> findPathAsync(int plane, Point start, Point end) {
-        return asyncExe.submit(() -> tilePathfinder.findPath(plane, start, end));
+    private Future<RemoteTilePathfinder.PathResult> findPathAsync(int plane, Point start, Point end, Algo algo) {
+        return exe.submit(() -> remoteTilePathfinder.findPath(plane, start, end, algo));
     }
 
-    private WalkStep awaitPath(int plane, Future<List<Point>> pathFuture) {
-        return new WalkStep(plane, Util.await(pathFuture));
+    private WalkStep awaitPath(int plane, Future<RemoteTilePathfinder.PathResult> pathResultFuture) {
+        var pathResult = Util.await(pathResultFuture);
+        return new WalkStep(pathResult.cached(), plane, pathResult.path());
     }
 
     private @Nullable Position closestIfBlocked(Position position) {
