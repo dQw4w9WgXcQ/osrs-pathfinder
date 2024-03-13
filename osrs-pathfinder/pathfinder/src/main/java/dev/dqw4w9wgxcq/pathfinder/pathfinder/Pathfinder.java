@@ -47,34 +47,33 @@ public class Pathfinder {
         this(graphStore, new RemoteTilePathfinder(tilePathfinderAddress, redisHost, redisPort));
     }
 
-    public PathfinderResult findPath(Position start, Position finish, Agent agent, Algo algo)
-            throws PathfinderException {
+    public PathfinderResult findPath(Position start, Position end, Agent agent, Algo algo) throws PathfinderException {
         var startFuture = exe.submit(() -> closestIfBlocked(start));
-        var finishFuture = exe.submit(() -> closestIfBlocked(finish));
+        var endFuture = exe.submit(() -> closestIfBlocked(end));
 
         var fixedStart = Util.await(startFuture);
-        var fixedFinish = Util.await(finishFuture);
+        var fixedEnd = Util.await(endFuture);
 
-        if (fixedStart == null || fixedFinish == null) {
-            return new PathfinderResult.Blocked(fixedStart, fixedFinish);
+        if (fixedStart == null || fixedEnd == null) {
+            return new PathfinderResult.Blocked(fixedStart, fixedEnd);
         }
 
-        var linkPath = linkPathfinder.findLinkPath(fixedStart, fixedFinish, agent);
+        var linkPath = linkPathfinder.findLinkPath(fixedStart, fixedEnd, agent);
 
         if (linkPath == null) {
-            log.info("no path from {} to {} for agent {}", fixedStart, fixedFinish, agent);
-            return new PathfinderResult.Unreachable(fixedStart, fixedFinish);
+            log.info("no path from {} to {} for agent {}", fixedStart, fixedEnd, agent);
+            return new PathfinderResult.Unreachable(fixedStart, fixedEnd);
         }
 
-        var steps = toSteps(linkPath, fixedStart, fixedFinish, algo);
+        var steps = toSteps(linkPath, fixedStart, fixedEnd, algo);
 
-        return new PathfinderResult.Success(fixedStart, fixedFinish, steps);
+        return new PathfinderResult.Success(fixedStart, fixedEnd, steps);
     }
 
     /**
      * Finds tile paths between links and combines them into a list of path steps.
      */
-    private List<Step> toSteps(List<Link> linkPath, Position start, Position finish, Algo algo) {
+    private List<Step> toSteps(List<Link> linkPath, Position start, Position end, Algo algo) {
         var startTime = System.currentTimeMillis();
 
         var curr = start;
@@ -88,7 +87,7 @@ public class Pathfinder {
             curr = link.end();
         }
 
-        var pathFuture = findPathAsync(curr.plane(), curr.toPoint(), finish.toPoint(), algo);
+        var pathFuture = findPathAsync(curr.plane(), curr.toPoint(), end.toPoint(), algo);
         final var finalCurr1 = curr;
         steps.add(() -> awaitPath(finalCurr1.plane(), pathFuture));
 

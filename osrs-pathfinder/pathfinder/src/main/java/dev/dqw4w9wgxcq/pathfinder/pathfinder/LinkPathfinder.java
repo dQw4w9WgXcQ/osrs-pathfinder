@@ -23,18 +23,18 @@ class LinkPathfinder {
     /**
      * Dijkstra-like algorithm.  Edges to the end component are simulated to avoid modifying the graph.  (see comment below)
      */
-    public @Nullable List<Link> findLinkPath(Position start, Position finish, Agent agent) {
+    public @Nullable List<Link> findLinkPath(Position start, Position end, Agent agent) {
         record Node(Link link, int distance, boolean isEnd) {}
 
-        log.debug("link path from {} to {} for agent {}", start, finish, agent);
+        log.debug("link path from {} to {} for agent {}", start, end, agent);
 
         var startTime = System.currentTimeMillis();
 
         var startComponent = componentGrid.componentOf(start);
-        var endComponent = componentGrid.componentOf(finish);
+        var endComponent = componentGrid.componentOf(end);
 
         var startDistancesFuture = asyncExe.submit(() -> linkDistances.findDistances(start, true));
-        var endDistancesFuture = asyncExe.submit(() -> linkDistances.findDistances(finish, false));
+        var endDistancesFuture = asyncExe.submit(() -> linkDistances.findDistances(end, false));
 
         var startDistances = Util.await(startDistancesFuture);
         var endDistances = Util.await(endDistancesFuture);
