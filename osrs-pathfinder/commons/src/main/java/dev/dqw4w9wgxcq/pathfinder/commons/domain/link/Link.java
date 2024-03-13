@@ -19,9 +19,9 @@ public sealed interface Link
      * null if link is a teleport
      */
     @Nullable
-    Position origin();
+    Position start();
 
-    Position destination();
+    Position end();
 
     /**
      * approximate cost in terms of walking tile units

@@ -5,10 +5,10 @@ import dev.dqw4w9wgxcq.pathfinder.commons.domain.requirement.Requirement;
 
 import java.util.List;
 
-public record DungeonLink(Type type, int id, Position origin, Position destination, int objectId, String action)
+public record DungeonLink(Type type, int id, Position start, Position end, int objectId, String action)
         implements Link {
-    public DungeonLink(int id, Position origin, Position destination, int objectId, String action) {
-        this(Type.DUNGEON, id, origin, destination, objectId, action);
+    public DungeonLink(int id, Position start, Position end, int objectId, String action) {
+        this(Type.DUNGEON, id, start, end, objectId, action);
     }
 
     @Override

@@ -5,9 +5,9 @@ import dev.dqw4w9wgxcq.pathfinder.commons.domain.requirement.Requirement;
 
 import java.util.List;
 
-public record ShipLink(Type type, int id, Position origin, Position destination) implements Link {
-    public ShipLink(int id, Position origin, Position destination) {
-        this(Type.SHIP, id, origin, destination);
+public record ShipLink(Type type, int id, Position start, Position end) implements Link {
+    public ShipLink(int id, Position start, Position end) {
+        this(Type.SHIP, id, start, end);
     }
 
     @Override

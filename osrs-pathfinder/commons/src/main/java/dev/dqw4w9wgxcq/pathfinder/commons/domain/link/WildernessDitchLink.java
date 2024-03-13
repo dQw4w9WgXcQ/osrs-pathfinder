@@ -5,9 +5,9 @@ import dev.dqw4w9wgxcq.pathfinder.commons.domain.requirement.Requirement;
 
 import java.util.List;
 
-public record WildernessDitchLink(Type type, int id, Position origin, Position destination) implements Link {
-    public WildernessDitchLink(int id, Position origin, Position destination) {
-        this(Type.WILDERNESS_DITCH, id, origin, destination);
+public record WildernessDitchLink(Type type, int id, Position start, Position end) implements Link {
+    public WildernessDitchLink(int id, Position start, Position end) {
+        this(Type.WILDERNESS_DITCH, id, start, end);
     }
 
     @Override

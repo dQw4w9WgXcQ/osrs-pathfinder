@@ -59,6 +59,6 @@ public class SpecialLinks {
     }
 
     public static SpecialLink bidirection(int id, SpecialLink link) {
-        return new SpecialLink(id, link.destination(), link.origin(), link.cost(), link.requirements(), link.extra());
+        return new SpecialLink(id, link.end(), link.start(), link.cost(), link.requirements(), link.extra());
     }
 }

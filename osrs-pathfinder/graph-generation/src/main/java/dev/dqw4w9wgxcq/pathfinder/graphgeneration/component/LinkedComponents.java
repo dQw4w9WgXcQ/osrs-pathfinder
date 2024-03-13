@@ -24,25 +24,25 @@ public record LinkedComponents(List<LinkedComponent> linkedComponents) {
 
                     var component = components[id];
                     if (component == null) {
-                        var originLinks = new ArrayList<Link>();
-                        var destinationLinks = new ArrayList<Link>();
+                        var startLinks = new ArrayList<Link>();
+                        var endLinks = new ArrayList<Link>();
                         for (var link : links.all()) {
-                            var originId = contiguousComponents
-                                    .planes()[link.origin().plane()][
-                                    link.origin().x()][link.origin().y()];
-                            var destinationId = contiguousComponents
-                                    .planes()[link.destination().plane()][
-                                    link.destination().x()][link.destination().y()];
+                            var startId = contiguousComponents
+                                    .planes()[link.start().plane()][link.start().x()][
+                                    link.start().y()];
+                            var endId = contiguousComponents
+                                    .planes()[link.end().plane()][link.end().x()][
+                                    link.end().y()];
 
-                            if (originId == id) {
-                                originLinks.add(link);
+                            if (startId == id) {
+                                startLinks.add(link);
                             }
 
-                            if (destinationId == id) {
-                                destinationLinks.add(link);
+                            if (endId == id) {
+                                endLinks.add(link);
                             }
                         }
-                        component = new LinkedComponent(originLinks, destinationLinks);
+                        component = new LinkedComponent(startLinks, endLinks);
                         components[id] = component;
                     }
                 }

@@ -14,7 +14,6 @@ import dev.dqw4w9wgxcq.pathfinder.commons.store.GraphStore;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.Nullable;
 
-import java.net.URL;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -82,11 +81,11 @@ public class Pathfinder {
         var steps = new ArrayList<Supplier<Step>>();
         for (var link : linkPath) {
             var pathResultFuture =
-                    findPathAsync(curr.plane(), curr.toPoint(), link.origin().toPoint(), algo);
+                    findPathAsync(curr.plane(), curr.toPoint(), link.start().toPoint(), algo);
             final var finalCurr = curr;
             steps.add(() -> awaitPath(finalCurr.plane(), pathResultFuture));
             steps.add(() -> new LinkStep(link));
-            curr = link.destination();
+            curr = link.end();
         }
 
         var pathFuture = findPathAsync(curr.plane(), curr.toPoint(), finish.toPoint(), algo);

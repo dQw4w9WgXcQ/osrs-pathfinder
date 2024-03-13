@@ -9,19 +9,14 @@ import java.util.Map;
 public record SpecialLink(
         Type type,
         int id,
-        Position origin,
-        Position destination,
+        Position start,
+        Position end,
         int cost,
         List<Requirement> requirements,
         Map<String, Object> extra)
         implements Link {
     public SpecialLink(
-            int id,
-            Position origin,
-            Position destination,
-            int cost,
-            List<Requirement> requirements,
-            Map<String, Object> extra) {
-        this(Type.SPECIAL, id, origin, destination, cost, requirements, extra);
+            int id, Position start, Position end, int cost, List<Requirement> requirements, Map<String, Object> extra) {
+        this(Type.SPECIAL, id, start, end, cost, requirements, extra);
     }
 }

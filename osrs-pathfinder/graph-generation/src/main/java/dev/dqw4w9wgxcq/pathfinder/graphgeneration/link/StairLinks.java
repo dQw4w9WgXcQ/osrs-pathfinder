@@ -64,14 +64,14 @@ public class StairLinks {
 
             log.debug("found stair at {} up:{}", location.getPosition(), up);
 
-            var destinationPlane = location.getPosition().getZ();
+            var endPlane = location.getPosition().getZ();
             if (up) {
-                destinationPlane++;
+                endPlane++;
             } else {
-                destinationPlane--;
+                endPlane--;
             }
 
-            if (destinationPlane < 0 || destinationPlane >= Constants.PLANES_SIZE) {
+            if (endPlane < 0 || endPlane >= Constants.PLANES_SIZE) {
                 log.debug("stair at {} is out of bounds up:{}", location.getPosition(), up);
                 continue;
             }
@@ -88,24 +88,24 @@ public class StairLinks {
                 sizeY = definition.getSizeY();
             }
 
-            Position origin = null;
-            Position destination = null;
+            Position start = null;
+            Position end = null;
             for (var adjacent :
                     Util.findNotBlockedAdjacent(tileWorld, Util.fromRlPosition(location.getPosition()), sizeX, sizeY)) {
-                var testDestination = new Position(adjacent.x(), adjacent.y(), destinationPlane);
-                if (grid.componentOf(testDestination) != -1) {
-                    origin = adjacent;
-                    destination = testDestination;
+                var testEnd = new Position(adjacent.x(), adjacent.y(), endPlane);
+                if (grid.componentOf(testEnd) != -1) {
+                    start = adjacent;
+                    end = testEnd;
                     break;
                 }
             }
 
-            if (origin == null) {
+            if (start == null) {
                 log.debug("no adjacent for location:{}", location);
                 continue;
             }
 
-            var stairLink = new StairLink(id++, origin, destination, location.getId(), up);
+            var stairLink = new StairLink(id++, start, end, location.getId(), up);
             log.debug("found stair link: {}", stairLink);
             out.add(stairLink);
         }

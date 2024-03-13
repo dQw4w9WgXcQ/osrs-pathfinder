@@ -53,28 +53,27 @@ public class DoorLinks {
             }
 
             var direction = determineDoorDirection(location.getType(), location.getOrientation());
-            var origin = Util.fromRlPosition(location.getPosition());
-            var destination =
-                    new Position(origin.x() + direction.getDx(), origin.y() + direction.getDy(), origin.plane());
+            var start = Util.fromRlPosition(location.getPosition());
+            var end = new Position(start.x() + direction.getDx(), start.y() + direction.getDy(), start.plane());
 
-            if (componentGrid.componentOf(origin) == -1 || componentGrid.componentOf(destination) == -1) {
+            if (componentGrid.componentOf(start) == -1 || componentGrid.componentOf(end) == -1) {
                 continue;
             }
 
-            if (componentGrid.componentOf(origin) < 0 || componentGrid.componentOf(destination) < 0) {
+            if (componentGrid.componentOf(start) < 0 || componentGrid.componentOf(end) < 0) {
                 System.out.println("AAAAAAAAAAAAAAAAAAAAAAA");
-                System.out.println(componentGrid.componentOf(origin));
-                System.out.println(componentGrid.componentOf(destination));
-                System.out.println(origin);
-                System.out.println(destination);
+                System.out.println(componentGrid.componentOf(start));
+                System.out.println(componentGrid.componentOf(end));
+                System.out.println(start);
+                System.out.println(end);
                 System.exit(42069);
             }
 
-            var link = new DoorLink(id++, origin, destination, location.getId());
+            var link = new DoorLink(id++, start, end, location.getId());
             log.debug("new door link {}", link);
             links.add(link);
             // bidirectionality
-            links.add(new DoorLink(id++, destination, origin, location.getId()));
+            links.add(new DoorLink(id++, end, start, location.getId()));
         }
 
         var endTime = System.currentTimeMillis();

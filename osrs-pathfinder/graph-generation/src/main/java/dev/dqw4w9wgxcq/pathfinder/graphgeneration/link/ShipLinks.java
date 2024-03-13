@@ -35,6 +35,6 @@ public class ShipLinks {
     }
 
     private static ShipLink bidirection(int id, ShipLink link) {
-        return new ShipLink(id, link.destination(), link.origin());
+        return new ShipLink(id, link.end(), link.start());
     }
 }

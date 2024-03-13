@@ -15,12 +15,7 @@ import dev.dqw4w9wgxcq.pathfinder.graphgeneration.leafletimages.LeafletImages;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.link.FindLinks;
 import dev.dqw4w9wgxcq.pathfinder.graphgeneration.tileworld.TileWorld;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;

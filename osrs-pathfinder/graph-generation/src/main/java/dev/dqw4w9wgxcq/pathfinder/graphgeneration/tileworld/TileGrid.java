@@ -231,15 +231,15 @@ public class TileGrid {
             return false;
         }
 
-        var destX = x + dx;
-        var destY = y + dy;
-        if (destX < 0 || destX >= width || destY < 0 || destY >= height) {
-            log.debug("destination out of bounds");
+        var endX = x + dx;
+        var endY = y + dy;
+        if (endX < 0 || endX >= width || endY < 0 || endY >= height) {
+            log.debug("end out of bounds");
             return false;
         }
 
         if (dx != 0) {
-            var adjacentXConfig = tiles[destX][y];
+            var adjacentXConfig = tiles[endX][y];
             if ((adjacentXConfig & TileFlags.HAVE_DATA) == 0) {
                 log.debug("dont have data for adjacent x");
                 return false;
@@ -252,7 +252,7 @@ public class TileGrid {
         }
 
         if (dy != 0) {
-            var adjacentYConfig = tiles[x][destY];
+            var adjacentYConfig = tiles[x][endY];
             if ((adjacentYConfig & TileFlags.HAVE_DATA) == 0) {
                 log.debug("dont have data for adjacent y");
                 return false;
@@ -265,7 +265,7 @@ public class TileGrid {
         }
 
         if (dx != 0 && dy != 0) {
-            var diagonalConfig = tiles[destX][destY];
+            var diagonalConfig = tiles[endX][endY];
             if ((diagonalConfig & TileFlags.HAVE_DATA) == 0) {
                 log.debug("dont have data for diagonal");
                 return false;

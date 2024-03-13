@@ -8,9 +8,9 @@ import java.util.List;
 /**
  * A simple door(or gate etc.).  Doors with requirements or that are unidirectional are SpecialLinks.
  */
-public record DoorLink(Type type, int id, Position origin, Position destination, int objectId) implements Link {
-    public DoorLink(int id, Position origin, Position destination, int objectId) {
-        this(Type.DOOR, id, origin, destination, objectId);
+public record DoorLink(Type type, int id, Position start, Position end, int objectId) implements Link {
+    public DoorLink(int id, Position start, Position end, int objectId) {
+        this(Type.DOOR, id, start, end, objectId);
     }
 
     @Override

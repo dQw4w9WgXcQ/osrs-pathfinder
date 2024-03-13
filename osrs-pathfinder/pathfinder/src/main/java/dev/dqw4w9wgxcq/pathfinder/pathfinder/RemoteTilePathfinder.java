@@ -76,7 +76,7 @@ class RemoteTilePathfinder {
 
     @VisibleForTesting
     CacheResult internalFindPath(int plane, Point start, Point end, Algo algo) {
-        var key = String.format("path:%d,%d,%d,%s", plane, start.x(), start.y(), algo);
+        var key = String.format("path:%d-%d,%d-%d,%d-%s", plane, start.x(), start.y(), end.x(), end.y(), algo);
         return cache.computeIfAbsent(key, () -> {
             var dto = new Dto.FindPathRequest(plane, start, end, algo);
 

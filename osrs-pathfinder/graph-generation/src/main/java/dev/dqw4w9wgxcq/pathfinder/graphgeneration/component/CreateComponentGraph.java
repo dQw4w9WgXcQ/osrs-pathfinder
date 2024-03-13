@@ -32,21 +32,21 @@ public class CreateComponentGraph {
             var startTime = System.currentTimeMillis();
             for (var inboundLink : component.inboundLinks()) {
                 var distances = tilePathfinder.distances(
-                        inboundLink.destination(),
+                        inboundLink.end(),
                         component.outboundLinks().stream()
-                                .map(Link::origin)
+                                .map(Link::start)
                                 .map(Position::toPoint)
                                 .collect(Collectors.toSet()));
 
                 for (var outboundLink : component.outboundLinks()) {
                     if (inboundLink == outboundLink) {
-                        // can happen if the link origin and destination are in the same component
+                        // can happen if the link start and end are in the same component
                         skippedCount++;
                         continue;
                     }
 
                     log.debug("Adding edge from {} to {}", inboundLink, outboundLink);
-                    var distance = distances.get(outboundLink.origin().toPoint());
+                    var distance = distances.get(outboundLink.start().toPoint());
                     var cost = outboundLink.cost() + distance;
 
                     var edge = new LinkEdge(outboundLink, cost);

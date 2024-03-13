@@ -28,7 +28,7 @@ class LinkDistances {
         }
 
         var ends = links.stream()
-                .map(l -> isOutbound ? l.origin() : l.destination())
+                .map(l -> isOutbound ? l.start() : l.end())
                 .map(Position::toPoint)
                 .collect(Collectors.toSet());
 

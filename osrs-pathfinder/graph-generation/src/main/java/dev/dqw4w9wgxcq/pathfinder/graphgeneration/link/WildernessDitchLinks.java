@@ -61,8 +61,7 @@ public class WildernessDitchLinks {
         var blackKnightsFortressDitch =
                 new WildernessDitchLink(id++, new Position(2995, 3532, 0), new Position(2998, 3532, 0));
         links.add(blackKnightsFortressDitch);
-        links.add(new WildernessDitchLink(
-                id++, blackKnightsFortressDitch.destination(), blackKnightsFortressDitch.origin()));
+        links.add(new WildernessDitchLink(id++, blackKnightsFortressDitch.end(), blackKnightsFortressDitch.start()));
 
         return links;
     }

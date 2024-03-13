@@ -22,8 +22,8 @@ public class DungeonLinks {
         var tempMortyniaIn = new DungeonLink(
                 id++, new Position(3405, 3506, 0), new Position(3405, 9906, 0), ObjectID.TRAPDOOR_1581, "Climb-down");
         links.add(tempMortyniaIn);
-        links.add(new DungeonLink(
-                id++, tempMortyniaIn.destination(), tempMortyniaIn.origin(), ObjectID.LADDER_17385, "Climb-up"));
+        links.add(
+                new DungeonLink(id++, tempMortyniaIn.end(), tempMortyniaIn.start(), ObjectID.LADDER_17385, "Climb-up"));
 
         var tempMortyniaOut = new DungeonLink(
                 id++, new Position(3423, 3485, 0), new Position(3440, 9887, 0), ObjectID.TRAPDOOR_3433, "Climb-down");

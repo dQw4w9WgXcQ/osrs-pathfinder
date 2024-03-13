@@ -6,11 +6,10 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
-public record TeleportLink(
-        Type type, int id, @Nullable Position origin, Position destination, List<Requirement> requirements)
+public record TeleportLink(Type type, int id, @Nullable Position start, Position end, List<Requirement> requirements)
         implements Link {
-    public TeleportLink(int id, Position destination, List<Requirement> requirements) {
-        this(Type.TELEPORT, id, null, destination, requirements);
+    public TeleportLink(int id, Position end, List<Requirement> requirements) {
+        this(Type.TELEPORT, id, null, end, requirements);
     }
 
     @Override

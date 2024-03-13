@@ -57,7 +57,7 @@ class LinkPathfinder {
         log.debug("{} start links", startLinks.size());
         for (var startLink : startLinks) {
             if (agent.checkRequirements(startLink.requirements())) {
-                var distance = startDistances.get(startLink.origin().toPoint());
+                var distance = startDistances.get(startLink.start().toPoint());
                 queue.add(new Node(startLink, distance, false));
                 linkDistances.put(startLink, distance);
             }
@@ -83,12 +83,11 @@ class LinkPathfinder {
             }
 
             // simulate end component edges
-            if (componentGrid.componentOf(curr.link().destination()) == endComponent) {
+            if (componentGrid.componentOf(curr.link().end()) == endComponent) {
                 log.debug("adding end link {}", curr);
                 queue.add(new Node(
                         curr.link(),
-                        curr.distance()
-                                + endDistances.get(curr.link().destination().toPoint()),
+                        curr.distance() + endDistances.get(curr.link().end().toPoint()),
                         true));
                 // don't need linkDistances because finding an end node terminates the search
             }
