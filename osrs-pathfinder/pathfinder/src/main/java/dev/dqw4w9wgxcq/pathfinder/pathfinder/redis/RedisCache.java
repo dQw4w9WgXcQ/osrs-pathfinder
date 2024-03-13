@@ -3,10 +3,13 @@ package dev.dqw4w9wgxcq.pathfinder.pathfinder.redis;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.ApiStatus;
+import org.xerial.snappy.Snappy;
 import redis.clients.jedis.ConnectionPoolConfig;
 import redis.clients.jedis.JedisPooled;
 import redis.clients.jedis.params.SetParams;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 
@@ -31,9 +34,16 @@ public class RedisCache {
     }
 
     public CacheResult computeIfAbsent(String key, Compute compute) {
-        var hitJson = redis.get(key);
-        if (hitJson != null) {
-            return new CacheResult(CacheResult.Status.HIT, gson.fromJson(hitJson, CacheState.class));
+        var hit = redis.get(key.getBytes(StandardCharsets.UTF_8));
+        if (hit != null) {
+            String json;
+            try {
+                json = Snappy.uncompressString(hit);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            return new CacheResult(CacheResult.Status.HIT, gson.fromJson(json, CacheState.class));
         }
 
         if (acquireComputeLock(key)) {
@@ -52,12 +62,20 @@ public class RedisCache {
                     state = new CacheState(CacheState.Status.PERMANENT_FAILURE, null, e.getMessage());
                 }
 
+                var keyBytes = key.getBytes(StandardCharsets.UTF_8);
+                byte[] valBytes;
+                try {
+                    valBytes = Snappy.compress(gson.toJson(state));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
                 if (expire != -1) {
                     assert state.status() == CacheState.Status.FAILURE;
 
-                    redis.setex(key, expire, gson.toJson(state));
+                    redis.setex(keyBytes, expire, valBytes);
                 } else {
-                    redis.set(key, gson.toJson(state));
+                    redis.set(keyBytes, valBytes);
                 }
 
                 return new CacheResult(CacheResult.Status.MISS, state);
@@ -77,8 +95,15 @@ public class RedisCache {
                     throw new RuntimeException("interrupted", e);
                 }
 
-                var json = redis.get(key);
-                if (json != null) {
+                var bytes = redis.get(key.getBytes(StandardCharsets.UTF_8));
+                if (bytes != null) {
+                    String json;
+                    try {
+                        json = Snappy.uncompressString(bytes);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
                     return new CacheResult(
                             CacheResult.Status.MISS_COMPUTED_ELSEWHERE, gson.fromJson(json, CacheState.class));
                 }
