@@ -1,7 +1,6 @@
 package dev.dqw4w9wgxcq.pathfinder.pathfinder;
 
 import dev.dqw4w9wgxcq.pathfinder.commons.domain.Point;
-import lombok.SneakyThrows;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,13 +8,14 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 class Util {
-    @SneakyThrows({ExecutionException.class})
     public static <T> T await(Future<T> future) {
         try {
             return future.get();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeException("interrupted", e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
         }
     }
 

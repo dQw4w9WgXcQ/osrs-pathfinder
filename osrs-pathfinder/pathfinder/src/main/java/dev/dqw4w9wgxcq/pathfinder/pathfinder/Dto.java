@@ -9,7 +9,7 @@ import java.util.Set;
 class Dto {
     public record FindPathRequest(int plane, Point start, Point end, Algo algo) {}
 
-    public record FindPathResponse(int size, ArrayList<Point> path) {}
+    public record FindPathResponse(int size, int cost, ArrayList<Point> path) {}
 
     public record FindDistancesRequest(int plane, Point start, Set<Point> ends) {}
 

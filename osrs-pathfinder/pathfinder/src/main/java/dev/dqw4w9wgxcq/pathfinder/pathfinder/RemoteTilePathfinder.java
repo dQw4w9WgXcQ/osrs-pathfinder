@@ -17,7 +17,7 @@ import java.time.Duration;
 import java.util.*;
 
 class RemoteTilePathfinder {
-    public record PathResult(boolean cached, List<Point> path) {}
+    public record PathResult(boolean cached, int cost, List<Point> path) {}
 
     public record DistancesResult(boolean cached, Map<Point, Integer> distances) {}
 
@@ -49,7 +49,7 @@ class RemoteTilePathfinder {
 
         if (cacheResult.state().status() == CacheState.Status.SUCCESS) {
             var path = GSON.fromJson(cacheResult.state().jsonOrThrow(), Dto.FindPathResponse.class);
-            return new PathResult(cacheResult.status() == CacheResult.Status.HIT, path.path());
+            return new PathResult(cacheResult.status() == CacheResult.Status.HIT, path.cost(), path.path());
         }
 
         throw new PathfinderException("find path failed");

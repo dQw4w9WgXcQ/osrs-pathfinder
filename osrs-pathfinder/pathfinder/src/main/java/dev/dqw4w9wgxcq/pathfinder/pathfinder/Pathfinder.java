@@ -47,7 +47,7 @@ public class Pathfinder {
         this(graphStore, new RemoteTilePathfinder(tilePathfinderAddress, redisHost, redisPort));
     }
 
-    public PathfinderResult findPath(Position start, Position end, Agent agent, Algo algo) throws PathfinderException {
+    public PathfinderResult findPath(Position start, Position end, Agent agent, Algo algo) {
         var startFuture = exe.submit(() -> closestIfBlocked(start));
         var endFuture = exe.submit(() -> closestIfBlocked(end));
 
@@ -58,14 +58,30 @@ public class Pathfinder {
             return new PathfinderResult.Blocked(fixedStart, fixedEnd);
         }
 
-        var linkPath = linkPathfinder.findLinkPath(fixedStart, fixedEnd, agent);
+        var linkPathFuture = exe.submit(() -> linkPathfinder.findLinkPath(fixedStart, fixedEnd, agent));
+
+        Future<RemoteTilePathfinder.PathResult> directPathFuture = null;
+        if (componentGrid.componentOf(fixedStart) == componentGrid.componentOf(fixedEnd)) {
+            directPathFuture = exe.submit(() ->
+                    remoteTilePathfinder.findPath(fixedStart.plane(), fixedStart.toPoint(), fixedEnd.toPoint(), algo));
+        }
+
+        var linkPath = Util.await(linkPathFuture);
+        if (directPathFuture != null) {
+            var directPath = Util.await(directPathFuture);
+            if (directPath.cost() <= linkPath.cost()) {
+                List<Step> steps = List.of(
+                        new WalkStep(directPath.cached(), directPath.cost(), fixedStart.plane(), directPath.path()));
+                return new PathfinderResult.Success(fixedStart, fixedEnd, steps);
+            }
+        }
 
         if (linkPath == null) {
             log.info("no path from {} to {} for agent {}", fixedStart, fixedEnd, agent);
             return new PathfinderResult.Unreachable(fixedStart, fixedEnd);
         }
 
-        var steps = toSteps(linkPath, fixedStart, fixedEnd, algo);
+        var steps = toSteps(linkPath.path(), fixedStart, fixedEnd, algo);
 
         return new PathfinderResult.Success(fixedStart, fixedEnd, steps);
     }
@@ -103,7 +119,7 @@ public class Pathfinder {
 
     private WalkStep awaitPath(int plane, Future<RemoteTilePathfinder.PathResult> pathResultFuture) {
         var pathResult = Util.await(pathResultFuture);
-        return new WalkStep(pathResult.cached(), plane, pathResult.path());
+        return new WalkStep(pathResult.cached(), pathResult.cost(), plane, pathResult.path());
     }
 
     private @Nullable Position closestIfBlocked(Position position) {
