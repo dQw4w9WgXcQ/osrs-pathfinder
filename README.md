@@ -26,13 +26,15 @@ In the image below, cyan lines represent links while blue lines represent the ti
 
 ![](https://i.imgur.com/MaD51oN.png)
 
-This design was chosen for performance, caching, and replication.  
+This design was chosen for parallelization, replication, and caching.  
 
-During graph generation, distances from every link to every other link in its component are calculated to create the weighted Dijkstra's graph.  However, at runtime, distances from the start/end tile to all links in the start/end component need to be calculated for each request. Distances take up very little space and are cached in memory without eviction.
+During graph generation, distances from every link to every other link in its component are calculated to create the weighted Dijkstra's graph.  However, at runtime, distances from the start/end tile to all links in the start/end component need to be calculated for each request. Distances take up very little space and cached with Redis.
 
 Since A* uses a heuristic, it can't be used on a weighted graph. Additionally, while A* is fast in the average case, it's very inefficient in the worst case. By finding the link path, we can guarantee a valid path exists and will never hit the worst case.  
 
-The majority of resource usage is in finding the tile path. Tile pathfinding was rewritten in Rust and separated out into its own service, which can be replicated independently.  The two stage design allows tile paths to be cached independently of the link path. The link path can vary between calls because users may have different item/quest unlocks and therefore can't be cached.  
+The majority of resource usage is in finding the tile path. Tile pathfinding was rewritten in Rust and separated out into its own service, which can be replicated independently.  
+
+The two stage design allows tile paths to be cached independently of the link path. Tile paths are compressed with Snappy and cached with Redis. The link path can vary between calls because users may have different item/quest unlocks and therefore can't be cached.  
 
 ## Types of Links
 
