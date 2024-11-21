@@ -1,8 +1,6 @@
 # OSRS Pathfinder
 
-OSRS Pathfinder is a REST service that serves shortest paths between two locations in Old School Runescape while handling doors, stairs, ships, dungeons, teleports, and other links.
-
-The pathfinding graph is generated from data extracted from the game's cache files.
+OSRS Pathfinder is a REST service that serves shortest paths between two locations in Old School Runescape while handling doors, stairs, ships, dungeons, teleports, and other links.  Paths are found using a combination of Dijkstra's and A*.  The pathfinding graph is generated from data extracted from the game's cache files.
 
 
 Demonstrated at [osrspathfinder.github.io](https://osrspathfinder.github.io/).
@@ -24,9 +22,11 @@ To find a path, the link path is first found using Dijkstra's. Then, tile paths 
 
 In the image below, cyan lines represent links while blue lines represent the tile path. The colored areas represent "components", which are islands of contiguous tiles connected by links.
 
+This design was chosen for parallelization, replication, and caching.  
+
 ![](https://i.imgur.com/MaD51oN.png)
 
-This design was chosen for parallelization, replication, and caching.  
+### Further details
 
 During graph generation, distances from every link to every other link in its component are calculated to create the weighted Dijkstra's graph.  However, at runtime, distances from the start/end tile to all links in the start/end component need to be calculated for each request. Distances take up very little space and cached with Redis.
 
