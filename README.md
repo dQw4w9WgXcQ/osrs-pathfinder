@@ -1,6 +1,6 @@
 # OSRS Pathfinder
 
-OSRS Pathfinder is a REST service that serves shortest paths between two locations in Old School Runescape.  Handles doors, stairs, ships, dungeons, teleports, and other links.
+OSRS Pathfinder is a REST service that serves shortest paths between two locations in Old School Runescape while handling doors, stairs, ships, dungeons, teleports, and other links.
 
 The pathfinding graph is generated from data extracted from the game's cache files.
 
