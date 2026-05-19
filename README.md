@@ -1,5 +1,7 @@
 # OSRS Pathfinder
 
+[osrspathfinder.github.io](https://osrspathfinder.github.io/).
+
 OSRS Pathfinder is a REST service that serves shortest paths between two locations in Old School Runescape.
 
 - Handles doors, stairs, ships, dungeons, teleports, and other links.  
@@ -9,10 +11,6 @@ OSRS Pathfinder is a REST service that serves shortest paths between two locatio
 - Uses a combination of Dijkstra's and A* to find paths
 
 - Written primarily in Java, with performance critical components written in Rust
-
-Demonstrated at [osrspathfinder.github.io](https://osrspathfinder.github.io/).
-
-[![website](https://i.imgur.com/sk5XPSt.png)](https://osrspathfinder.github.io/)
 
 ## Project Layout
 
