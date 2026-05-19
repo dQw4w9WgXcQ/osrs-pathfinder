@@ -1,6 +1,6 @@
 # OSRS Pathfinder
 
-[osrspathfinder.github.io](https://osrspathfinder.github.io/).
+[osrspathfinder.github.io](https://osrspathfinder.github.io/)
 
 OSRS Pathfinder is a REST service that serves shortest paths between two locations in Old School Runescape.
 
